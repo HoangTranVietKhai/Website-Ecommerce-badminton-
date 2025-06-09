@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UMT Instruments - Không Gian Nhạc Cụ Trầm Ấm</title>
+    <meta name="description" content="Khám phá bộ sưu tập guitar, piano và nhạc cụ thủ công tại UMT Instruments.">
+    
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- ICONS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body class="home-page">
+    <!-- Header sẽ được chèn bởi JS -->
+
+    <main>
+        <!-- CẢI TIẾN: Hero Section với Video nền để tạo cảm giác sống động, nghệ thuật -->
+        <section class="hero-section">
+            <video class="hero-video" autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1510915361894-db8b60106945?q=80&w=2070&auto=format&fit=crop">
+                <!-- Sử dụng một video miễn phí chất lượng cao về làm đàn hoặc chơi đàn -->
+                <source src="https://videos.pexels.com/video-files/4769372/4769372-hd_1920_1080_25fps.mp4" type="video/mp4">
+                Trình duyệt của bạn không hỗ trợ video.
+            </video>
+            <div class="hero-overlay"></div>
+            <div class="container hero-content">
+                <h1 class="fade-in-element">Khơi Nguồn Giai Điệu</h1>
+                <p class="fade-in-element" style="--delay: 0.2s;">Tìm kiếm người bạn đồng hành hoàn hảo trên hành trình âm nhạc của bạn.</p>
+                <a href="products.html" class="btn primary-btn fade-in-element" style="--delay: 0.4s;">Khám Phá Nhạc Cụ</a>
+            </div>
+        </section>
+
+        <!-- CẢI TIẾN: Thêm khối giới thiệu câu chuyện để xây dựng thương hiệu -->
+        <section class="story-section-home container fade-in-element">
+            <div class="story-content">
+                <h2>Một Nơi Cho Những Tâm Hồn Đồng Điệu</h2>
+                <p>Tại UMT, chúng tôi không chỉ bán nhạc cụ. Chúng tôi kết nối những người nghệ sĩ với tri kỷ của họ. Mỗi sản phẩm là một lời hứa về chất lượng, đam mê và những giai điệu bất tận.</p>
+                <a href="about.html" class="btn secondary-btn">Câu Chuyện Của Chúng Tôi</a>
+            </div>
+            <div class="story-image">
+                <img src="https://images.unsplash.com/photo-1579541571257-2c9769997e09?q=80&w=2070&auto=format&fit=crop" alt="Xưởng chế tác nhạc cụ UMT">
+            </div>
+        </section>
+
+        <section class="products-section-home container">
+            <h2 class="fade-in-element">Sản Phẩm Nổi Bật</h2>
+            <div class="product-grid">
+                <!-- JS sẽ tự động render các sản phẩm có isPromotional: true vào đây -->
+            </div>
+        </section>
+        
+        <!-- CẢI TIẾN: Thêm khối Testimonials để tăng độ tin cậy -->
+        <section class="testimonials-section fade-in-element">
+            <div class="container">
+                <h2>Khách Hàng Nói Gì Về UMT</h2>
+                <div class="testimonials-grid">
+                    <div class="testimonial-card">
+                        <p>"Cây đàn guitar từ UMT thực sự là một tác phẩm nghệ thuật. Âm thanh ấm và vang, vượt xa mong đợi của tôi. Cảm ơn đội ngũ!"</p>
+                        <h4>- Huy DuckDuck, Nhạc sĩ</h4>
+                    </div>
+                    <div class="testimonial-card">
+                        <p>"Dịch vụ tư vấn rất tận tâm. Họ đã giúp tôi chọn được cây piano điện hoàn hảo cho việc học của con gái tôi. Rất đáng tin cậy."</p>
+                        <h4>- Huy DuckDuck, Phụ huynh</h4>
+                    </div>
+                    <div class="testimonial-card">
+                        <p>"Tôi yêu không gian và con người ở UMT. Mua một chiếc ukulele và nhận lại cả một nguồn cảm hứng mới. Sẽ quay lại chắc chắn."</p>
+                        <h4>- Duck Huy, Sinh viên</h4>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer và Modals sẽ được chèn bởi JS -->
+    <script type="module" src="/js/main.js"></script> 
+</body>
+</html>

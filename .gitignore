@@ -1,0 +1,20 @@
+# Lịch sử và cấu hình hệ điều hành
+.DS_Store
+Thumbs.db
+
+# Các file log
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Các thư mục chứa các gói đã cài đặt (rất nặng và không cần thiết)
+/node_modules
+/server/node_modules
+
+# Các file chứa biến môi trường (BẢO MẬT - TUYỆT ĐỐI KHÔNG ĐƯA LÊN)
+.env
+/server/.env
+
+# Các file cấu hình của IDE
+.vscode/

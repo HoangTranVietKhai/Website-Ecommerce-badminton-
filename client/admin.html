@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - UMT Instruments</title>
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body.admin-page { display: block; }
+        .admin-layout { display: flex; min-height: 100vh; }
+        .admin-sidebar { width: 250px; background-color: var(--color-dark-bg); color: #fff; padding: 2rem 1.5rem; flex-shrink: 0; }
+        .admin-sidebar h2 { color: #fff; margin-bottom: 2rem; }
+        .admin-nav a { display: block; color: rgba(255,255,255,0.8); padding: 0.8rem; border-radius: var(--border-radius); transition: all 0.2s; text-decoration: none; margin-bottom: 0.5rem; }
+        .admin-nav a:hover { background-color: rgba(255,255,255,0.1); }
+        .admin-nav a.active { background-color: var(--color-accent); color: var(--color-dark-bg); font-weight: 600; }
+        .admin-main-content { flex-grow: 1; padding: 2rem; }
+        .admin-main-content h1 { border-bottom: 1px solid var(--color-border); padding-bottom: 1rem; margin-bottom: 2rem; }
+        .protected-content { display: none; }
+        .product-table { width: 100%; border-collapse: collapse; margin-top: 2rem; }
+        .product-table th, .product-table td { border: 1px solid var(--color-border); padding: 0.8rem; text-align: left; vertical-align: middle; }
+        .product-table th { background-color: #f9f9f9; }
+        .product-table img { width: 50px; height: 50px; object-fit: cover; border-radius: 4px; }
+        .product-table .btn { padding: 0.4rem 0.8rem; font-size: 0.8rem; margin-right: 5px; cursor: pointer; }
+        .btn.edit-btn { background-color: #3498db; color: #fff; border-color: #3498db; }
+        .btn.delete-btn { background-color: #e74c3c; color: #fff; border-color: #e74c3c; }
+    </style>
+</head>
+<body class="admin-page">
+    
+    <div id="admin-auth-layer">
+        <p>Đang kiểm tra quyền truy cập...</p>
+    </div>
+
+    <div class="admin-layout protected-content">
+        <aside class="admin-sidebar">
+            <h2>UMT Admin</h2>
+            <nav class="admin-nav">
+                <a href="#dashboard" class="nav-link" data-target="dashboard-section">Bảng Điều Khiển</a>
+                <a href="#products" class="nav-link active" data-target="products-section">Quản Lý Sản Phẩm</a>
+                <a href="index.html" style="margin-top: 2rem; opacity: 0.7;">Về trang chính</a>
+            </nav>
+        </aside>
+
+        <main class="admin-main-content">
+            <section id="dashboard-section" class="admin-section" style="display: none;">
+                <h1>Bảng Điều Khiển</h1>
+                <p>Chào mừng bạn đến với trang quản trị của UMT Instruments.</p>
+            </section>
+
+            <section id="products-section" class="admin-section">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h1>Quản Lý Sản Phẩm</h1>
+                    <button id="add-product-btn" class="btn primary-btn">Thêm Sản Phẩm Mới</button>
+                </div>
+                <table class="product-table">
+                    <thead>
+                        <tr>
+                            <th>Ảnh</th>
+                            <th>Tên Sản Phẩm</th>
+                            <th>Giá</th>
+                            <th>Thương Hiệu</th>
+                            <th>Hành Động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="product-list-body"></tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal (cửa sổ pop-up) để Thêm/Sửa sản phẩm -->
+    <div id="product-modal-overlay" class="auth-modal-overlay" style="display: none;"></div>
+    <div id="product-modal" class="auth-modal" style="display: none;">
+        <button id="close-product-modal" class="close-auth-modal">×</button>
+        <h3 id="product-modal-title">Thêm Sản Phẩm Mới</h3>
+        <form id="product-form" class="auth-form">
+            <input type="hidden" id="product-id">
+            <div class="form-group"><label for="product-name">Tên sản phẩm</label><input type="text" id="product-name" required></div>
+            <div class="form-group"><label for="product-price">Giá (VNĐ)</label><input type="number" id="product-price" required></div>
+            <div class="form-group"><label for="product-image">Link hình ảnh</label><input type="text" id="product-image" required></div>
+            <div class="form-group"><label for="product-brand">Thương hiệu</label><input type="text" id="product-brand" required></div>
+            <div class="form-group"><label for="product-description">Mô tả ngắn</label><textarea id="product-description" rows="3" required></textarea></div>
+            <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
+                <input type="checkbox" id="product-isPromotional" style="width: auto;">
+                <label for="product-isPromotional" style="margin-bottom: 0;">Là sản phẩm nổi bật?</label>
+            </div>
+            <button type="submit" class="btn primary-btn">Lưu Sản Phẩm</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = JSON.parse(localStorage.getItem('user'));
+            const token = localStorage.getItem('token');
+            
+            if (!user || user.role !== 'admin' || !token) {
+                document.getElementById('admin-auth-layer').innerHTML = '<p style="color: red;">Truy cập bị từ chối. Bạn không phải là Admin.</p>';
+                setTimeout(() => { window.location.href = 'index.html'; }, 2000);
+                return;
+            }
+
+            document.getElementById('admin-auth-layer').style.display = 'none';
+            document.querySelector('.protected-content').style.display = 'flex';
+            
+            const productListBody = document.getElementById('product-list-body');
+            const productModal = document.getElementById('product-modal');
+            const productModalOverlay = document.getElementById('product-modal-overlay');
+            const productForm = document.getElementById('product-form');
+            const productModalTitle = document.getElementById('product-modal-title');
+            const productIdInput = document.getElementById('product-id');
+            const API_URL = 'http://localhost:5000/api';
+
+            async function fetchAndRenderProducts() {
+                try {
+                    const res = await fetch(`${API_URL}/products`);
+                    const products = await res.json();
+                    productListBody.innerHTML = '';
+                    products.forEach(p => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td><img src="${p.image}" alt="${p.name}"></td>
+                            <td>${p.name}</td>
+                            <td>${p.price.toLocaleString('vi-VN')} VNĐ</td>
+                            <td>${p.brand}</td>
+                            <td>
+                                <button class="btn edit-btn" data-id="${p._id}">Sửa</button>
+                                <button class="btn delete-btn" data-id="${p._id}">Xóa</button>
+                            </td>
+                        `;
+                        productListBody.appendChild(row);
+                    });
+                } catch (error) { console.error('Lỗi khi lấy sản phẩm:', error); }
+            }
+            
+            function openProductModal(product = null) {
+                productForm.reset();
+                if (product) {
+                    productModalTitle.textContent = 'Chỉnh Sửa Sản Phẩm';
+                    productIdInput.value = product._id;
+                    document.getElementById('product-name').value = product.name;
+                    document.getElementById('product-price').value = product.price;
+                    document.getElementById('product-image').value = product.image;
+                    document.getElementById('product-brand').value = product.brand;
+                    document.getElementById('product-description').value = product.description;
+                    document.getElementById('product-isPromotional').checked = product.isPromotional;
+                } else {
+                    productModalTitle.textContent = 'Thêm Sản Phẩm Mới';
+                    productIdInput.value = '';
+                }
+                productModal.style.display = 'block';
+                productModalOverlay.style.display = 'block';
+            }
+
+            function closeProductModal() {
+                productModal.style.display = 'none';
+                productModalOverlay.style.display = 'none';
+            }
+            
+            productForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const id = productIdInput.value;
+                const productData = {
+                    name: document.getElementById('product-name').value,
+                    price: document.getElementById('product-price').value,
+                    image: document.getElementById('product-image').value,
+                    brand: document.getElementById('product-brand').value,
+                    description: document.getElementById('product-description').value,
+                    isPromotional: document.getElementById('product-isPromotional').checked,
+                };
+                
+                const method = id ? 'PUT' : 'POST';
+                const url = id ? `${API_URL}/products/${id}` : `${API_URL}/products`;
+
+                try {
+                    const res = await fetch(url, {
+                        method: method,
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                        body: JSON.stringify(productData)
+                    });
+                    if (!res.ok) throw new Error((await res.json()).message);
+                    closeProductModal();
+                    fetchAndRenderProducts();
+                } catch (error) { alert('Lỗi: ' + error.message); }
+            });
+
+            document.body.addEventListener('click', async (e) => {
+                const target = e.target;
+                if (target.id === 'add-product-btn') openProductModal();
+                if (target.id === 'close-product-modal' || target.id === 'product-modal-overlay') closeProductModal();
+                
+                if (target.classList.contains('delete-btn')) {
+                    const id = target.dataset.id;
+                    if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')) {
+                        try {
+                            await fetch(`${API_URL}/products/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
+                            fetchAndRenderProducts();
+                        } catch (error) { alert('Xóa thất bại!'); }
+                    }
+                }
+                
+                if (target.classList.contains('edit-btn')) {
+                    const id = target.dataset.id;
+                    const res = await fetch(`${API_URL}/products/${id}`);
+                    const product = await res.json();
+                    openProductModal(product);
+                }
+            });
+
+            const navLinks = document.querySelectorAll('.admin-nav .nav-link');
+            const sections = document.querySelectorAll('.admin-section');
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    sections.forEach(s => s.style.display = 'none');
+                    link.classList.add('active');
+                    const targetId = link.dataset.target;
+                    document.getElementById(targetId).style.display = 'block';
+                    if (targetId === 'products-section') fetchAndRenderProducts();
+                });
+            });
+
+            fetchAndRenderProducts(); // Tải danh sách sản phẩm khi vào trang
+        });
+    </script>
+</body>
+</html>

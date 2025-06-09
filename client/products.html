@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sản Phẩm - UMT Instruments</title>
+    <meta name="description" content="Khám phá bộ sưu tập nhạc cụ chất lượng cao được tuyển chọn bởi UMT Instruments.">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- ĐƯỜNG DẪN CSS ĐÚNG -->
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body class="products-page">
+    <!-- Header sẽ được chèn bởi JS -->
+
+    <main class="container">
+        <div class="page-header fade-in-element">
+            <h1 id="page-main-title">Tất Cả Sản Phẩm</h1>
+        </div>
+
+        <div class="products-page-layout">
+            <aside class="products-sidebar fade-in-element" style="--delay: 0.2s;">
+                <div class="filter-group">
+                    <h3>Lọc theo</h3>
+                    <label for="brand-filter">Thương Hiệu:</label>
+                    <select id="brand-filter">
+                        <option value="all">Tất cả thương hiệu</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="price-sort">Sắp xếp theo giá:</label>
+                    <select id="price-sort">
+                        <option value="default">Mặc định</option>
+                        <option value="asc">Giá tăng dần</option>
+                        <option value="desc">Giá giảm dần</option>
+                    </select>
+                </div>
+            </aside>
+            
+            <section class="product-listing">
+                <div class="product-grid">
+                    <!-- JS sẽ render tất cả sản phẩm vào đây -->
+                </div>
+                <p id="no-products-found-detailed" class="no-products-message" style="display: none;">Không có sản phẩm nào phù hợp.</p>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer và Modals sẽ được chèn bởi JS -->
+
+    <!-- ĐƯỜNG DẪN JS ĐÚNG -->
+    <script type="module" src="/js/main.js"></script>
+</body>
+</html>
