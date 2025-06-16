@@ -74,21 +74,66 @@
     <div id="product-modal" class="auth-modal" style="display: none;">
         <button id="close-product-modal" class="close-auth-modal">×</button>
         <h3 id="product-modal-title">Thêm Sản Phẩm Mới</h3>
-        <form id="product-form" class="auth-form">
-            <input type="hidden" id="product-id">
-            <div class="form-group"><label for="product-name">Tên sản phẩm</label><input type="text" id="product-name" required></div>
-            <div class="form-group"><label for="product-price">Giá (VNĐ)</label><input type="number" id="product-price" required></div>
-            <div class="form-group"><label for="product-image">Link hình ảnh</label><input type="text" id="product-image" required></div>
-            <div class="form-group"><label for="product-brand">Thương hiệu</label><input type="text" id="product-brand" required></div>
-            <div class="form-group"><label for="product-description">Mô tả ngắn</label><textarea id="product-description" rows="3" required></textarea></div>
-            <div class="form-group" style="display: flex; align-items: center; gap: 10px;">
-                <input type="checkbox" id="product-isPromotional" style="width: auto;">
-                <label for="product-isPromotional" style="margin-bottom: 0;">Là sản phẩm nổi bật?</label>
-            </div>
-            <button type="submit" class="btn primary-btn">Lưu Sản Phẩm</button>
-        </form>
-    </div>
+        <!-- TRONG FILE admin.html, TÌM ĐẾN FORM VÀ THÊM ĐOẠN NÀY -->
 
+<form id="product-form" class="auth-form">
+    <input type="hidden" id="product-id">
+    <div class="form-group"><label for="product-name">Tên sản phẩm</label><input type="text" id="product-name" required></div>
+    
+    <!-- THÊM MỚI: Form group cho giá gốc -->
+    <div class="form-group"><label for="product-original-price">Giá gốc (VNĐ, điền nếu có giảm giá)</label><input type="number" id="product-original-price"></div>
+
+    <div class="form-group"><label for="product-price">Giá bán (VNĐ)</label><input type="number" id="product-price" required></div>
+    <div class="form-group"><label for="product-image">Link hình ảnh</label><input type="text" id="product-image" required></div>
+    <!-- ... các form group còn lại giữ nguyên ... -->
+</form>
+
+<!-- SAU ĐÓ, TÌM ĐẾN THẺ SCRIPT Ở CUỐI FILE VÀ CẬP NHẬT 2 HÀM BÊN TRONG -->
+
+<script>
+    // ... code javascript hiện có của bạn ...
+
+    // HÀM 1: CẬP NHẬT openProductModal
+    function openProductModal(product = null) {
+        productForm.reset();
+        if (product) {
+            productModalTitle.textContent = 'Chỉnh Sửa Sản Phẩm';
+            productIdInput.value = product._id;
+            document.getElementById('product-name').value = product.name;
+            document.getElementById('product-price').value = product.price;
+            // THÊM DÒNG NÀY
+            document.getElementById('product-original-price').value = product.originalPrice || '';
+            document.getElementById('product-image').value = product.image;
+            document.getElementById('product-brand').value = product.brand;
+            document.getElementById('product-description').value = product.description;
+            document.getElementById('product-isPromotional').checked = product.isPromotional;
+        } else {
+            productModalTitle.textContent = 'Thêm Sản Phẩm Mới';
+            productIdInput.value = '';
+        }
+        productModal.style.display = 'block';
+        productModalOverlay.style.display = 'block';
+    }
+
+    // HÀM 2: CẬP NHẬT EVENT LISTENER CỦA productForm
+    productForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const id = productIdInput.value;
+        const productData = {
+            name: document.getElementById('product-name').value,
+            price: document.getElementById('product-price').value,
+            // THÊM DÒNG NÀY
+            originalPrice: document.getElementById('product-original-price').value || null,
+            image: document.getElementById('product-image').value,
+            brand: document.getElementById('product-brand').value,
+            description: document.getElementById('product-description').value,
+            isPromotional: document.getElementById('product-isPromotional').checked,
+        };
+        // ... code gửi request giữ nguyên ...
+    });
+
+    // ... các code còn lại giữ nguyên ...
+</script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const user = JSON.parse(localStorage.getItem('user'));
@@ -108,31 +153,29 @@
             const productModalOverlay = document.getElementById('product-modal-overlay');
             const productForm = document.getElementById('product-form');
             const productModalTitle = document.getElementById('product-modal-title');
-            const productIdInput = document.getElementById('product-id');
-            const API_URL = 'http://localhost:5000/api';
+           async function fetchAndRenderProducts() {
+    try {
+        const res = await fetch(`${API_URL}/products`);
+        const data = await res.json(); // Lấy cả object data
+        const products = data.products; // Lấy ra mảng products từ object
 
-            async function fetchAndRenderProducts() {
-                try {
-                    const res = await fetch(`${API_URL}/products`);
-                    const products = await res.json();
-                    productListBody.innerHTML = '';
-                    products.forEach(p => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td><img src="${p.image}" alt="${p.name}"></td>
-                            <td>${p.name}</td>
-                            <td>${p.price.toLocaleString('vi-VN')} VNĐ</td>
-                            <td>${p.brand}</td>
-                            <td>
-                                <button class="btn edit-btn" data-id="${p._id}">Sửa</button>
-                                <button class="btn delete-btn" data-id="${p._id}">Xóa</button>
-                            </td>
-                        `;
-                        productListBody.appendChild(row);
-                    });
-                } catch (error) { console.error('Lỗi khi lấy sản phẩm:', error); }
-            }
-            
+        productListBody.innerHTML = '';
+        products.forEach(p => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><img src="${p.image}" alt="${p.name}"></td>
+                <td>${p.name}</td>
+                <td>${p.price.toLocaleString('vi-VN')} VNĐ</td>
+                <td>${p.brand}</td>
+                <td>
+                    <button class="btn edit-btn" data-id="${p._id}">Sửa</button>
+                    <button class="btn delete-btn" data-id="${p._id}">Xóa</button>
+                </td>
+            `;
+            productListBody.appendChild(row);
+        });
+    } catch (error) { console.error('Lỗi khi lấy sản phẩm:', error); }
+}
             function openProductModal(product = null) {
                 productForm.reset();
                 if (product) {

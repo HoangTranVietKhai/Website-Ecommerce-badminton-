@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đơn hàng của tôi - UMT Instruments</title>
+    <meta name="description" content="Xem lịch sử các đơn hàng bạn đã đặt tại UMT Instruments.">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="/style.css"> </head>
+<body class="myorders-page">
+    <main class="container">
+        <div class="page-header fade-in-element">
+            <h1>Đơn Hàng Của Tôi</h1>
+            <p>Xem lại tất cả các đơn hàng bạn đã đặt.</p>
+        </div>
+
+        <section class="orders-list">
+            <div id="orders-container">
+                <p id="loading-orders" class="loading-message">Đang tải đơn hàng, vui lòng chờ...</p>
+                <p id="no-orders-found" class="no-products-message" style="display: none;">Bạn chưa có đơn hàng nào.</p>
+                <table id="myorders-table" class="product-table" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>ID Đơn hàng</th>
+                            <th>Ngày đặt</th>
+                            <th>Tổng cộng</th>
+                            <th>Thanh toán</th>
+                            <th>Giao hàng</th>
+                            <th>Chi tiết</th>
+                        </tr>
+                    </thead>
+                    <tbody id="myorders-table-body">
+                        </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+    
+    <script type="module" src="/js/main.js"></script> </body>
+</html>

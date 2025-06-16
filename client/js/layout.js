@@ -2,16 +2,20 @@ const headerHTML = `
     <header class="main-header">
         <div class="container header-content">
             <div class="logo">
-                <a href="index.html" aria-label="Trang chủ UMT Musical Instruments">
-                    <img src="images/logoguitar.png" alt="UMT Musical Instruments Logo">
+                <a href="/index.html" aria-label="Trang chủ UMT Musical Instruments">
+                    <img src="/images/logoguitar.png" alt="UMT Musical Instruments Logo">
                 </a>
             </div>
+            <form id="search-form" class="search-form">
+                <input type="search" id="search-input" placeholder="Tìm kiếm sản phẩm...">
+                <button type="submit" aria-label="Tìm kiếm"><i class="fas fa-search"></i></button>
+            </form>
             <nav class="main-navigation">
                 <ul id="main-nav-list">
-                    <li><a href="index.html">Trang Chủ</a></li>
-                    <li><a href="products.html">Sản Phẩm</a></li>
-                    <li><a href="about.html">Câu Chuyện</a></li>
-                    <li><a href="contact.html">Liên Hệ</a></li>
+                    <li><a href="/index.html">Trang Chủ</a></li>
+                    <li><a href="/products.html">Sản Phẩm</a></li>
+                    <li><a href="/about.html">Câu Chuyện</a></li>
+                    <li><a href="/contact.html">Liên Hệ</a></li>
                 </ul>
             </nav>
             <div class="header-actions">
@@ -19,7 +23,6 @@ const headerHTML = `
                 <div id="auth-section">
                     <!-- Nút này sẽ hiển thị khi người dùng chưa đăng nhập -->
                     <button id="login-btn" class="btn secondary-btn">Đăng Nhập</button>
-                    <!-- Khu vực này sẽ hiển thị khi người dùng ĐÃ đăng nhập -->
                     <div id="user-info" style="display: none;">
                         <span id="user-name"></span>
                         <button id="logout-btn" class="btn secondary-btn">Đăng Xuất</button>
@@ -35,6 +38,24 @@ const headerHTML = `
             </div>
         </div>
     </header>
+    <nav class="sub-navigation">
+        <div class="container">
+            <ul>
+                <li><a href="/products.html?mainCategory=piano">Piano</a></li>
+                <li><a href="/products.html?mainCategory=guitar">Guitar</a></li>
+                <li><a href="/products.html?mainCategory=drums">Trống</a></li>
+                <!-- === DROPDOWN MENU MỚI CHO CÁC NHẠC CỤ KHÁC === -->
+                <li class="nav-dropdown">
+                    <a href="#">Khác <i class="fas fa-caret-down"></i></a>
+                    <div class="dropdown-menu">
+                        <a href="/products.html?mainCategory=ukulele">Ukulele</a>
+                        <a href="/products.html?mainCategory=violin">Violin</a>
+                        <a href="/products.html?mainCategory=wind">Nhạc Cụ Hơi</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
 `;
 
 const footerHTML = `
@@ -83,13 +104,12 @@ const cartDrawerHTML = `
                 <span>Tạm tính</span>
                 <span id="cart-total" class="total-price">0 VNĐ</span>
             </div>
-            <button class="btn primary-btn checkout-btn">Tiến hành thanh toán</button>
+            <a href="shipping.html" class="btn primary-btn checkout-btn">Tiến hành thanh toán</a>
         </div>
     </div>
     <div id="toast-notification" class="toast"><span id="toast-message"></span></div>
 `;
 
-// HTML cho modal đăng nhập/đăng ký
 const authModalHTML = `
     <div id="auth-modal-overlay" class="auth-modal-overlay" style="display: none;"></div>
     <div id="auth-modal" class="auth-modal" style="display: none;">
@@ -99,7 +119,6 @@ const authModalHTML = `
             <button id="register-tab-btn" class="auth-tab-btn" data-form="register-form">Đăng Ký</button>
         </div>
         <div class="auth-modal-content">
-            <!-- Form Đăng nhập -->
             <form id="login-form" class="auth-form">
                 <h3>Chào mừng trở lại!</h3>
                 <div class="form-group"><label for="login-email">Email</label><input type="email" id="login-email" name="email" required></div>
@@ -107,7 +126,6 @@ const authModalHTML = `
                 <button type="submit" class="btn primary-btn">Đăng Nhập</button>
                 <p id="login-error" class="form-error"></p>
             </form>
-            <!-- Form Đăng ký -->
             <form id="register-form" class="auth-form" style="display: none;">
                 <h3>Tạo tài khoản mới</h3>
                 <div class="form-group"><label for="register-name">Họ và Tên</label><input type="text" id="register-name" name="name" required></div>
@@ -122,7 +140,7 @@ const authModalHTML = `
 
 export function loadLayout() {
     document.body.insertAdjacentHTML('afterbegin', headerHTML);
-    document.body.insertAdjacentHTML('beforeend', authModalHTML); // Chèn modal đăng nhập
+    document.body.insertAdjacentHTML('beforeend', authModalHTML);
     document.body.insertAdjacentHTML('beforeend', cartDrawerHTML);
 
     const newFooter = document.createElement('footer');

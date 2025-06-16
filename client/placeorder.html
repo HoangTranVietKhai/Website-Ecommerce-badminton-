@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xác nhận Đơn hàng - UMT Instruments</title>
+    <meta name="description" content="Xem lại chi tiết đơn hàng của bạn trước khi xác nhận.">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="/style.css"> </head>
+<body class="placeorder-page">
+    <main class="container">
+        <div class="page-header fade-in-element">
+            <h1>Xác Nhận Đơn Hàng</h1>
+            <p>Vui lòng kiểm tra lại thông tin đơn hàng trước khi đặt hàng.</p>
+        </div>
+
+        <div class="placeorder-layout">
+            <div class="placeorder-details">
+                <div class="shipping-info card-section fade-in-element" style="--delay: 0.2s;">
+                    <h3>Giao Hàng</h3>
+                    <p><strong>Địa chỉ:</strong> <span id="shipping-address-display"></span></p>
+                    <p><strong>Phương thức:</strong> <span id="payment-method-display"></span></p>
+                </div>
+
+                <div class="order-items card-section fade-in-element" style="--delay: 0.4s;">
+                    <h3>Sản Phẩm</h3>
+                    <div id="placeorder-items-list">
+                        </div>
+                </div>
+            </div>
+
+            <div class="order-summary-card card-section fade-in-element" style="--delay: 0.6s;">
+                <h3>Tóm Tắt Đơn Hàng</h3>
+                <div class="summary-line"><span>Giá sản phẩm:</span><span id="items-price">0 VNĐ</span></div>
+                <div class="summary-line"><span>Phí vận chuyển:</span><span id="shipping-price">0 VNĐ</span></div>
+                <div class="summary-line"><span>Thuế (nếu có):</span><span id="tax-price">0 VNĐ</span></div>
+                <div class="summary-line total-line"><span>Tổng cộng:</span><span id="total-price">0 VNĐ</span></div>
+                
+                <button id="place-order-btn" class="btn primary-btn" style="width: 100%; margin-top: 1.5rem;">Đặt Hàng</button>
+                <div id="place-order-error" class="form-error" style="margin-top: 1rem;"></div>
+            </div>
+        </div>
+    </main>
+    
+    <script type="module" src="/js/main.js"></script> </body>
+</html>

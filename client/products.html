@@ -4,15 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sản Phẩm - UMT Instruments</title>
-    <meta name="description" content="Khám phá bộ sưu tập nhạc cụ chất lượng cao được tuyển chọn bởi UMT Instruments.">
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- ĐƯỜNG DẪN CSS ĐÚNG -->
     <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.css" />
 </head>
 <body class="products-page">
     <!-- Header sẽ được chèn bởi JS -->
@@ -21,6 +15,9 @@
         <div class="page-header fade-in-element">
             <h1 id="page-main-title">Tất Cả Sản Phẩm</h1>
         </div>
+
+        <!-- Các thẻ lọc danh mục con -->
+        <div id="category-tags-container" class="category-tags-container fade-in-element"></div>
 
         <div class="products-page-layout">
             <aside class="products-sidebar fade-in-element" style="--delay: 0.2s;">
@@ -32,18 +29,18 @@
                     </select>
                 </div>
                 <div class="filter-group">
-                    <label for="price-sort">Sắp xếp theo giá:</label>
-                    <select id="price-sort">
-                        <option value="default">Mặc định</option>
-                        <option value="asc">Giá tăng dần</option>
-                        <option value="desc">Giá giảm dần</option>
-                    </select>
+                    <label>Lọc theo giá:</label>
+                    <div id="price-slider"></div>
+                    <div id="price-slider-values" style="margin-top: 10px; text-align: center;">
+                        <span id="price-min-value"></span> - <span id="price-max-value"></span>
+                    </div>
                 </div>
             </aside>
             
             <section class="product-listing">
+                <p id="product-count-display"></p>
                 <div class="product-grid">
-                    <!-- JS sẽ render tất cả sản phẩm vào đây -->
+                    <!-- JS sẽ render sản phẩm vào đây -->
                 </div>
                 <p id="no-products-found-detailed" class="no-products-message" style="display: none;">Không có sản phẩm nào phù hợp.</p>
             </section>
@@ -52,7 +49,8 @@
 
     <!-- Footer và Modals sẽ được chèn bởi JS -->
 
-    <!-- ĐƯỜNG DẪN JS ĐÚNG -->
+    <!-- QUAN TRỌNG: Tải thư viện noUiSlider TRƯỚC khi chạy main.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.js"></script>
     <script type="module" src="/js/main.js"></script>
 </body>
 </html>
