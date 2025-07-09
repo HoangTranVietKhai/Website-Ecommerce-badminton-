@@ -1,41 +1,36 @@
-// ===== server/routes/dashboardRoutes.js (FILE MỚI) =====
+// ===== File: server/routes/dashboardRoutes.js =====
 const express = require('express');
-const router = express.Router();
-const Order = require('../models/orderModel.js');
-const User = require('../models/userModel.js');
-const Product = require('../models/productModel.js');
+const asyncHandler = require('express-async-handler');
+const sql = require('mssql');
 const { protect, admin } = require('../middleware/authMiddleware.js');
+const { pool } = require('../config/db.js');
+
+const router = express.Router();
 
 // @desc    Lấy các số liệu thống kê cho admin dashboard
 // @route   GET /api/dashboard/stats
 // @access  Private/Admin
-router.get('/stats', protect, admin, async (req, res) => {
-    try {
-        const totalUsers = await User.countDocuments();
-        const totalProducts = await Product.countDocuments();
-        const totalOrders = await Order.countDocuments();
+router.get('/stats', protect, admin, asyncHandler(async (req, res) => {
+    
+    // Dùng Promise.all để chạy các câu query song song cho hiệu quả
+    const [userResult, productResult, orderResult, salesResult] = await Promise.all([
+        pool.request().query('SELECT COUNT(*) as total FROM Users'),
+        pool.request().query('SELECT COUNT(*) as total FROM Products'),
+        pool.request().query('SELECT COUNT(*) as total FROM Orders'),
+        pool.request().query('SELECT SUM(TotalPrice) as total FROM Orders WHERE IsPaid = 1'),
+    ]);
 
-        const salesData = await Order.aggregate([
-            {
-                $group: {
-                    _id: null,
-                    totalSales: { $sum: '$totalPrice' }
-                }
-            }
-        ]);
-        
-        const totalSales = salesData.length > 0 ? salesData[0].totalSales : 0;
+    const totalUsers = userResult.recordset[0].total;
+    const totalProducts = productResult.recordset[0].total;
+    const totalOrders = orderResult.recordset[0].total;
+    const totalSales = salesResult.recordset[0].total || 0; // Nếu chưa có đơn hàng nào, SUM sẽ là NULL
 
-        res.json({
-            totalUsers,
-            totalProducts,
-            totalOrders,
-            totalSales
-        });
-
-    } catch (error) {
-        res.status(500).json({ message: 'Lỗi server khi lấy thống kê' });
-    }
-});
+    res.json({
+        totalUsers,
+        totalProducts,
+        totalOrders,
+        totalSales: parseFloat(totalSales)
+    });
+}));
 
 module.exports = router;

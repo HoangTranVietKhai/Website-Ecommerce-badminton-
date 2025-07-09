@@ -1,252 +1,1732 @@
-// ===== server/data/products.js (PHIÊN BẢN ĐẦY ĐỦ VÀ ỔN ĐỊNH) =====
-
-const sampleUserId = '60d0fe4f5311236168a109ca'; 
-
 const products = [
-    // =========== GUITAR ================
+    // =======================================================================
+    // VỢT CẦU LÔNG
+    // =======================================================================
     {
-        name: 'Đàn guitar Acoustic Taylor 214ce',
-        price: 35000000,
-        originalPrice: 38500000,
-        image: 'https://images.unsplash.com/photo-1510915361894-db8b60106945?q=80&w=1920&auto=format&fit=crop',
-        brand: 'Taylor',
-        mainCategory: 'guitar',
-        subCategory: 'acoustic',
-        description: 'Dáng Grand Auditorium, mặt gỗ Sitka Spruce, lưng và hông Rosewood.',
-        fullDescription: 'Taylor 214ce là một trong những mẫu đàn bán chạy nhất của Taylor, nổi tiếng với âm thanh cân bằng, rõ ràng và khả năng chơi linh hoạt. Hệ thống pickup ES2 độc quyền tái tạo âm thanh mộc một cách trung thực nhất khi kết nối ra loa.',
+        name: 'Vợt Cầu Lông Yonex Astrox 100ZZ (Kurenai)',
+        price: 4500000,
+        originalPrice: 4990000,
+        image: '/images/products/vot-yonex-astrox-100zz.jpg',
+        images: JSON.stringify([
+            '/images/products/vot-yonex-astrox-100zz-2.jpg',
+        ]),
+        brand: 'Yonex',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'tan-cong',
+        description: 'Siêu phẩm tấn công đỉnh cao, dành cho người chơi chuyên nghiệp yêu thích lối đánh mạnh mẽ, áp đảo.',
+        fullDescription: 'Yonex Astrox 100ZZ là cây vợt đã cùng Viktor Axelsen chinh phục nhiều danh hiệu lớn. Công nghệ Rotational Generator System độc quyền giúp phân bổ trọng lượng trên toàn cây vợt cho khả năng kiểm soát và chuyển đổi trạng thái từ phòng thủ sang tấn công cực nhanh. Khung vợt siêu mỏng và đũa vợt Hyper Slim Shafts giảm tối đa sức cản không khí, tạo ra những cú đập sấm sét.',
         isPromotional: true,
+        countInStock: 10,
+        warranty: '3 tháng',
+        youtubeLink: 'https://www.youtube.com/watch?v=M58BRvS2b4w',
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Nặng đầu (Head Heavy)' },
+            { key: 'Độ cứng', value: 'Siêu Cứng (Extra Stiff)' },
+            { key: 'Trọng lượng', value: '4U (Avg. 83g)' },
+            { key: 'Mức căng tối đa', value: '4U: ≤ 28 lbs (12.5kg)' },
+            { key: 'Vật liệu khung', value: 'HM Graphite / Namd / Tungsten / Black Micro Core / Nanometric' },
+            { key: 'Vật liệu đũa', value: 'HM Graphite / Namd' },
+            { key: 'Xuất xứ', value: 'Nhật Bản' }
+        ])
+    },
+    {
+        name: 'Vợt Cầu Lông Lining Axforce 90 Max (Dragon)',
+        price: 4200000,
+        originalPrice: null,
+        image: '/images/products/vot-lining-axforce-90.jpg',
+        images: JSON.stringify([]),
+        brand: 'Lining',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'tan-cong',
+        description: 'Vợt "Rồng" mạnh mẽ, chuyên dùng cho các cú đập uy lực và chính xác.',
+        fullDescription: 'Lining Axforce 90 Max là sự lựa chọn của nhà vô địch thế giới Loh Kean Yew. Với thiết kế đũa vợt siêu mỏng chỉ 6.2mm và công nghệ Thunder-Technology, cây vợt này tối ưu hóa sức mạnh cho từng cú đánh, biến những pha smash trở nên cực kỳ uy lực. Hộp gen vợt sử dụng vật liệu Superb Carbon siêu bền, tăng cường độ ổn định và sức chịu đựng của khung.',
+        isPromotional: false,
         countInStock: 8,
-        images: [
-            'https://images.unsplash.com/photo-1525457426-345f2d285813?q=80&w=1920&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1549297184-3c58de2a6652?q=80&w=1920&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1562094254-182d3c1234b3?q=80&w=1920&auto=format&fit=crop'
-        ],
-        warranty: '24 tháng (chính hãng)',
-        youtubeLink: 'https://www.youtube.com/watch?v=kpgb2y5tASc',
-        specifications: [
-            { key: 'Dáng đàn', value: 'Grand Auditorium' },
-            { key: 'Gỗ mặt', value: 'Solid Sitka Spruce' },
-            { key: 'Gỗ lưng & hông', value: 'Layered Indian Rosewood' },
-            { key: 'Cần đàn', value: 'Tropical Mahogany' },
-            { key: 'Electronics', value: 'Expression System 2 (ES2)' },
-            { key: 'Dây đàn', value: 'Elixir Phosphor Bronze Light' }
-        ],
-        reviews: [
-            { user: sampleUserId, name: 'Anh Tuấn', rating: 5, comment: 'Âm thanh tuyệt vời, rất đáng tiền. Cây đàn đẹp và hoàn thiện tỉ mỉ.' },
-            { user: sampleUserId, name: 'Minh Hằng', rating: 4, comment: 'Action hơi cao so với mình một chút, nhưng sau khi chỉnh lại thì chơi rất êm.' }
-        ]
+        warranty: '3 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Rất nặng đầu (~307mm)' },
+            { key: 'Độ cứng', value: 'Cứng' },
+            { key: 'Trọng lượng', value: '4U (85-89g)' },
+            { key: 'Mức căng tối đa', value: '≤ 30 lbs (13.6kg)' },
+            { key: 'Vật liệu', value: 'M50 + TB Nano + Superb Carbon' }
+        ])
     },
     {
-        name: 'Đàn guitar Điện Fender Stratocaster Player',
-        price: 21000000,
-        originalPrice: 22500000,
-        image: 'https://images.unsplash.com/photo-1521939094-5535234241B2?q=80&w=1920&auto=format&fit=crop',
-        brand: 'Fender',
-        mainCategory: 'guitar',
-        subCategory: 'electric',
-        description: 'Biểu tượng rock & blues, âm thanh linh hoạt, thiết kế hiện đại.',
-        fullDescription: 'Fender Player Series Stratocaster mang đến âm thanh và phong cách Fender kinh điển với một chút hiện đại. Cấu hình 3 pickup single-coil Alnico 5 cho âm thanh trong trẻo, mạnh mẽ, phù hợp với mọi thể loại.',
-        isPromotional: true,
-        countInStock: 7,
-        images: [
-            'https://images.unsplash.com/photo-1629910435287-4c4754714446?q=80&w=1920&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1614741118873-a2a43a29e9df?q=80&w=1920&auto=format&fit=crop'
-        ],
-        warranty: '12 tháng',
-        youtubeLink: 'https://www.youtube.com/watch?v=0gQZg-22w6w',
-        specifications: [
-            { key: 'Gỗ thân', value: 'Alder' },
-            { key: 'Finish thân', value: 'Gloss Polyester' },
-            { key: 'Chất liệu cần', value: 'Maple' },
-            { key: 'Dáng cần', value: 'Modern "C"' },
-            { key: 'Số phím', value: '22, Medium Jumbo' },
-            { key: 'Pickup', value: 'Player Series Alnico 5 Strat® Single-Coil' }
-        ],
-        reviews: [
-            { user: sampleUserId, name: 'Quốc Bảo', rating: 5, comment: 'Chất âm Fender không thể lẫn vào đâu được. Cần đàn mượt, chơi rất sướng tay!' }
-        ]
-    },
-    {
-        name: 'Đàn guitar Classic Cordoba C5',
-        price: 8500000,
-        image: 'https://images.unsplash.com/photo-1598993881263-fd505d53c3e8?q=80&w=1920&auto=format&fit=crop',
-        brand: 'Cordoba',
-        mainCategory: 'guitar',
-        subCategory: 'classic',
-        description: 'Cây đàn lý tưởng cho người học cổ điển, mặt gỗ Cedar, âm thanh ấm.',
-        fullDescription: 'Cordoba C5 là một trong những cây đàn classic được khuyên dùng nhiều nhất cho người mới bắt đầu và trình độ trung cấp. Mặt top làm từ gỗ Cedar nguyên tấm mang lại chất âm ấm áp, ngọt ngào đặc trưng của dòng nhạc cổ điển.',
+        name: 'Vợt Cầu Lông Victor Auraspeed 90K II',
+        price: 3800000,
+        originalPrice: null,
+        image: '/images/products/vot-victor-ars-90k-ii.jpg',
+        images: JSON.stringify([]),
+        brand: 'Victor',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'toc-do',
+        description: 'Kiệt tác tốc độ, dành cho lối chơi nhanh, phản tạt và điều cầu linh hoạt.',
+        fullDescription: 'Victor Auraspeed 90K II là thế hệ thứ hai của dòng vợt tốc độ huyền thoại. Công nghệ WES 2.0 giúp đũa vợt phục hồi nhanh hơn sau mỗi cú đánh, tạo điều kiện cho những pha phản tạt và phòng thủ chớp nhoáng. Khung vợt Dynamic-Sword kết hợp với vật liệu Graphene mang lại sự ổn định và tốc độ vung vợt đáng kinh ngạc. Đây là lựa chọn hoàn hảo cho các tay vợt đôi, đặc biệt là vị trí trên lưới.',
         isPromotional: false,
         countInStock: 12,
-        images: [],
-        warranty: '12 tháng',
-        youtubeLink: 'https://www.youtube.com/watch?v=G3Q-P7n5-zM',
-        specifications: [],
-        reviews: []
-    },
-     {
-        name: 'Đàn guitar Điện Gibson Les Paul Standard \'60s',
-        price: 75000000,
-        image: 'https://images.unsplash.com/photo-1605021955363-f22217e94114?q=80&w=1920&auto=format&fit=crop',
-        brand: 'Gibson',
-        mainCategory: 'guitar',
-        subCategory: 'electric',
-        description: 'Âm thanh rock dày và mạnh mẽ, pickup BurstBucker, vẻ đẹp cổ điển.',
-        fullDescription: 'Gibson Les Paul Standard \'60s tái hiện lại linh hồn của những cây đàn Les Paul huyền thoại. Với cặp pickup BurstBucker 61, nó tạo ra chất âm dày, ấm và đầy nội lực, là âm thanh nền tảng của nhạc Rock.',
-        isPromotional: false,
-        countInStock: 3,
-        images: [
-            'https://images.unsplash.com/photo-1574258941543-5c7604f3621b?q=80&w=1920&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1605021955325-3a8761219088?q=80&w=1920&auto=format&fit=crop'
-        ],
-        warranty: 'Trọn đời',
-        youtubeLink: 'https://www.youtube.com/watch?v=AtyA-D-yO-M',
-        specifications: [],
-        reviews: []
-    },
-    // =========== PIANO =================
-    {
-        name: 'Piano Điện Roland FP-30X',
-        price: 22000000,
-        originalPrice: 24000000,
-        image: 'https://images.unsplash.com/photo-1571974599782-876246a84b49?q=80&w=1920&auto=format&fit=crop',
-        brand: 'Roland',
-        mainCategory: 'piano',
-        subCategory: 'digital',
-        description: 'Âm thanh SuperNATURAL, bàn phím PHA-4 Standard, kết nối Bluetooth.',
-        fullDescription: 'Roland FP-30X nổi bật với công nghệ âm thanh SuperNATURAL cho chất âm sống động và biểu cảm. Bàn phím PHA-4 với cơ chế escapement và bề mặt ngà voi tổng hợp mang lại cảm giác chơi chân thực.',
-        isPromotional: true,
-        countInStock: 6,
-        images: [
-            'https://images.unsplash.com/photo-1628921868472-8a49335ab070?q=80&w=1920&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1601362840049-970d43343a41?q=80&w=1920&auto=format&fit=crop'
-        ],
-        warranty: '24 tháng',
-        youtubeLink: 'https://www.youtube.com/watch?v=sI-38Lz4yN4',
-        specifications: [],
-        reviews: [
-            { user: sampleUserId, name: 'Thanh Mai', rating: 5, comment: 'Cảm giác phím rất thật, âm thanh hay. Kết nối bluetooth với app học piano rất tiện lợi.' }
-        ]
+        warranty: '3 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Cân bằng (Even Balance)' },
+            { key: 'Độ cứng', value: 'Hơi cứng (Slightly Stiff)' },
+            { key: 'Trọng lượng', value: '4U' },
+            { key: 'Mức căng tối đa', value: '≤ 29 lbs (13kg)' },
+            { key: 'Vật liệu', value: 'High Resilience Modulus Graphite + Nano Fortify TR + Graphene' }
+        ])
     },
     {
-        name: 'Piano Cơ Upright Kawai K300',
-        price: 150000000,
-        image: 'https://images.unsplash.com/photo-1598322339599-311624bc056b?q=80&w=1920&auto=format&fit=crop',
-        brand: 'Kawai',
-        mainCategory: 'piano',
-        subCategory: 'upright',
-        description: 'Âm thanh chuyên nghiệp, bộ máy Millennium III Action độc quyền.',
-        fullDescription: 'Kawai K-300 là một trong những cây đàn piano upright được yêu thích nhất thế giới. Bộ máy Millennium III Action sử dụng vật liệu ABS-Carbon siêu nhẹ và cứng, mang lại tốc độ phản hồi phím đáng kinh ngạc.',
-        isPromotional: false,
-        countInStock: 2,
-        images: [],
-        warranty: '5 năm',
-        youtubeLink: '',
-        specifications: [],
-        reviews: []
-    },
-    // =========== DRUMS =================
-    {
-        name: 'Bộ Trống Tama Imperialstar',
-        price: 23500000,
-        image: 'https://images.unsplash.com/photo-1531315335759-b15334e3daf6?q=80&w=1920&auto=format&fit=crop',
-        brand: 'Tama',
-        mainCategory: 'drums',
-        subCategory: 'acoustic-kit',
-        description: 'Bộ trống chất lượng cao, đi kèm cymbal Meinl HCS.',
-        fullDescription: 'Tama Imperialstar là một cái tên uy tín trong thế giới trống. Bộ trống này cung cấp chất lượng vượt trội trong tầm giá, với vỏ trống làm từ gỗ Poplar cho âm thanh ấm và đầy. Điểm nhấn là bộ cymbal Meinl HCS đi kèm.',
-        isPromotional: false,
-        countInStock: 4,
-        images: [],
-        warranty: '12 tháng',
-        youtubeLink: '',
-        specifications: [],
-        reviews: []
-    },
-    {
-        name: 'Trống Điện Roland TD-07DMK',
-        price: 26000000,
-        originalPrice: 27500000,
-        image: 'https://images.unsplash.com/photo-1599481356767-3ddc337446ae?q=80&w=1920&auto=format&fit=crop',
-        brand: 'Roland',
-        mainCategory: 'drums',
-        subCategory: 'electronic-kit',
-        description: 'Trống điện nhỏ gọn, mặt lưới cho cảm giác chơi chân thực, module mạnh mẽ.',
-        fullDescription: 'Roland TD-07DMK là giải pháp hoàn hảo cho việc luyện tập tại nhà. Mặt trống lưới siêu tĩnh độc quyền của Roland mang lại cảm giác phản hồi như trống cơ nhưng không gây tiếng ồn. Module âm thanh tích hợp sẵn nhiều bộ trống chất lượng cao.',
-        isPromotional: true,
-        countInStock: 9,
-        images: [
-             'https://images.unsplash.com/photo-1524234140-71638a8b1a53?q=80&w=1920&auto=format&fit=crop'
-        ],
-        warranty: '12 tháng',
-        youtubeLink: 'https://www.youtube.com/watch?v=yBEb2M_I_4s',
-        specifications: [],
-        reviews: []
-    },
-    // =========== UKULELE ===============
-    {
-        name: 'Ukulele Concert Kala KA-C',
-        price: 2800000,
-        originalPrice: 3100000,
-        image: 'https://images.unsplash.com/photo-1558941252-96d4b5420d43?q=80&w=1920&auto=format&fit=crop',
-        brand: 'Kala',
-        mainCategory: 'ukulele',
-        subCategory: 'concert',
-        description: 'Dáng concert cho âm thanh đầy đặn hơn soprano, làm từ gỗ Mahogany.',
-        fullDescription: 'Kala KA-C là một lựa chọn nâng cấp hoàn hảo từ dòng soprano. Kích thước lớn hơn một chút mang lại âm thanh to, ấm và đầy đặn hơn. Toàn bộ thân đàn được làm từ gỗ Mahogany, tạo ra chất âm ngọt ngào và mượt mà.',
+        name: 'Vợt Cầu Lông Yonex Arcsaber 11 Pro',
+        price: 4150000,
+        originalPrice: 4600000,
+        image: '/images/products/acber.jpg',
+        images: JSON.stringify([]),
+        brand: 'Yonex',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'can-bang',
+        description: 'Huyền thoại kiểm soát trở lại, mang đến cảm giác cầu và độ chính xác tuyệt vời.',
+        fullDescription: 'Yonex Arcsaber 11 Pro là phiên bản nâng cấp của dòng Arcsaber 11 huyền thoại. Tập trung vào khả năng kiểm soát và giữ cầu lâu hơn trên mặt vợt, cây vợt này cho phép người chơi điều khiển trận đấu với những pha cầu có độ chính xác cao. Khung vợt được cải tiến với vật liệu Pocketing Booster, tăng cường độ đàn hồi và ổn định.',
         isPromotional: true,
         countInStock: 15,
-        images: [],
-        warranty: '6 tháng',
-        youtubeLink: '',
-        specifications: [],
-        reviews: []
+        warranty: '3 tháng',
+        youtubeLink: 'https://www.youtube.com/watch?v=JzY_k8n7d8A',
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Cân bằng (Even Balance)' },
+            { key: 'Độ cứng', value: 'Cứng' },
+            { key: 'Trọng lượng', value: '4U (Avg. 83g)' },
+            { key: 'Mức căng tối đa', value: '4U: 19 - 27 lbs' },
+            { key: 'Vật liệu khung', value: 'HM Graphite / Pocketing Booster' },
+            { key: 'Vật liệu đũa', value: 'HM Graphite / Super HMG' },
+            { key: 'Xuất xứ', value: 'Nhật Bản' }
+        ])
     },
-    // =========== VIOLIN ================
     {
-        name: 'Violin Acoustic Size 4/4',
+        name: 'Vợt Cầu Lông Lining Bladex 800',
         price: 3500000,
-        image: 'https://images.unsplash.com/photo-1612225330847-64b187c33895?q=80&w=1920&auto=format&fit=crop',
-        brand: 'Lazer',
-        mainCategory: 'violin',
-        subCategory: 'acoustic',
-        description: 'Bộ violin đầy đủ phụ kiện, bao gồm hộp, vĩ và nhựa thông. Sẵn sàng để chơi.',
-        fullDescription: 'Bộ violin size 4/4 này là lựa chọn lý tưởng cho người lớn hoặc thanh thiếu niên muốn học violin. Sản phẩm được làm từ gỗ phong và vân sam, cho ra âm thanh đạt chuẩn. Đi kèm là hộp cứng chống sốc, vĩ kéo và nhựa thông chất lượng.',
+        originalPrice: null,
+        image: '/images/products/vot-lining-bladex-800.jpg',
+        images: JSON.stringify([]),
+        brand: 'Lining',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'phong-thu',
+        description: 'Lưỡi kiếm sắc bén trong phòng thủ, phản tạt nhanh và chớp nhoáng.',
+        fullDescription: 'Lining Bladex 800 là cây vợt thiên về phòng thủ và phản tạt tốc độ. Với khung vợt dạng vát mỏng và công nghệ SW Head-light, vợt có tốc độ vung cực nhanh, giúp người chơi dễ dàng xoay trở trong các tình huống bị tấn công dồn dập. Đũa vợt dẻo giúp trợ lực tốt cho những pha phông cầu và phản tạt.',
         isPromotional: false,
-        countInStock: 11,
-        images: [],
-        warranty: '6 tháng',
-        youtubeLink: '',
-        specifications: [],
-        reviews: []
+        countInStock: 7,
+        warranty: '3 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Nhẹ đầu (Head Light)' },
+            { key: 'Độ cứng', value: 'Trung bình' },
+            { key: 'Trọng lượng', value: '5U (Avg. 78g)' },
+            { key: 'Mức căng tối đa', value: '≤ 28 lbs (12.5kg)' },
+            { key: 'Vật liệu', value: 'TB Nano + Superb Carbon' }
+        ])
     },
-    // ======== WIND INSTRUMENTS =========
     {
-        name: 'Kèn Saxophone Alto Selmer AS42',
-        price: 65000000,
-        image: 'https://images.unsplash.com/photo-1607973686344-f06d3335c3a2?q=80&w=1920&auto=format&fit=crop',
-        brand: 'Selmer',
-        mainCategory: 'wind',
-        subCategory: 'saxophone',
-        description: 'Sản xuất bởi Conn-Selmer, kết hợp giữa thiết kế Pháp và chế tác Mỹ.',
-        fullDescription: 'Selmer AS42 là cây kèn saxophone chuyên nghiệp, được phát triển dựa trên thiết kế của những cây kèn Selmer Paris huyền thoại. Nó mang lại âm thanh ấm, dày và đầy biểu cảm, đáp ứng được yêu cầu của những nghệ sĩ khó tính nhất.',
+        name: 'Vợt Cầu Lông Mizuno Fortius 11 Power',
+        price: 3790000,
+        originalPrice: null,
+        image: 'https://cdn.shopvnb.com/uploads/san_pham/vot-cau-long-mizuno-fortius-11-power-chinh-hang-1.webp',
+        images: JSON.stringify([]),
+        brand: 'Mizuno',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'tan-cong',
+        description: 'Sức mạnh bùng nổ từ thương hiệu Nhật Bản, dành cho người chơi có lực cổ tay tốt.',
+        fullDescription: 'Mizuno Fortius 11 Power là cây vợt tấn công hàng đầu của Mizuno. Công nghệ Trans-Force Frame giúp truyền tối đa năng lượng vào quả cầu, tạo ra các cú đập uy lực. Vành vợt được gia cố chắc chắn, tăng cường sự ổn định và giảm xoắn, mang lại sự chính xác cho mỗi cú đánh.',
         isPromotional: false,
-        countInStock: 3,
-        images: [],
-        warranty: '24 tháng',
-        youtubeLink: '',
-        specifications: [],
-        reviews: []
-    }
+        countInStock: 5,
+        warranty: '3 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Nặng đầu (Head Heavy)' },
+            { key: 'Độ cứng', value: 'Cứng' },
+            { key: 'Trọng lượng', value: '4U (Avg. 83g)' },
+            { key: 'Mức căng tối đa', value: '≤ 30 lbs (13.6kg)' },
+            { key: 'Vật liệu', value: 'High Elasticity Graphite + Graphite, MFUSION' },
+            { key: 'Xuất xứ', value: 'Nhật Bản' }
+        ])
+    },
+    {
+        name: 'Vợt Cầu Lông Victor Ryuga II',
+        price: 4000000,
+        originalPrice: null,
+        image: '/images/products/vot-victor-ryuga-II.jpg',
+        images: JSON.stringify([]),
+        brand: 'Victor',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'toc-do',
+        description: 'Vợt cầu lông Victor Ryuga II cũng được cải tiến về phần thống số kĩ thuật cho phép chúng ta kiểm soát lưới vợt vượt trội hơn, giúp cho ra những cú đấp đầy bất ngờ.',
+        fullDescription: 'Victor TK Ryuga II phát hành ra hai phiên bản với trọng lượng là 3U và 4U, độ to cán cầm là G5. Và song song đó là cải thiện đường kính đũa vợt chỉ 6.6m, thấp nhỏ hơn Ryuga I với 6.8mm. Điều này đem lại sự linh hoạt nhưng vẫn giữ được độ bền và cứng của đũa.',
+        isPromotional: false,
+        countInStock: 12,
+        warranty: '3 tháng',
+        youtubeLink: 'https://www.youtube.com/watch?time_continue=3&v=RrczGmCRf4w&embeds_referring_euri=https%3A%2F%2Fshopvnb.com%2F&source_ve_path=MjM4NTE',
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Nặng đầu  (Even Balance)' },
+            { key: 'Độ cứng', value: 'Cứng (Slightly)' },
+            { key: 'Trọng lượng', value: '4U' },
+            { key: 'Mức căng tối đa', value: '≤ 31 lbs (16kg)' },
+            { key: 'Vật liệu', value: ' HHigh Resilience Modulus Graphite + HARD CORED TECHNOLOGY.' }
+        ])
+    },
+    {
+        name: 'Vợt cầu lông Victor Thruster HMR Pro',
+        price: 139000, 
+        originalPrice: null,
+        image: '/images/products/vot-victor-HMR-PRO.jpg',
+        images: JSON.stringify(['/images/products/vot-victor-HMR-PRO.jpg']),
+        brand: 'Victor',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'tan-cong',
+        description: 'Vợt hỗ trợ đập cầu uy lực, thiên về sức mạnh khủng khiếp, tạo lợi thế trong các pha tấn công nhanh.',
+        fullDescription: 'Vợt cầu lông Victor Thruster HMR Pro hướng đến lối chơi tấn công mạnh mẽ. Trong đó, phiên bản 4U có trọng lượng nặng hơn dành cho người có lực tay ở mức trung bình trở lên. Phiên bản 5U nhẹ dành cho người chơi có lực tay yếu hơn.',
+        isPromotional: false,
+        countInStock: 12,
+        warranty: '3 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Nặng đầu (Head Heavy)' },
+            { key: 'Độ cứng', value: 'Hơi cứng (Slightly Stiff)' },
+            { key: 'Trọng lượng', value: '4U, 5U' }, 
+            { key: 'Mức căng tối đa', value: '4U: 32lbs (14,5 kg), 5U: 31lbs (14kg)' },
+            { key: 'Vật liệu', value: 'Graphite + Resin + Fiber Reinforced System(FRS)' }
+        ])
+    },
+    {
+        name: 'Vợt Cầu Lông Victor Thruster Ryuga Metallic CPS',
+        price: 3950000,
+        originalPrice: null,
+        image: '/images/products/vot-victor-Ryuga-metalic.jpg',
+        images: JSON.stringify([]),
+        brand: 'Victor',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'can-bang',
+        description: 'Đũa vợt được trang bị thêm một lớp phủ kim loại Metallic giúp tăng cường hạn chế tối đa rung lắc cho người chơi. Đặc biệt, với việc sử dụng vật liệu trục mới Pyrofil, cây vợt trở nên cứng cáp hơn mang lại khả năng xử lý cầu nhạy bén. tác tốc độ, dành cho lối chơi nhanh, phản tạt và điều cầu linh hoạt.',
+        fullDescription: 'Vợt Cầu Lông Victor Thruster Ryuga Metallic CPS sự kết hợp mới mẻ giữa chủ nghĩa tối giản, thiết bị phổ biến và màu sắc bắt mắt. Với sắc thái đặc biệt: Hồng hồng hạc. Với thiết kế tối giản nhưng táo bạo, nó mang lại tác động thị giác mới mẻ cho phong cách cầu lông. Có năm tông màu đặc biệt: Hồng Flamingo, Tím nho, Trắng sữa, Xanh băng và Đen bí ẩn. Với thiết kế tối giản nhưng táo bạo, sản phẩm mang đến tác động thị giác mới mẻ cho phong cách cầu lông. ',
+        isPromotional: false,
+        countInStock: 12,
+        warranty: '3 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Nặng đầu (head heavy)' },
+            { key: 'Độ cứng', value: 'Hơi cứng (Slightly Stiff)' },
+            { key: 'Trọng lượng', value: '3U, 4U' },
+            { key: 'Mức căng tối đa', value: '32lbs ( 14,5 kg)' },
+            { key: 'Vật liệu', value: 'High Resilience Modulus Graphite + Hardcore Technology + Metallic Carbon Fiber' }
+        ])
+    },
+    {
+        name: 'Set vợt cầu lông Victor Thruster K CNY 2025',
+        price: 4190000,
+        originalPrice: null,
+        image: '/images/products/vot-victor-thruster-k.jpg',
+        images: JSON.stringify(['/images/products/vot-victor-thruster-k-2.jpg', '/images/products/vot-victor-thruster-k-3.jpg', '/images/products/vot-victor-thruster-k-4.jpg']),
+        brand: 'Victor',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'tan-cong',
+        description: 'Được thiết kế hướng đến những người chơi có lối đánh tấn công, đập cầu đầy mạnh mẽ và uy lực.',
+        fullDescription: 'Set vợt cầu lông Victor Thruster K CNY 2025 có 1 hộp đựng vợt, bên trong là 1 vợt cầu lông Victor Thruster K CNY 2025, 1 cước Victor VS-63CNY, 1 ống cầu, 1 set quấn cán, 1 túi nhung, tất cả đều được thiết kế nhân dịp Tết Nguyên Đán năm 2025 với hình ảnh rồng theo tông màu đỏ vô cùng tinh xảo và nổi bật',
+        isPromotional: false,
+        countInStock: 12,
+        warranty: '4 tháng',
+        youtubeLink: 'https://www.youtube.com/watch?v=9r6OrN3K0A8',
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Nặng đầu(Head heavy)' },
+            { key: 'Độ cứng', value: 'Hơi cứng (Slightly Stiff)' },
+            { key: 'Trọng lượng', value: '4U' },
+            { key: 'Mức căng tối đa', value: '< 31lbs ( 14 kg) ' },
+            { key: 'Vật liệu', value: 'High Resilience Modulus Graphite + Hardcore Technology + Nano Resin' }
+        ])
+    },
+    {
+        name: 'Vợt Cầu Lông Lining Halbertec 2000',
+        price: 1250000,
+        originalPrice: null,
+        image: '/images/products/vot-lining-2000.jpg',
+        images: JSON.stringify([]),
+        brand: 'Lining',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'phong-thu',
+        description: 'Cây vợt này chắc chắn sẽ rất thích hợp với những lông thủ yêu thích thiết kế tinh tế, bắt mắt mang phong cách độc đáo.',
+        fullDescription: 'Vợt cầu lông Lining Halbertec 2000 được trang bị sợi cacbon siêu đàn hồi, đũa vợt mỏng 6,8mm linh hoạt và hệ thông hấp thụ sốc mật độ cao giúp cây vợt ổn định trong những pha cầu có cường độ mạnh, nhanh.',
+        isPromotional: false,
+        countInStock: 7,
+        warranty: '3 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Cân bằng (Even Balance' },
+            { key: 'Độ cứng', value: 'Trung bình' },
+            { key: 'Trọng lượng', value: '3U, 4U' },
+            { key: 'Mức căng tối đa', value: '3U (12,5kg) và 4U (12kg)' },
+            { key: 'Vật liệu', value: 'Carbon Fiber' }
+        ])
+    },
+    {
+        name: 'Vợt cầu lông Lining Halbertec 3000',
+        price: 1490000,
+        originalPrice: null,
+        image: '/images/products/halbtec3000.png',
+        images: JSON.stringify(['/images/products/vot-lining-3000-1.png']),
+        brand: 'Lining',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'can-bang',
+        description: 'Được cấu tạo từ chất liệu carbon cao cấp giúp vợt đảm bảo độ bền và chịu được lực căng tối đa lên đến 28 lbs, kết hợp với công nghệ giúp cải thiện điểm uốn trên trục vợt, làm trục vợt mỏng hỗ trợ những cú đập có độ chính xác hơn và linh hoạt hơn.',
+        fullDescription: 'Vợt Cầu Lông Lining Halbertec 3000 có đũa vợt mỏng 6,8mm linh hoạt và hệ thống hấp thụ sốc mật độ cao giúp cây vợt ổn định trong những pha cầu có cường độ mạnh, nhanh. Đũa vợt còn giúp cải thiện khả năng phòng thủ và phản công nhanh, đặc biệt phù hợp với những tay vợt có lối chơi linh hoạt. Thiết kế này hỗ trợ người chơi trong các pha cầu bền, giúp tạo ra những cú đánh ổn định và có độ kiểm soát tốt hơn trên sân đấu.',
+        isPromotional: false,
+        countInStock: 7,
+        warranty: '3 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Nhẹ đầu (Head Light)' },
+            { key: 'Độ cứng', value: 'Trung bình' },
+            { key: 'Trọng lượng', value: '3U, 4U' },
+            { key: 'Mức căng tối đa', value: '≤ 28 lbs (12.5kg)' },
+            { key: 'Vật liệu', value: 'TB Nano + Superb Carbon' }
+        ])
+    },
+    {
+        name: 'Vợt cầu lông Lining Halbertec 4000',
+        price: 2070000,
+        originalPrice: null,
+        image: '/images/products/halbtec4000.png',
+        images: JSON.stringify(['/images/products/vot-lining-4000-1.png']),
+        brand: 'Lining',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'tan-cong',
+        description: 'Lưỡi kiếm sắc bén trong phòng thủ, phản tạt nhanh và chớp nhoáng.',
+        fullDescription: 'Vợt cầu lông Lining Halbertec 4000 được thương hiệu Lining cho ra mắt năm 2025 tiếp nối sự thành công của các dòng vợt Lining Halberte đang làm mưa làm gió trên thị trường cầu lông thời gian vừa qua. Để giúp người chơi được đa dạng hơn về sự lựa chọn phù hợp về trình độ cũng như giá thành hơn. Lining Halbertec 4000 có một thiết kế cực kỳ bắt mắt và hiện đại, với màu sắc nổi bật và kiểu dáng thể thao cuốn hút. Khung vợt được làm từ chất liệu carbon cao cấp, không chỉ giúp vợt có vẻ ngoài sang trọng mà còn đảm bảo độ bền vững vượt trội trong quá trình sử dụng.',
+        isPromotional: false,
+        countInStock: 7,
+        warranty: '3 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Nhẹ đầu (Head Light)' },
+            { key: 'Độ cứng', value: 'Cứng' },
+            { key: 'Trọng lượng', value: '3U, 4U' },
+            { key: 'Mức căng tối đa', value: '3U ≤ 29LBS, 4U ≤ 28LBS' },
+            { key: 'Vật liệu', value: ' Carbon Fiber ' }
+        ])
+    },
+    {
+        name: 'Vợt cầu lông Lining Halbertec 5000',
+        price: 2252000,
+        originalPrice: null,
+        image: '/images/products/halbtec50000.png',
+        images: JSON.stringify(['/images/products/vot-cau-long-lining-halbertec-5000-1.png']),
+        brand: 'Lining',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'tan-cong',
+        description: 'Lining Halbertec 5000 được trang bị sợi Carbon siêu đàn hồi, đũa vợt mỏng 6,8mm linh hoạt và hệ thống hấp thụ sốc mật độ cao giúp cây vợt ổn định trong những pha cầu có cường độ mạnh, nhanh.',
+        fullDescription: 'Vợt Cầu Lông Lining Halbertec 5000 là mẫu vợt cận cao cấp được ra mắt trong năm 2023 sau sự thành công của phiên bản cao cấp được nhiều người chơi chuyên nghiệp và các VĐV thi đấu thế giới dùng.',
+        isPromotional: false,
+        countInStock: 7,
+        warranty: '3 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Hơi nặng đầu (Head Heavy)' },
+            { key: 'Độ cứng', value: 'Trung bình' },
+            { key: 'Trọng lượng', value: '4U' },
+            { key: 'Mức căng tối đa', value: '≤ 30LBS ~ 14kg' },
+            { key: 'Vật liệu', value: 'TB Nano + Superb Carbon' }
+        ])
+    },
+    {
+        name: 'Vợt cầu lông Lining Halbertec 6000',
+        price: 2950000,
+        originalPrice: null,
+        image: '/images/products/halbtec6000.png',
+        images: JSON.stringify(['/images/products/vot-cau-long-lining-halbertec-6000-1.png']),
+        brand: 'Lining',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'tan-cong',
+        description: 'phong cách phối màu nhẹ nhàng, thanh thoát có điểm thêm các chi tiết hoa anh đào ôm quanh khung vợt mang tới 1 hình ảnh khác biệt so với những dòng Halbertec trước thường ngoại hình mạnh mẽ, cứng cáp hơn. Lining Halbertec 6000 mang lối chơi kiểm soát, linh hoạt trong mọi pha cầu.',
+        fullDescription: 'Vợt cầu lông Lining Halbertec 6000 - tiếp nối sau sự thành công của người đàn anh Halbertec 8000 được cho ra mắt trong thời gian gần đây đã đón nhận nhiều chú ý với thiết kế đẹp mắt cùng với các công nghệ tân tiến, hiện đại được tích hợp. Dự đoán Vợt Cầu Lông Lining Halbertec 6000 sẽ là một trong những siêu phẩm được các lông thủ săn đón trong năm 2024.',
+        isPromotional: false,
+        countInStock: 7,
+        warranty: '3 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Cân bằng (Even Balance)' },
+            { key: 'Độ cứng', value: 'Cứng' },
+            { key: 'Trọng lượng', value: '4U, 5U (Avg. 78g)' },
+            { key: 'Mức căng tối đa', value: '≤ 29lbs ~ 13kg' },
+            { key: 'Vật liệu', value: 'Ultra High-Modulus Graphite' }
+        ])
+    },
+    {
+        name: 'Vợt cầu lông Lining Halbertec 7000',
+        price: 3400000,
+        originalPrice: null,
+        image: '/images/products/halbtec7000.png',
+        images: JSON.stringify(['/images/products/vot-cau-long-lining-halbertec-7000-1.png']),
+        brand: 'Lining',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'tan-cong',
+        description: 'Thân vợt sử dụng carbon T1100 với công nghệ cao đi cùng thiết kế trục 6.8mm High-Modulus Slim Shaft giúp vợt nâng cao cảm ứng nhanh nhạy hơn, cho tốc độ ra vợt nhanh hơn, tăng hiệu suất phòng thủ của vợt Lining Halbertec 7000 nhưng nhưng vẫn đảm bảo các pha tấn công hiệu quả để cho ra một cây vợt toàn diện bậc nhất.',
+        fullDescription: 'Vợt cầu lông Lining Halbertec 7000 thích hợp cho lối đánh toàn diện. Bất kể bạn muốn phòng thủ hay tấn công thì cây vợt đều đem lại sự ổn định. Phiên bản 3U hơi thiên công dành cho những người chơi chuyên nghiệp, có kinh nghiệm chơi lâu năm sử dụng để phát huy sức mạnh của các cú đập. Phiên bản 4U dành cho người chơi phong trào có trình độ trung bình trở lên là có thể sử dụng được. Lining Halbertec 7000 phù hợp cho lối đánh kiểm soát khi đánh đơn. Trong đánh đôi thì 4U hiệu quả nhất cho vị trí đánh lưới, còn 3U sẽ dành cho vị trí công phía sau. Tóm lại, vợt cầu lông Lining Halbertec 7000 là siêu phẩm cao cấp mang đến cho bạn những sự hỗ trợ tối ưu nhất. Tùy trình độ mà bạn nên cân nhắc để lựa chọn cho mình phiên bản thích hợp với lối chơi để có thể đồng hành lâu dài trên sân các bạn nhé..',
+        isPromotional: false,
+        countInStock: 7,
+        warranty: '3 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Rất nặng đầu (~307mm)' },
+            { key: 'Độ cứng', value: 'Cứng' },
+            { key: 'Trọng lượng', value: '3U, 4U' },
+            { key: 'Mức căng tối đa', value: '3U ≦ 31(~14kg) và 4U ≦30 lbs(13.5kg)' },
+            { key: 'Vật liệu', value: 'Med Carbon Fiber' }
+        ])
+    },
+    {
+        name: 'Vợt cầu lông Lining Halbertec 8000',
+        price: 3500000,
+        originalPrice: null,
+        image: '/images/products/halbtec8000.png',
+        images: JSON.stringify([]),
+        brand: 'Lining',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'phong-thu',
+        description: 'Lưỡi kiếm sắc bén trong phòng thủ, phản tạt nhanh và chớp nhoáng.',
+        fullDescription: 'Lining Bladex 800 là cây vợt thiên về phòng thủ và phản tạt tốc độ. Với khung vợt dạng vát mỏng và công nghệ SW Head-light, vợt có tốc độ vung cực nhanh, giúp người chơi dễ dàng xoay trở trong các tình huống bị tấn công dồn dập. Đũa vợt dẻo giúp trợ lực tốt cho những pha phông cầu và phản tạt.',
+        isPromotional: false,
+        countInStock: 7,
+        warranty: '3 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Nhẹ đầu (Head Light)' },
+            { key: 'Độ cứng', value: 'Trung bình' },
+            { key: 'Trọng lượng', value: '5U (Avg. 78g)' },
+            { key: 'Mức căng tối đa', value: '≤ 28 lbs (12.5kg)' },
+            { key: 'Vật liệu', value: 'TB Nano + Superb Carbon' }
+        ])
+    },
+    {
+        name: 'Vợt cầu lông Lining Halbertec 9000',
+        price: 3500000,
+        originalPrice: null,
+        image: '/images/products/halbtec9000.png',
+        images: JSON.stringify([]),
+        brand: 'Lining',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'phong-thu',
+        description: 'Lưỡi kiếm sắc bén trong phòng thủ, phản tạt nhanh và chớp nhoáng.',
+        fullDescription: 'Lining Bladex 800 là cây vợt thiên về phòng thủ và phản tạt tốc độ. Với khung vợt dạng vát mỏng và công nghệ SW Head-light, vợt có tốc độ vung cực nhanh, giúp người chơi dễ dàng xoay trở trong các tình huống bị tấn công dồn dập. Đũa vợt dẻo giúp trợ lực tốt cho những pha phông cầu và phản tạt.',
+        isPromotional: false,
+        countInStock: 7,
+        warranty: '3 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Nhẹ đầu (Head Light)' },
+            { key: 'Độ cứng', value: 'Trung bình' },
+            { key: 'Trọng lượng', value: '5U (Avg. 78g)' },
+            { key: 'Mức căng tối đa', value: '≤ 28 lbs (12.5kg)' },
+            { key: 'Vật liệu', value: 'TB Nano + Superb Carbon' }
+        ])
+    },
+    {
+        name: 'Vợt cầu lông Lining Halbertec 9000 Limited',
+        price: 3500000,
+        originalPrice: null,
+        image: '/images/products/halbtec9000limited.png',
+        images: JSON.stringify([]),
+        brand: 'Lining',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'phong-thu',
+        description: 'Lưỡi kiếm sắc bén trong phòng thủ, phản tạt nhanh và chớp nhoáng.',
+        fullDescription: 'Lining Bladex 800 là cây vợt thiên về phòng thủ và phản tạt tốc độ. Với khung vợt dạng vát mỏng và công nghệ SW Head-light, vợt có tốc độ vung cực nhanh, giúp người chơi dễ dàng xoay trở trong các tình huống bị tấn công dồn dập. Đũa vợt dẻo giúp trợ lực tốt cho những pha phông cầu và phản tạt.',
+        isPromotional: false,
+        countInStock: 7,
+        warranty: '3 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Nhẹ đầu (Head Light)' },
+            { key: 'Độ cứng', value: 'Trung bình' },
+            { key: 'Trọng lượng', value: '5U (Avg. 78g)' },
+            { key: 'Mức căng tối đa', value: '≤ 28 lbs (12.5kg)' },
+            { key: 'Vật liệu', value: 'TB Nano + Superb Carbon' }
+        ])
+    },
+    {
+        name: 'Vợt cầu lông Yonex Nanoflare 1000Z',
+        price: 5099000,
+        originalPrice: 6110000,
+        image: '/images/products/1000zz.png',
+        images: JSON.stringify([
+            '/images/products/1000zz-1.png',
+        ]),
+        brand: 'Yonex',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'can-bang',
+        description: 'Cây vợt này, bạn có thể đánh bại đối thủ với những pha cầu nhanh như chớp. ',
+        fullDescription: 'Vợt Cầu Lông Yonex Nanoflare 1000Z với thiết kế nhẹ đầu, mang lại sự nhẹ nhàng và linh hoạt trong mỗi cú đánh. Trọng lượng nhẹ giúp bạn xoay chuyển vợt một cách nhanh chóng và dễ dàng. Đồng thời, điểm cân bằng ở phía đầu vợt giúp những pha đập cầu nhanh và uy lực.',
+        isPromotional: true,
+        countInStock: 10,
+        warranty: '3 tháng',
+        youtubeLink: 'https://www.youtube.com/watch?v=5vRQLlqBk18',
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Nặng đầu (Head Heavy)' },
+            { key: 'Độ cứng', value: 'Siêu Cứng (Extra Stiff)' },
+            { key: 'Trọng lượng', value: '4U (Avg. 83g), 3U (Avg. 88g)' },
+            { key: 'Mức căng tối đa', value: '4U: 20 - 28lbs, 3U: 21 - 29lbs' },
+            { key: 'Vật liệu khung', value: 'HM Graphite,NANOMETRIC DR,M40X,EX-HYPER MG' },
+            { key: 'Vật liệu đũa', value: 'HM Graphite / Ultra PE FIBER' },
+            { key: 'Xuất xứ', value: 'Nhật Bản' }
+        ])
+    },
+    {
+        name: 'Vợt cầu lông Yonex Nanoflare Starbucks',
+        price: 1599000,
+        originalPrice: 1900000,
+        image: '/images/products/starbucks.png',
+        images: JSON.stringify([
+            '/images/products/starbucks-1.png',
+        ]),
+        brand: 'Yonex',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'tan-cong',
+        description: 'Vợt cầu lông Yonex Nanoflare Starbucks được thiết kế dành cho người chơi có lối đánh công thủ toàn diện , thiên về phản tạt, điều cầu.',
+        fullDescription: 'Vợt cầu lông Yonex Nanoflare Starbucks là sản phẩm kết hợp giữa Yonex và thương hiệu coffee nổi tiếng Starbucks. Mang thiết kế có 2 phiên bản, một màu sắc xanh của thương hiệu cà phê và một phiên bản màu hồng nhẹ nhàng hơn, kết hợp cùng với các chi tiết được làm tỉ mỉ, tạo nên một tổng thể hiện đại và nổi bật. Và vợt đã được đan sẵn lưới rất tiện lợi cho các bạn.',
+        isPromotional: true,
+        countInStock: 10,
+        warranty: '3 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Nhẹ đầu (Head Light) ' },
+            { key: 'Độ cứng', value: 'Trung bình ' },
+            { key: 'Trọng lượng', value: '4U (Avg. 83g)' },
+            { key: 'Mức căng tối đa', value: '4U: 27 lbs' },
+            { key: 'Vật liệu khung', value: 'HM Graphite / Namd / Tungsten / Black Micro Core / Nanometric' },
+            { key: 'Vật liệu đũa', value: 'HM Graphite / Namd' },
+            { key: 'Xuất xứ', value: 'Nhật Bản' }
+        ])
+    },
+    {
+        name: 'Vợt Cầu Lông Yonex Astrox 88D Pro 2024',
+        price: 4599000,
+        originalPrice: 5510000,
+        image: '/images/products/88d-pro.png',
+        images: JSON.stringify([
+            '/images/products/88d-pro-1.png',
+        ]),
+        brand: 'Yonex',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'tan-cong',
+        description: 'Siêu phẩm tấn công đỉnh cao, dành cho người chơi chuyên nghiệp yêu thích lối đánh mạnh mẽ, áp đảo.',
+        fullDescription: 'Vợt Cầu Lông Yonex Astrox 88D Pro 2024 mang đến một thiết kế mới hoàn toàn với màu sơn đen – bạc độc đáo, kết hợp với họa tiết xanh dương tinh tế, tạo nên vẻ đẹp hiện đại và thu hút. Với chiều dài vợt được kéo dài hơn 10mm, vợt tập trung sức mạnh và cung cấp phản đòn uy lực. Khung vợt mở rộng vùng điểm ngọt, tăng cường cảm giác và ổn định trong mỗi cú đánh.',
+        isPromotional: true,
+        countInStock: 10,
+        warranty: '3 tháng',
+        youtubeLink: 'https://www.youtube.com/watch?v=TzDyiUJlFNo',
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Nặng đầu (Head Heavy)' },
+            { key: 'Độ cứng', value: 'Siêu Cứng (Extra Stiff)' },
+            { key: 'Trọng lượng', value: '4U (Avg. 83g), 3U (Avg. 88g)' },
+            { key: 'Mức căng tối đa', value: '4U: 20 - 28 lbs, 3U: 21-29 lbs' },
+            { key: 'Vật liệu khung', value: 'Graphite HM, CFR, Tungsten' },
+            { key: 'Vật liệu đũa', value: ' HM Graphite, 2G-Namd™ FLEX FORCE, Ultra PE Fiber, NEW Built-in T-Joint' },
+            { key: 'Xuất xứ', value: 'Nhật Bản' }
+        ])
+    },
+    {
+        name: 'Vợt Cầu Lông Yonex Astrox 88S Pro 2024',
+        price: 4599000,
+        originalPrice: 5510000,
+        image: '/images/products/88s-pro.png',
+        images: JSON.stringify([
+            '/images/products/88s-pro-1.png',
+        ]),
+        brand: 'Yonex',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'tan-cong',
+        description: 'Là sản phẩm dành cho những người thiên về lối chơi cầu nhanh, phòng thủ phản tạt.',
+        fullDescription: ' Vợt Cầu Lông Yonex Astrox 88S Pro 2024 là cây vợt thiên về khả năng phản tạt, và kiểm soát. Với điểm cân bằng có thông số 298mm cùng với đũa vợt cứng và ngắn hơn thông thường mang lại khả năng linh hoạt trong các pha cầu, đặc biệt với những pha bắt lưới, phản tạt tốc độ cao.',
+        isPromotional: true,
+        countInStock: 10,
+        warranty: '3 tháng',
+        youtubeLink: 'https://www.youtube.com/watch?v=pwe7McLVJOo',
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Nặng đầu (Head Heavy)' },
+            { key: 'Độ cứng', value: 'Cứng (Stiff)' },
+            { key: 'Trọng lượng', value: '4U (Avg. 83g), 3U (Avg. 88g)' },
+            { key: 'Mức căng tối đa', value: '4U: ≤ 28 lbs (12.5kg), 3U: ≤ 29 lbs (13kg)' },
+            { key: 'Vật liệu khung', value: ' Graphite HM, CFR, Tungsten' },
+            { key: 'Vật liệu đũa', value: 'HM Graphite, 2G-Namd™ FLEX FORCE, Ultra PE Fiber, NEW Built-in T-Joint' },
+            { key: 'Xuất xứ', value: 'Nhật Bản' }
+        ])
+    },
+    {
+        name: 'Vợt cầu lông Yonex Duora 10 LCW 2016',
+        price: 3990000,
+        originalPrice: 4006000,
+        image: '/images/products/Duora-10-LCW.png',
+        images: JSON.stringify([
+            '/images/products/Duora-10-LCW-1.png',
+        ]),
+        brand: 'Yonex',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'tan-cong',
+        description: ' Sản phẩm Doura 10 LCW 2016 đặc biệt dành cho huyền thoại cầu lông người Malaysia với sự cá nhân hóa cực kỳ sắc nét ',
+        fullDescription: 'Vợt cầu lông Yonex Duora 10 LCW 2016 là sự kết hợp giữa sức mạnh của mặt vợt Voltric và sự linh hoạt, xử lý nhanh của Nanoray. Cùng với ngoại hình thiết kế đúng chất của Lee Chong Wei, các fan cứng của huyền thoại người Malaysia sẽ rất khó bỏ qua dòng vợt này. Tuy nhiên, vì đây là dòng vợt thiên công nên đòi hỏi người chơi có một lực tay khá khỏe khắn để phát huy tối đa sức mạnh.',
+        isPromotional: true,
+        countInStock: 10,
+        warranty: '3 tháng',
+        youtubeLink: 'https://www.youtube.com/watch?v=M58BRvS2b4w',
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Nặng đầu (Head Heavy)' },
+            { key: 'Độ cứng', value: 'Siêu Cứng (Extra Stiff)' },
+            { key: 'Trọng lượng', value: '4U (Avg. 83g)' },
+            { key: 'Mức căng tối đa', value: '4U: ≤ 28 lbs (12.5kg)' },
+            { key: 'Vật liệu khung', value: 'HM Graphite / Namd / Tungsten / Black Micro Core / Nanometric' },
+            { key: 'Vật liệu đũa', value: 'HM Graphite / Namd' },
+            { key: 'Xuất xứ', value: 'Nhật Bản' }
+        ])
+    },
+    {
+        name: 'Vợt cầu lông Yonex Voltric 7 Neo',
+        price: 1090000,
+        originalPrice: 1380000,
+        image: '/images/products/voltric7.png',
+        images: JSON.stringify([]),
+        brand: 'Yonex',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'tan-cong',
+        description: 'Với lối đánh thiên công, trả cầu chính xác, thiết kế cổ vợt tăng lực đẩy cầu, hợp với người chơi trung bình khá. Độ căng vợt ở mức tối đa 24 LBS hỗ trợ đường cầu đi đúng với ý định của người chơi, giúp linh hoạt hơn trong lối đánh.',
+        fullDescription: 'Vợt cầu lông Yonex Voltric 7 Neo là sản phẩm thuộc Voltric Series của Yonex. Nổi tiếng là dòng vợt thiên công nặng đầu, tấn công áp đảo, uy lực. Voltric 7 Neo vẫn được áp dụng những công nghệ hiện đại nhất và vật liệu tiêu biểu.',
+        isPromotional: true,
+        countInStock: 10,
+        warranty: '3 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Nặng đầu (Head Heavy)' },
+            { key: 'Độ cứng', value: 'Trung bình ' },
+            { key: 'Trọng lượng', value: '4U (Avg. 83g)' },
+            { key: 'Mức căng tối đa', value: '4U: ≤ 28 lbs (12.5kg)' },
+            { key: 'Vật liệu khung', value: 'HM Graphite / Namd / Tungsten / Black Micro Core / Nanometric' },
+            { key: 'Vật liệu đũa', value: 'HM Graphite / Namd' },
+            { key: 'Xuất xứ', value: 'Nhật Bản' }
+        ])
+    },
+    {
+        name: 'Vợt Cầu Lông Yonex Nanoray Z-Speed 2016',
+        price: 2840000,
+        originalPrice: 2950000,
+        image: '/images/products/z-speed.png',
+        images: JSON.stringify([]),
+        brand: 'Yonex',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'tan-cong',
+        description: 'Siêu phẩm tấn công đỉnh cao, dành cho người chơi chuyên nghiệp yêu thích lối đánh mạnh mẽ, áp đảo.',
+        fullDescription: 'Nanoray Zspeed 2016 có màu sắc chủ đạo là vàng chanh kết hợp với màu đen tuyền. Đây có lẽ là màu chủ đạo trong 1 vài năm tới trong thể thao nói chung và cầu lông nói riêng.  Vẫn sử dụng nước sơn sáng bóng như bản đầu ra mắt năm 2014 tuy nhiên bản mới đã có sự chau chuốt về thiết kế hơn rất nhiều, nước sơn không còn dày và dễ bong như bản đầu, không còn những nét gợn của sơn hay dán đề can bị lệch nhiều như bản trước. Nhìn tổng thể màu sắc năm nay làm tốt hơn nhiều. Hai bên vành khung được thiết kế với màu đen tạo cho người chơi cảm giác mặt vợt bé sẵn của Zspeed lại càng bé hơn.',
+        isPromotional: true,
+        countInStock: 10,
+        warranty: '3 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Nặng đầu (Head Heavy)' },
+            { key: 'Độ cứng', value: 'Siêu Cứng (Extra Stiff)' },
+            { key: 'Trọng lượng', value: '4U (Avg. 83g)' },
+            { key: 'Mức căng tối đa', value: '4U: ≤ 28 lbs (12.5kg)' },
+            { key: 'Vật liệu khung', value: 'HM Graphite / Namd / Tungsten / Black Micro Core / Nanometric' },
+            { key: 'Vật liệu đũa', value: 'HM Graphite / Namd' },
+            { key: 'Xuất xứ', value: 'Nhật Bản' }
+        ])
+    },
+    {
+        name: 'Vợt Cầu Lông Mizuno Altrax 800 Chính Hãng',
+        price: 1250000,
+        originalPrice: 1500000,
+        image: '/images/products/800.png',
+        images: JSON.stringify([]),
+        brand: 'Mizuno',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'tan-cong',
+        description: 'Vợt cầu lông Mizuno Altrax 800 - Đỏ chính hãng nổi trội với thông số điểm cân bằng khoảng 290mm, trọng lượng 4U cùng đũa vợt có độ cứng ở mức trung bình hoàn hảo cho lối chơi công thủ toàn diện.',
+        fullDescription: 'Đặc biệt, vợt cầu lông Mizuno Altrax 800 Đỏ chính hãng 2022 nổi bật với công nghệ AeroGroove có rãnh vợt độc đáo, góp phần nâng cao độ bền cho khung. Ngoài ra, công nghệ AeroBox ở vành vợt giúp giảm lực cản không khí cho người chơi gia tăng tốc độ vung vợt trong mỗi cú đánh.',
+        isPromotional: false,
+        countInStock: 5,
+        warranty: '3 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Nặng đầu (Head Heavy)' },
+            { key: 'Độ cứng', value: 'Trung bình ' },
+            { key: 'Trọng lượng', value: '4U (Avg. 83g)' },
+            { key: 'Mức căng tối đa', value: '11,5 kg' },
+            { key: 'Vật liệu', value: 'Japan HM Graphite ' },
+            { key: 'Xuất xứ', value: 'Nhật Bản' }
+        ])
+    },
+    {
+        name: 'Vợt cầu lông Mizuno JPX Limited Edition Attack New - Đen Xanh chính hãng',
+        price: 3700000,
+        originalPrice: 4440000,
+        image: '/images/products/jpx.png',
+        images: JSON.stringify(['/images/products/jpx-1.png']),
+        brand: 'Mizuno',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'can-bang',
+        description: 'Sức mạnh bùng nổ từ thương hiệu Nhật Bản, dành cho người chơi có lực cổ tay tốt.',
+        fullDescription: 'Vợt Cầu Lông Mizuno JPX Limited Edition Attack thuộc dòng vợt cao cấp của hãng thể thao hàng đầu thế giới Mizuno nổi trội về khả năng tấn công áp đảo với những pha smash cầu mạnh mẽ đầy uy lực.',
+        isPromotional: false,
+        countInStock: 5,
+        warranty: '3 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Nặng đầu (Head Heavy)' },
+            { key: 'Độ cứng', value: 'Cứng' },
+            { key: 'Trọng lượng', value: '3U' },
+            { key: 'Mức căng tối đa', value: '≤ 30 lbs (13.6kg)' },
+            { key: 'Vật liệu', value: 'High Elasticity Graphite + Graphite, MFUSION' },
+            { key: 'Xuất xứ', value: 'Nhật Bản' }
+        ])
+    },
+    {
+        name: 'Vợt Cầu Lông Mizuno Fioria Lite',
+        price: 3790000,
+        originalPrice: null,
+        image: '/images/products/lite.png',
+        images: JSON.stringify([]),
+        brand: 'Mizuno',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'phong-thu',
+        description: 'Được tích hợp cùng với các công nghệ hiện đại như Super Lightweight, 4-Points Inner Wave và Aerobox mang đến hiệu suất tối ưu cho người chơi, giúp gia tăng khả năng vung vợt, độ linh hoạt và khả năng hỗ trợ lực tốt. ',
+        fullDescription: 'Vợt cầu lông Mizuno Fioria Lite có độ cân bằng 295 mm, được thiết kế cho lối chơi công thủ toàn diện, linh hoạt chuyển đổi giữa tấn công và phòng thủ. Đũa vợt cứng ở mức trung bình mang lại khả năng hỗ trợ lực cho người chơi, đặc biệt là với người chơi có lực tay chưa được khỏe.',
+        isPromotional: false,
+        countInStock: 5,
+        warranty: '3 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Nhẹ đầu (light heavy)' },
+            { key: 'Độ cứng', value: 'Cứng' },
+            { key: 'Trọng lượng', value: '5U' },
+            { key: 'Mức căng tối đa', value: '≤ 12,5kg' },
+            { key: 'Vật liệu', value: 'High Elasticity Graphite + Graphite, MFUSION' },
+            { key: 'Xuất xứ', value: 'Nhật Bản' }
+        ])
+    },
+    {
+        name: 'Vợt Cầu Lông Mizuno PROMAX ZX3 đen vàng chính hãng',
+        price: 1350000,
+        originalPrice: 1400000,
+        image: '/images/products/zzx3.png',
+        images: JSON.stringify([]),
+        brand: 'Mizuno',
+        mainCategory: 'vot-cau-long',
+        subCategory: 'tan-cong',
+        description: 'Cấu trúc của đầu vợt cầu lông Promax ZX3 hơi nặng nên khả năng vung vợt nhanh giúp cho người chơi có thể smash mạnh và cắm vào đối thủ.',
+        fullDescription: 'Thích hợp với nội dung cả đơn và đôi vì đây là cây vợt 4U đầu hơi nặng nên việc kiểm soát e nó rất dễ dàng phù hợp cả với những người mới tập chơi.',
+        isPromotional: false,
+        countInStock: 5,
+        warranty: '3 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Điểm cân bằng', value: 'Nặng đầu (Head Heavy)' },
+            { key: 'Độ cứng', value: 'Trung bình' },
+            { key: 'Trọng lượng', value: '4U (Avg. 83g)' },
+            { key: 'Mức căng tối đa', value: '≤ 30 lbs (13.6kg)' },
+            { key: 'Vật liệu', value: 'High Elasticity Graphite + Graphite, MFUSION' },
+            { key: 'Xuất xứ', value: 'Nhật Bản' }
+        ])
+    },
+  
+    // =======================================================================
+    // GIÀY
+    // =======================================================================
+    {
+        name: 'Giày Cầu Lông Yonex 65Z3 (Trắng)',
+        price: 2650000,
+        originalPrice: 2900000,
+        image: '/images/products/giay-yonex-65z3.jpg',
+        images: JSON.stringify([]),
+        brand: 'Yonex',
+        mainCategory: 'giay',
+        subCategory: null,
+        description: 'Mẫu giày toàn diện và ổn định nhất, được nhiều VĐV chuyên nghiệp tin dùng.',
+        fullDescription: 'Yonex SHB 65Z3 là mẫu giày cầu lông cân bằng hoàn hảo giữa sự êm ái, ổn định và nhẹ nhàng. Công nghệ Power Cushion+ độc quyền cung cấp khả năng hấp thụ chấn động vượt trội và phản hồi lực tuyệt vời, giúp bạn di chuyển nhanh nhẹn hơn. Thiết kế upper liền mạch (seamless) và công nghệ Lateral Shell giúp ôm chân và chống lật cổ chân hiệu quả.',
+        isPromotional: true,
+        countInStock: 20,
+        warranty: '1 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Công nghệ đế giữa', value: 'Power Cushion+' },
+            { key: 'Vật liệu Upper', value: 'Synthetic Fiber' },
+            { key: 'Đế ngoài', value: 'Cao su (Rubber)' },
+            { key: 'Tính năng', value: 'Toàn diện, êm ái, ổn định' }
+        ])
+    },
+     {
+        name: 'Giày Cầu Lông Yonex Aerus Blue Gray',
+        price: 2650000,
+        originalPrice: 2900000,
+        image: '/images/products/aruze.jpg',
+        images: JSON.stringify([]),
+        brand: 'Yonex',
+        mainCategory: 'giay',
+        subCategory: null,
+        description: 'Mẫu giày toàn diện và ổn định nhất, được nhiều VĐV chuyên nghiệp tin dùng.',
+        fullDescription: 'Yonex Aerus Blue Gray là mẫu giày cầu lông cân bằng hoàn hảo giữa sự êm ái, ổn định và nhẹ nhàng. Công nghệ Power Cushion+ độc quyền cung cấp khả năng hấp thụ chấn động vượt trội và phản hồi lực tuyệt vời, giúp bạn di chuyển nhanh nhẹn hơn. Thiết kế upper liền mạch (seamless) và công nghệ Lateral Shell giúp ôm chân và chống lật cổ chân hiệu quả.',
+        isPromotional: true,
+        countInStock: 20,
+        warranty: '1 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Công nghệ đế giữa', value: 'Power Cushion+' },
+            { key: 'Vật liệu Upper', value: 'Synthetic Fiber' },
+            { key: 'Đế ngoài', value: 'Cao su (Rubber)' },
+            { key: 'Tính năng', value: 'Toàn diện, êm ái, ổn định' }
+        ])
+    },
+     {
+        name: 'Giày Cầu Lông Yonex 65Z3 (Custome)',
+        price: 2850000,
+        originalPrice: 2900000,
+        image: '/images/products/custome.jpg',
+        images: JSON.stringify([]),
+        brand: 'Yonex',
+        mainCategory: 'giay',
+        subCategory: null,
+        description: 'Mẫu giày toàn diện và ổn định nhất, được nhiều VĐV chuyên nghiệp tin dùng.',
+        fullDescription: 'Yonex 65Z3 custome là mẫu giày cầu lông cân bằng hoàn hảo giữa sự êm ái, ổn định và nhẹ nhàng. Công nghệ Power Cushion+ độc quyền cung cấp khả năng hấp thụ chấn động vượt trội và phản hồi lực tuyệt vời, giúp bạn di chuyển nhanh nhẹn hơn. Thiết kế upper liền mạch (seamless) và công nghệ Lateral Shell giúp ôm chân và chống lật cổ chân hiệu quả.',
+        isPromotional: true,
+        countInStock: 20,
+        warranty: '1 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Công nghệ đế giữa', value: 'Power Cushion+' },
+            { key: 'Vật liệu Upper', value: 'Synthetic Fiber' },
+            { key: 'Đế ngoài', value: 'Cao su (Rubber)' },
+            { key: 'Tính năng', value: 'Toàn diện, êm ái, ổn định' }
+        ])
+    },
+     {
+        name: 'Giày Cầu Lông Yonex 65Z3 (Black)',
+        price: 2650000,
+        originalPrice: 2900000,
+        image: '/images/products/black.jpg',
+        images: JSON.stringify([]),
+        brand: 'Yonex',
+        mainCategory: 'giay',
+        subCategory: null,
+        description: 'Mẫu giày toàn diện và ổn định nhất, được nhiều VĐV chuyên nghiệp tin dùng.',
+        fullDescription: 'Yonex SHB 65Z3 là mẫu giày cầu lông cân bằng hoàn hảo giữa sự êm ái, ổn định và nhẹ nhàng. Công nghệ Power Cushion+ độc quyền cung cấp khả năng hấp thụ chấn động vượt trội và phản hồi lực tuyệt vời, giúp bạn di chuyển nhanh nhẹn hơn. Thiết kế upper liền mạch (seamless) và công nghệ Lateral Shell giúp ôm chân và chống lật cổ chân hiệu quả.',
+        isPromotional: true,
+        countInStock: 20,
+        warranty: '1 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Công nghệ đế giữa', value: 'Power Cushion+' },
+            { key: 'Vật liệu Upper', value: 'Synthetic Fiber' },
+            { key: 'Đế ngoài', value: 'Cao su (Rubber)' },
+            { key: 'Tính năng', value: 'Toàn diện, êm ái, ổn định' }
+        ])
+    },
+     {
+        name: 'Giày Cầu Lông Yonex 65Z3 (Viktor Axelsen)',
+        price: 2650000,
+        originalPrice: 2900000,
+        image: '/images/products/green.jpg',
+        images: JSON.stringify([]),
+        brand: 'Yonex',
+        mainCategory: 'giay',
+        subCategory: null,
+        description: 'Mẫu giày toàn diện và ổn định nhất, được nhiều VĐV chuyên nghiệp tin dùng.',
+        fullDescription: 'Yonex 65Z3 (Viktor Axelsen) là mẫu giày cầu lông cân bằng hoàn hảo giữa sự êm ái, ổn định và nhẹ nhàng. Công nghệ Power Cushion+ độc quyền cung cấp khả năng hấp thụ chấn động vượt trội và phản hồi lực tuyệt vời, giúp bạn di chuyển nhanh nhẹn hơn. Thiết kế upper liền mạch (seamless) và công nghệ Lateral Shell giúp ôm chân và chống lật cổ chân hiệu quả.',
+        isPromotional: true,
+        countInStock: 20,
+        warranty: '1 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Công nghệ đế giữa', value: 'Power Cushion+' },
+            { key: 'Vật liệu Upper', value: 'Synthetic Fiber' },
+            { key: 'Đế ngoài', value: 'Cao su (Rubber)' },
+            { key: 'Tính năng', value: 'Toàn diện, êm ái, ổn định' }
+        ])
+    },
+    {
+        name: 'Giày Cầu Lông Lining AYAT005-3',
+        price: 2200000,
+        originalPrice: null,
+        image: '/images/products/aya.jpg',
+        images: JSON.stringify([]),
+        brand: 'Lining',
+        mainCategory: 'giay',
+        subCategory: null,
+        description: 'Thiết kế thời trang, độ bám sân tuyệt vời và công nghệ giảm chấn hàng đầu.',
+        fullDescription: 'Lining AYAT005-3 là mẫu giày cao cấp với thiết kế hiện đại và bắt mắt. Công nghệ Light Foam ở đế giữa mang lại sự nhẹ nhàng và êm ái, trong khi công nghệ Probar Loc ở vòm giày tăng cường sự ổn định, chống lật cổ chân. Đế giày với các rãnh đa hướng giúp bám sân cực tốt.',
+        isPromotional: false,
+        countInStock: 18,
+        warranty: '1 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Công nghệ đế giữa', value: 'Light Foam' },
+            { key: 'Vật liệu Upper', value: 'Textile + TPU' },
+            { key: 'Đế ngoài', value: 'Cao su + EVA' },
+            { key: 'Tính năng', value: 'Bám sân, ổn định' }
+        ])
+    },
+    {
+        name: 'Giày Cầu Lông Lining AYAT005-6',
+        price: 2200000,
+        originalPrice: null,
+        image: '/images/products/0005-6.jpg',
+        images: JSON.stringify([]),
+        brand: 'Lining',
+        mainCategory: 'giay',
+        subCategory: null,
+        description: 'Thiết kế thời trang, độ bám sân tuyệt vời và công nghệ giảm chấn hàng đầu.',
+        fullDescription: 'Lining AYAT005-6 là mẫu giày cao cấp với thiết kế hiện đại và bắt mắt. Công nghệ Light Foam ở đế giữa mang lại sự nhẹ nhàng và êm ái, trong khi công nghệ Probar Loc ở vòm giày tăng cường sự ổn định, chống lật cổ chân. Đế giày với các rãnh đa hướng giúp bám sân cực tốt.',
+        isPromotional: false,
+        countInStock: 18,
+        warranty: '1 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Công nghệ đế giữa', value: 'Light Foam' },
+            { key: 'Vật liệu Upper', value: 'Textile + TPU' },
+            { key: 'Đế ngoài', value: 'Cao su + EVA' },
+            { key: 'Tính năng', value: 'Bám sân, ổn định' }
+        ])
+    },
+    {
+        name: 'Giày Cầu Lông Lining AYAT005-1',
+        price: 2200000,
+        originalPrice: null,
+        image: '/images/products/005-1.jpg',
+        images: JSON.stringify([]),
+        brand: 'Lining',
+        mainCategory: 'giay',
+        subCategory: null,
+        description: 'Thiết kế thời trang, độ bám sân tuyệt vời và công nghệ giảm chấn hàng đầu.',
+        fullDescription: 'Lining AYAT005-1 là mẫu giày cao cấp với thiết kế hiện đại và bắt mắt. Công nghệ Light Foam ở đế giữa mang lại sự nhẹ nhàng và êm ái, trong khi công nghệ Probar Loc ở vòm giày tăng cường sự ổn định, chống lật cổ chân. Đế giày với các rãnh đa hướng giúp bám sân cực tốt.',
+        isPromotional: false,
+        countInStock: 18,
+        warranty: '1 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Công nghệ đế giữa', value: 'Light Foam' },
+            { key: 'Vật liệu Upper', value: 'Textile + TPU' },
+            { key: 'Đế ngoài', value: 'Cao su + EVA' },
+            { key: 'Tính năng', value: 'Bám sân, ổn định' }
+        ])
+    },
+    {
+        name: 'Giày Cầu Lông Lining AYAT005-7',
+        price: 2200000,
+        originalPrice: null,
+        image: '/images/products/005-7.jpg',
+        images: JSON.stringify([]),
+        brand: 'Lining',
+        mainCategory: 'giay',
+        subCategory: null,
+        description: 'Thiết kế thời trang, độ bám sân tuyệt vời và công nghệ giảm chấn hàng đầu.',
+        fullDescription: 'Lining AYAT005-7 là mẫu giày cao cấp với thiết kế hiện đại và bắt mắt. Công nghệ Light Foam ở đế giữa mang lại sự nhẹ nhàng và êm ái, trong khi công nghệ Probar Loc ở vòm giày tăng cường sự ổn định, chống lật cổ chân. Đế giày với các rãnh đa hướng giúp bám sân cực tốt.',
+        isPromotional: false,
+        countInStock: 18,
+        warranty: '1 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Công nghệ đế giữa', value: 'Light Foam' },
+            { key: 'Vật liệu Upper', value: 'Textile + TPU' },
+            { key: 'Đế ngoài', value: 'Cao su + EVA' },
+            { key: 'Tính năng', value: 'Bám sân, ổn định' }
+        ])
+    },
+    {
+        name: 'Giày Cầu Lông Lining AYAT005-4',
+        price: 2200000,
+        originalPrice: null,
+        image: '/images/products/005-4.jpg',
+        images: JSON.stringify([]),
+        brand: 'Lining',
+        mainCategory: 'giay',
+        subCategory: null,
+        description: 'Thiết kế thời trang, độ bám sân tuyệt vời và công nghệ giảm chấn hàng đầu.',
+        fullDescription: 'Lining AYAT005-4 là mẫu giày cao cấp với thiết kế hiện đại và bắt mắt. Công nghệ Light Foam ở đế giữa mang lại sự nhẹ nhàng và êm ái, trong khi công nghệ Probar Loc ở vòm giày tăng cường sự ổn định, chống lật cổ chân. Đế giày với các rãnh đa hướng giúp bám sân cực tốt.',
+        isPromotional: false,
+        countInStock: 18,
+        warranty: '1 tháng',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Công nghệ đế giữa', value: 'Light Foam' },
+            { key: 'Vật liệu Upper', value: 'Textile + TPU' },
+            { key: 'Đế ngoài', value: 'Cao su + EVA' },
+            { key: 'Tính năng', value: 'Bám sân, ổn định' }
+        ])
+    },
+    {
+    name: 'Giày Cầu Lông Victor P9200III-C',
+    price: 2700000,
+    originalPrice: null,
+    image: '/images/products/p9200iii-c.jpg',
+    images: JSON.stringify([]),
+    brand: 'Victor',
+    mainCategory: 'giay',
+    subCategory: null,
+    description: 'Giày thi đấu chuyên nghiệp với độ ổn định và bảo vệ cổ chân cao.',
+    fullDescription: 'Victor P9200III-C là mẫu giày được thiết kế cho vận động viên chuyên nghiệp với phần upper bền chắc, kết hợp công nghệ E-TPU và LS-S để tăng độ đàn hồi và hỗ trợ chuyển động ngang hiệu quả. Đế ngoài với VSR Rubber tăng độ bám sân, cùng công nghệ Carbon Power cho khả năng hỗ trợ và ổn định cực tốt.',
+    isPromotional: false,
+    countInStock: 12,
+    warranty: '1 tháng',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+        { key: 'Công nghệ đế giữa', value: 'E-TPU + ENERGYMAX3.0' },
+        { key: 'Vật liệu Upper', value: 'Microfiber PU Leather + V-Durable+' },
+        { key: 'Đế ngoài', value: 'VSR Rubber' },
+        { key: 'Tính năng', value: 'Bám sân, bảo vệ cổ chân, hỗ trợ chuyển động' }
+    ])
+},
+    
+  {
+    name: 'Giày Cầu Lông Victor SH-A920 C',
+    price: 2400000,
+    originalPrice: null,
+    image: '/images/products/sh-a920-c.jpg',
+    images: JSON.stringify([]),
+    brand: 'Victor',
+    mainCategory: 'giay',
+    subCategory: null,
+    description: 'Ổn định tối ưu cho người chơi phòng tập và thi đấu.',
+    fullDescription: 'SH-A920 C trang bị LS‑S và Brace Tek, mang đến sự ổn định ngang, bảo vệ cổ chân tối đa, với midsole EnergyMax 3.0 tăng đàn hồi và đế cao su VSR chống trượt, hỗ trợ di chuyển nhanh 🏸.',
+    isPromotional: false,
+    countInStock: 15,
+    warranty: '1 tháng',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Công nghệ', value: 'LS‑S, Brace Tek, Carbon Power' },
+      { key: 'Đệm giữa', value: 'EnergyMax 3.0 + EVA' },
+      { key: 'Upper', value: 'PU Leather + Mesh' },
+      { key: 'Đế ngoài', value: 'VSR Rubber' }
+    ])
+  },
+  {
+    name: 'Giày Cầu Lông Victor SH-980',
+    price: 2000000,
+    originalPrice: null,
+    image: '/images/products/sh-980.jpg',
+    images: JSON.stringify([]),
+    brand: 'Victor',
+    mainCategory: 'giay',
+    subCategory: null,
+    description: 'Hiệu năng chuyên nghiệp, phù hợp di chuyển đa hướng.',
+    fullDescription: 'SH‑980 là dòng cao cấp với midsole Resilient EVA kết hợp Carbon Power và EnergyMax, đệm gót chân đặc biệt giảm sốc, phần upper ôm chân như găng tay.',
+    isPromotional: false,
+    countInStock: 10,
+    warranty: '1 tháng',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Midsole', value: 'Resilient EVA + Carbon Power + EnergyMax' },
+      { key: 'Upper', value: 'Microfiber PU + Mesh' },
+      { key: 'Outsole', value: 'Rubber, Non‑Marking' },
+      { key: 'Tính năng', value: 'Ổn định, giảm sốc, đa hướng' }
+    ])
+  },
+  {
+    name: 'Giày Cầu Lông Victor VG2 ACE',
+    price: 2100000,
+    originalPrice: null,
+    image: '/images/products/vg2-ace.jpg',
+    images: JSON.stringify([]),
+    brand: 'Victor',
+    mainCategory: 'giay',
+    subCategory: null,
+    description: 'Nhanh nhẹn và nhẹ, dùng công nghệ Nitrolite mới.',
+    fullDescription: 'VG2 ACE trang bị đế giữa Nitrolite giúp tăng phản hồi bật nảy, thoáng nhẹ, phù hợp với người chơi cần tốc độ và linh hoạt.',
+    isPromotional: false,
+    countInStock: 14,
+    warranty: '1 tháng',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Midsole', value: 'Nitrolite + EVA' },
+      { key: 'Upper', value: 'PU + Mesh' },
+      { key: 'Outsole', value: 'VSR Rubber' },
+      { key: 'Tính năng', value: 'Nhanh, bật nảy, nhẹ' }
+    ])
+  },
+  {
+    name: 'Giày Cầu Lông Victor S82III',
+    price: 1900000,
+    originalPrice: null,
+    image: '/images/products/s82iii.jpg',
+    images: JSON.stringify([]),
+    brand: 'Victor',
+    mainCategory: 'giay',
+    subCategory: null,
+    description: 'Thiết kế cho tốc độ và hỗ trợ tốt cho các trận đôi.',
+    fullDescription: 'S82III nổi bật với đệm Nitrolite, thân giày thoáng nhẹ, form ôm chân – lý tưởng cho người chơi cầu lông tốc độ cao, nhiều lần di chuyển liên tục.',
+    isPromotional: false,
+    countInStock: 12,
+    warranty: '1 tháng',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Midsole', value: 'Nitrolite + EVA' },
+      { key: 'Upper', value: 'PU + AirMesh' },
+      { key: 'Outsole', value: 'Non‑Marking Rubber' },
+      { key: 'Tính năng', value: 'Nhanh, ôm chân, bám sân' }
+    ])
+  },
+  {
+    name: 'Giày Cầu Lông Victor P8500 ACE',
+    price: 1800000,
+    originalPrice: null,
+    image: '/images/products/p8500ace.jpg',
+    images: JSON.stringify([]),
+    brand: 'Victor',
+    mainCategory: 'giay',
+    subCategory: null,
+    description: 'Giá hợp lý, thân thiện người dùng phổ thông.',
+    fullDescription: 'P8500 ACE kế thừa từ dòng P8500 – được nhiều tuyển thủ sử dụng, kết hợp ổn định, độ bám tốt và giá mềm, thích hợp người chơi phong trào.',
+    isPromotional: false,
+    countInStock: 20,
+    warranty: '1 tháng',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Midsole', value: 'EVA + EnergyMax' },
+      { key: 'Upper', value: 'PU Leather + Mesh' },
+      { key: 'Outsole', value: 'Rubber' },
+      { key: 'Tính năng', value: 'Ổn định, bám sân, giá tốt' }
+    ])
+},
+    
+  {
+    name: 'Giày Cầu Lông Mizuno Thunder Blade Z',
+    price: 2300000,
+    originalPrice: null,
+    image: '/images/products/thunder-blade-z.jpg',
+    images: JSON.stringify([]),
+    brand: 'Mizuno',
+    mainCategory: 'giay',
+    subCategory: null,
+    description: 'Thiết kế nhẹ, êm ái và ổn định cho mọi cấp độ người chơi.',
+    fullDescription: 'Thunder Blade Z mang đến cảm giác nhẹ nhàng, thoải mái nhờ upper lưới thoáng khí và đế giữa êm ái. Công nghệ Mizuno Wave phân tán lực tác động giúp giảm sốc và tăng độ ổn định.',
+    isPromotional: false,
+    countInStock: 20,
+    warranty: '1 tháng',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Công nghệ đế giữa', value: 'Mizuno Wave + EVA Midsole' },
+      { key: 'Vật liệu Upper', value: 'AirMesh + Synthetic overlays' },
+      { key: 'Đế ngoài', value: 'Non-marking Rubber' },
+      { key: 'Tính năng', value: 'Nhẹ, êm, ổn định' }
+    ])
+  },
+  {
+    name: 'Giày Cầu Lông Mizuno Wave Fang Zero 2',
+    price: 2990000,
+    originalPrice: null,
+    image: '/images/products/wave-fang-zero-2.jpg',
+    images: JSON.stringify([]),
+    brand: 'Mizuno',
+    mainCategory: 'giay',
+    subCategory: null,
+    description: 'Mẫu giày cao cấp hỗ trợ di chuyển linh hoạt và bám sân.',
+    fullDescription: 'Wave Fang Zero 2 mang thiết kế ổn định, ôm chân, hỗ trợ người chơi chuyên nghiệp với đế Mizuno Wave giảm chấn, upper lưới nhẹ và outsole cao su XG chống trượt.',
+    isPromotional: false,
+    countInStock: 12,
+    warranty: '1 tháng',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Công nghệ đế giữa', value: 'Mizuno Wave + PoWnCe' },
+      { key: 'Vật liệu Upper', value: 'Synthetic Leather + Mesh' },
+      { key: 'Đế ngoài', value: 'XG Rubber' },
+      { key: 'Tính năng', value: 'Ổn định, hỗ trợ di chuyển, bám sân' }
+    ])
+  },
+  {
+    name: 'Giày Cầu Lông Mizuno Stealth Star 2',
+    price: 1750000,
+    originalPrice: null,
+    image: '/images/products/stealth-star-2.jpg',
+    images: JSON.stringify([]),
+    brand: 'Mizuno',
+    mainCategory: 'giay',
+    subCategory: null,
+    description: 'Giày nhẹ và linh hoạt phù hợp người mới và trung cấp.',
+    fullDescription: 'Stealth Star 2 có thiết kế nhỏ gọn, siêu nhẹ, dễ sử dụng cho người mới bắt đầu. Đế ngoài non-marking giúp giữ thăng bằng tốt và giảm trơn trượt.',
+    isPromotional: false,
+    countInStock: 25,
+    warranty: '1 tháng',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Midsole', value: 'Low-density EVA' },
+      { key: 'Upper', value: 'Synthetic + Mesh' },
+      { key: 'Outsole', value: 'Rubber' },
+      { key: 'Tính năng', value: 'Nhẹ, dễ mang, linh hoạt' }
+    ])
+  },
+  {
+    name: 'Giày Cầu Lông Mizuno Wave Claw Neo 2',
+    price: 3100000,
+    originalPrice: null,
+    image: '/images/products/wave-claw-neo-2.jpg',
+    images: JSON.stringify([]),
+    brand: 'Mizuno',
+    mainCategory: 'giay',
+    subCategory: null,
+    description: 'Giày thi đấu chuyên nghiệp với công nghệ Mizuno Wave tân tiến.',
+    fullDescription: 'Wave Claw Neo 2 được thiết kế cho tốc độ cao với Mizuno Wave hỗ trợ ổn định, midsole PoWnCe nhẹ và đệm lót êm. Phù hợp thi đấu trình độ cao.',
+    isPromotional: false,
+    countInStock: 8,
+    warranty: '1 tháng',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Midsole', value: 'PoWnCe + Mizuno Wave' },
+      { key: 'Upper', value: 'AIRmesh + TPU Overlays' },
+      { key: 'Outsole', value: 'High Abrasion Rubber' },
+      { key: 'Tính năng', value: 'Tốc độ, ổn định, nhẹ' }
+    ])
+  },
+  {
+    name: 'Giày Cầu Lông Mizuno Gate Sky Plus',
+    price: 1600000,
+    originalPrice: null,
+    image: '/images/products/gate-sky-plus.jpg',
+    images: JSON.stringify([]),
+    brand: 'Mizuno',
+    mainCategory: 'giay',
+    subCategory: null,
+    description: 'Thiết kế bền bỉ và ổn định dành cho người mới chơi.',
+    fullDescription: 'Gate Sky Plus là dòng giày entry-level giá tốt với đế cao su ổn định, upper vải tổng hợp thoáng khí và lớp đệm êm hỗ trợ cơ bản.',
+    isPromotional: false,
+    countInStock: 30,
+    warranty: '1 tháng',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Midsole', value: 'EVA' },
+      { key: 'Upper', value: 'Synthetic Leather + Mesh' },
+      { key: 'Outsole', value: 'Rubber' },
+      { key: 'Tính năng', value: 'Bền, êm, dễ chơi' }
+    ])
+  },
+  {
+    name: 'Giày Cầu Lông Mizuno Wave Exceed Tour 5',
+    price: 3200000,
+    originalPrice: null,
+    image: '/images/products/wave-exceed-tour-5.jpg',
+    images: JSON.stringify([]),
+    brand: 'Mizuno',
+    mainCategory: 'giay',
+    subCategory: null,
+    description: 'Dòng giày cao cấp cho tốc độ, bật nhảy và kiểm soát.',
+    fullDescription: 'Wave Exceed Tour 5 được thiết kế với sự nhẹ và ổn định vượt trội, midsole sử dụng Mizuno Enerzy cùng với X10 outsole cho độ bền vượt trội trên sân.',
+    isPromotional: false,
+    countInStock: 10,
+    warranty: '1 tháng',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Midsole', value: 'Mizuno Enerzy + PoWnCe' },
+      { key: 'Upper', value: '3D Solid + Mesh' },
+      { key: 'Outsole', value: 'X10 Rubber' },
+      { key: 'Tính năng', value: 'Tốc độ, kiểm soát, bật tốt' }
+    ])
+  },
+
+
+
+
+    // =======================================================================
+    // QUẦN ÁO
+    // =======================================================================
+    {
+        name: 'Áo Cầu Lông Yonex Sunrise 2024',
+        price: 750000,
+        originalPrice: null,
+        image: '/images/products/thuylinh.jpg',
+        images: JSON.stringify(['/images/products/A731.jpg']),
+        brand: 'Yonex',
+        mainCategory: 'quan-ao',
+        subCategory: 'ao',
+        description: 'Áo thi đấu chuyên nghiệp, chất liệu thoáng mát, co giãn tốt.',
+        fullDescription: 'Áo Yonex sunrise sử dụng công nghệ VeryCool giúp làm mát cơ thể khi vận động. Chất liệu vải polyester cao cấp có khả năng thấm hút mồ hôi cực tốt và khô nhanh. Form áo được thiết kế vừa vặn, không gây cản trở khi thực hiện các động tác khó.',
+        isPromotional: false,
+        countInStock: 30,
+        warranty: 'Không có',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Chất liệu', value: '100% Polyester' },
+            { key: 'Công nghệ', value: 'VeryCool, UV Reduction' },
+            { key: 'Tính năng', value: 'Thoáng mát, thấm hút mồ hôi' }
+        ])
+    },
+    
+  // --- Yonex ---
+  {
+    name: 'Áo Cầu Lông Yonex 10416EX (Xanh)',
+    price: 750000,
+    originalPrice: null,
+    image: '/images/products/Yonex 10416EX.jpg',
+    images: JSON.stringify([]),
+    brand: 'Yonex',
+    mainCategory: 'quan-ao',
+    subCategory: 'ao',
+    description: 'Áo thi đấu chuyên nghiệp, chất liệu thoáng mát, co giãn tốt.',
+    fullDescription: 'Áo Yonex 10416EX sử dụng công nghệ VeryCool giúp làm mát cơ thể khi vận động. Chất liệu vải polyester cao cấp có khả năng thấm hút mồ hôi cực tốt và khô nhanh. Form áo được thiết kế vừa vặn, không gây cản trở khi thực hiện các động tác khó.',
+    isPromotional: false,
+    countInStock: 30,
+    warranty: 'Không có',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Chất liệu', value: '100% Polyester' },
+      { key: 'Công nghệ', value: 'VeryCool, UV Reduction' },
+      { key: 'Tính năng', value: 'Thoáng mát, thấm hút mồ hôi' }
+    ])
+  },
+  {
+    name: 'Quần Cầu Lông Yonex 15115EX (Đen)',
+    price: 520000,
+    originalPrice: null,
+    image: '/images/products/15115EX (Đen).jpg',
+    images: JSON.stringify([]),
+    brand: 'Yonex',
+    mainCategory: 'quan-ao',
+    subCategory: 'quan',
+    description: 'Quần cầu lông Yonex chính hãng, co giãn và thoáng khí.',
+    fullDescription: 'Quần Yonex 15115EX có thiết kế thể thao hiện đại, vải mềm, nhẹ, thấm hút mồ hôi tốt, co giãn 4 chiều. Dễ phối đồ và phù hợp với mọi buổi tập hoặc thi đấu.',
+    isPromotional: false,
+    countInStock: 40,
+    warranty: 'Không có',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Chất liệu', value: 'Polyester cao cấp' },
+      { key: 'Kiểu dáng', value: 'Regular Fit' },
+      { key: 'Tính năng', value: 'Co giãn, thoáng khí' }
+    ])
+  },
+
+  // --- Lining ---
+  {
+    name: 'Áo Cầu Lông Lining AAYT137-1 (Trắng Xanh)',
+    price: 490000,
+    originalPrice: null,
+    image: '/images/products/ao-lining-aayt137.jpg',
+    images: JSON.stringify([]),
+    brand: 'Lining',
+    mainCategory: 'quan-ao',
+    subCategory: 'ao',
+    description: 'Áo thể thao chính hãng Lining, nhẹ và khô nhanh.',
+    fullDescription: 'Áo cầu lông Lining AAYT137-1 được làm từ chất liệu Dry-Tech siêu nhẹ, thoáng khí, thấm hút mồ hôi nhanh giúp bạn luôn khô ráo khi vận động.',
+    isPromotional: false,
+    countInStock: 20,
+    warranty: 'Không có',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Chất liệu', value: 'Polyester' },
+      { key: 'Công nghệ', value: 'Dry-Tech' },
+      { key: 'Tính năng', value: 'Mềm mại, thấm hút, chống UV' }
+    ])
+  },
+  {
+    name: 'Quần Cầu Lông Lining AKSP527-3 (Đen)',
+    price: 390000,
+    originalPrice: null,
+    image: '/images/products/quan-lining-aksp527.jpg',
+    images: JSON.stringify([]),
+    brand: 'Lining',
+    mainCategory: 'quan-ao',
+    subCategory: 'quan',
+    description: 'Quần cầu lông chuyên dụng Lining thoáng khí, nhẹ và bền.',
+    fullDescription: 'Quần cầu lông AKSP527-3 được thiết kế tối ưu cho vận động viên thi đấu, giúp dễ dàng di chuyển và thoải mái khi vận động mạnh.',
+    isPromotional: false,
+    countInStock: 25,
+    warranty: 'Không có',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Chất liệu', value: 'Polyester + Spandex' },
+      { key: 'Tính năng', value: 'Co giãn, thoáng khí, nhẹ' },
+      { key: 'Màu sắc', value: 'Đen viền xanh' }
+    ])
+  },
+
+  // --- Victor ---
+  {
+    name: 'Áo Cầu Lông Victor T-40001M (Xanh Biển)',
+    price: 610000,
+    originalPrice: null,
+    image: '/images/products/ao-victor-t40001m.jpg',
+    images: JSON.stringify([]),
+    brand: 'Victor',
+    mainCategory: 'quan-ao',
+    subCategory: 'ao',
+    description: 'Áo Victor thi đấu cao cấp, chất liệu thoáng và ôm form.',
+    fullDescription: 'Áo T-40001M thiết kế bởi Victor với công nghệ PerfectDry giúp áo luôn khô thoáng khi vận động, co giãn nhẹ nhàng, không nhăn và nhanh khô.',
+    isPromotional: false,
+    countInStock: 22,
+    warranty: 'Không có',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Chất liệu', value: '100% Polyester' },
+      { key: 'Công nghệ', value: 'PerfectDry' },
+      { key: 'Tính năng', value: 'Thấm hút, không nhăn, nhẹ' }
+    ])
+  },
+  {
+    name: 'Quần Cầu Lông Victor R-3231 (Đen)',
+    price: 420000,
+    originalPrice: null,
+    image: '/images/products/quan-victor-r3231.jpg',
+    images: JSON.stringify([]),
+    brand: 'Victor',
+    mainCategory: 'quan-ao',
+    subCategory: 'quan',
+    description: 'Quần thể thao cầu lông chính hãng Victor, thoải mái và linh hoạt.',
+    fullDescription: 'Quần R-3231 có thiết kế tối giản, cạp co giãn và chất liệu nhẹ. Đường may chắc chắn, phù hợp thi đấu hoặc tập luyện thường xuyên.',
+    isPromotional: false,
+    countInStock: 30,
+    warranty: 'Không có',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Chất liệu', value: 'Polyester + Spandex' },
+      { key: 'Tính năng', value: 'Co giãn, thấm mồ hôi' },
+      { key: 'Thiết kế', value: 'Cạp chun, nhẹ' }
+    ])
+  },
+
+  // --- Mizuno ---
+  {
+    name: 'Áo Cầu Lông Mizuno Quick Dry (Đỏ Đen)',
+    price: 580000,
+    originalPrice: null,
+    image: '/images/products/ao-mizuno-redblack.jpg',
+    images: JSON.stringify([]),
+    brand: 'Mizuno',
+    mainCategory: 'quan-ao',
+    subCategory: 'ao',
+    description: 'Áo cầu lông công nghệ DryLite của Mizuno – nhanh khô và thoáng mát.',
+    fullDescription: 'Mẫu áo Mizuno Quick Dry sử dụng công nghệ DryLite giúp giữ cho cơ thể khô thoáng, mát mẻ trong suốt quá trình vận động ở cường độ cao.',
+    isPromotional: false,
+    countInStock: 18,
+    warranty: 'Không có',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Chất liệu', value: 'Polyester + DryLite' },
+      { key: 'Công nghệ', value: 'DryLite' },
+      { key: 'Tính năng', value: 'Thoáng mát, nhẹ, co giãn' }
+    ])
+  },
+  {
+    name: 'Quần Cầu Lông Mizuno Training Shorts (Xám Đen)',
+    price: 450000,
+    originalPrice: null,
+    image: '/images/products/quan-mizuno-training.jpg',
+    images: JSON.stringify([]),
+    brand: 'Mizuno',
+    mainCategory: 'quan-ao',
+    subCategory: 'quan',
+    description: 'Quần cầu lông Mizuno nhẹ, thoáng khí, form chuẩn thể thao.',
+    fullDescription: 'Mizuno Training Shorts có kiểu dáng thể thao đơn giản, thoáng khí, độ co giãn tốt, thích hợp cho tập luyện và thi đấu.',
+    isPromotional: false,
+    countInStock: 27,
+    warranty: 'Không có',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Chất liệu', value: '100% Polyester' },
+      { key: 'Tính năng', value: 'Co giãn, thoáng khí, nhẹ' },
+      { key: 'Thiết kế', value: 'Sport Fit, cạp chun' }
+    ])
+  },
+
+    // =======================================================================
+    // PHỤ KIỆN
+    // =======================================================================
+    {
+        name: 'Cước Cầu Lông Yonex BG 66 Ultimax',
+        price: 180000,
+        originalPrice: null,
+        image: '/images/products/cuoc-yonex-bg66um.jpg',
+        images: JSON.stringify([]),
+        brand: 'Yonex',
+        mainCategory: 'phu-kien',
+        subCategory: 'cuoc-dan-vot',
+        description: 'Loại cước quốc dân, cân bằng giữa lực đẩy, kiểm soát và âm thanh nổ to.',
+        fullDescription: 'Yonex BG66 Ultimax là một trong những sợi cước phổ biến nhất trên thế giới. Với đường kính chỉ 0.65mm, nó mang lại cảm giác sắc nét, lực đẩy cầu cao và âm thanh vang dội khi đập cầu. Đây là sự lựa chọn lý tưởng cho những người chơi muốn có một sợi cước toàn diện.',
+        isPromotional: false,
+        countInStock: 100,
+        warranty: 'Không có',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Đường kính', value: '0.65 mm' },
+            { key: 'Lực đẩy', value: '10/10' },
+            { key: 'Độ bền', value: '6/10' },
+            { key: 'Âm thanh', value: '10/10' }
+        ])
+    },
+    {
+        name: 'Quả Cầu Lông Victor Lark 5',
+        price: 220000,
+        originalPrice: null,
+        image: '/images/products/cau-victor-lark5.jpg',
+        images: JSON.stringify([]),
+        brand: 'Victor',
+        mainCategory: 'phu-kien',
+        subCategory: 'qua-cau-long',
+        description: 'Ống cầu lông tiêu chuẩn, bền bỉ, cho đường bay ổn định.',
+        fullDescription: 'Victor Lark 5 là lựa chọn kinh tế và chất lượng cho các buổi chơi phong trào và luyện tập. Lông vịt được xử lý cẩn thận giúp cầu có độ bền cao và quỹ đạo bay ổn định. Đế cầu làm từ gỗ sồi cao cấp cho cảm giác tiếp xúc tốt.',
+        isPromotional: false,
+        countInStock: 50,
+        warranty: 'Không có',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Số lượng', value: '12 quả / ống' },
+            { key: 'Vật liệu lông', value: 'Lông vịt' },
+            { key: 'Tốc độ', value: '76, 77' }
+        ])
+    },
+    {
+        name: 'Quấn Cán Vợt Yonex AC102EX (3 in 1)',
+        price: 90000,
+        originalPrice: null,
+        image: '/images/products/AC102EX (3 in 1).jpg',
+        images: JSON.stringify([]),
+        brand: 'Yonex',
+        mainCategory: 'phu-kien',
+        subCategory: 'quan-can',
+        description: 'Quấn cán vải siêu bám, thấm hút mồ hôi cực tốt.',
+        fullDescription: 'Yonex AC102EX là loại quấn cán vợt phổ biến nhất của Yonex, được các vận động viên hàng đầu tin dùng. Bề mặt vải có độ bám dính cao, giúp cầm vợt chắc chắn ngay cả khi ra nhiều mồ hôi. Một vỉ gồm 3 chiếc.',
+        isPromotional: false,
+        countInStock: 200,
+        warranty: 'Không có',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Số lượng', value: '3 cái / vỉ' },
+            { key: 'Chất liệu', value: 'Polyurethane' },
+            { key: 'Độ dày', value: '0.6 mm' }
+        ])
+    },
+    {
+        name: 'Túi Vợt Cầu Lông Yonex 92229 Pro (6 ngăn)',
+        price: 1850000,
+        originalPrice: 2100000,
+        image: '/images/products/tui.jpg',
+        images: JSON.stringify([]),
+        brand: 'Yonex',
+        mainCategory: 'phu-kien',
+        subCategory: 'tui-vot',
+        description: 'Túi vợt chuyên nghiệp với không gian rộng rãi và nhiều ngăn tiện lợi.',
+        fullDescription: 'Túi Yonex 92229 Pro có 3 ngăn chính lớn, trong đó có một ngăn cách nhiệt để bảo vệ vợt khỏi nhiệt độ cao. Ngoài ra còn có ngăn đựng giày riêng và các ngăn phụ kiện nhỏ. Dây đeo có thể điều chỉnh linh hoạt để đeo vai hoặc làm balo.',
+        isPromotional: true,
+        countInStock: 10,
+        warranty: '1 tháng (dây kéo, khóa)',
+        youtubeLink: null,
+        specifications: JSON.stringify([
+            { key: 'Số ngăn', value: '3 ngăn chính, 1 ngăn giày' },
+            { key: 'Sức chứa', value: 'Tối đa 9 vợt' },
+            { key: 'Kích thước', value: '78 x 38 x 34 cm' }
+        ])
+    },
+
+  {
+    name: 'Cước Cầu Lông Yonex BG 80 Power',
+    price: 185000,
+    originalPrice: null,
+    image: '/images/products/cuoc-yonex-bg80power.jpg',
+    images: JSON.stringify([]),
+    brand: 'Yonex',
+    mainCategory: 'phu-kien',
+    subCategory: 'cuoc-dan-vot',
+    description: 'Lực đẩy mạnh mẽ, âm thanh lớn, phù hợp lối đánh tấn công.',
+    fullDescription: 'BG80 Power là phiên bản nâng cấp của BG80 với đường kính 0.68mm, tạo cảm giác đập cầu chắc chắn, lực đẩy lớn, phù hợp cho vận động viên thiên công.',
+    isPromotional: false,
+    countInStock: 80,
+    warranty: 'Không có',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Đường kính', value: '0.68 mm' },
+      { key: 'Lực đẩy', value: '10/10' },
+      { key: 'Độ bền', value: '8/10' },
+      { key: 'Âm thanh', value: '9/10' }
+    ])
+  },
+  {
+    name: 'Băng Quấn Vợt Yonex AC102EX',
+    price: 60000,
+    originalPrice: null,
+    image: '/images/products/bang-quan-yonex-ac102.jpg',
+    images: JSON.stringify([]),
+    brand: 'Yonex',
+    mainCategory: 'phu-kien',
+    subCategory: 'bang-quan',
+    description: 'Băng quấn mềm mại, thấm hút mồ hôi tốt, cảm giác cầm thoải mái.',
+    fullDescription: 'Băng quấn Yonex AC102EX được làm từ chất liệu polyurethane chất lượng cao, mang lại cảm giác thoải mái, chống trượt và hấp thụ mồ hôi hiệu quả.',
+    isPromotional: false,
+    countInStock: 200,
+    warranty: 'Không có',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Chất liệu', value: 'Polyurethane' },
+      { key: 'Tính năng', value: 'Thấm mồ hôi, chống trượt' },
+      { key: 'Chiều dài', value: '1200 mm' }
+    ])
+  },
+  {
+    name: 'Băng Gối Cầu Lông Lining 601',
+    price: 190000,
+    originalPrice: null,
+    image: '/images/products/bang-goi-lining-601.jpg',
+    images: JSON.stringify([]),
+    brand: 'Lining',
+    mainCategory: 'phu-kien',
+    subCategory: 'bao-ho',
+    description: 'Băng gối giúp bảo vệ khớp gối, thoáng khí, đàn hồi tốt.',
+    fullDescription: 'Băng gối Lining 601 được thiết kế để hỗ trợ và bảo vệ khớp gối khỏi chấn thương trong quá trình chơi cầu lông. Chất liệu co giãn, bền bỉ, thấm hút mồ hôi.',
+    isPromotional: false,
+    countInStock: 50,
+    warranty: 'Không có',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Chất liệu', value: 'Sợi tổng hợp co giãn' },
+      { key: 'Màu sắc', value: 'Đen/Xám' },
+      { key: 'Tính năng', value: 'Bảo vệ khớp, thoáng khí' }
+    ])
+  },
+  {
+    name: 'Túi Đựng Vợt Lining ABJN074',
+    price: 890000,
+    originalPrice: null,
+    image: '/images/products/tui-lining-abjn074.jpg',
+    images: JSON.stringify([]),
+    brand: 'Lining',
+    mainCategory: 'phu-kien',
+    subCategory: 'tui-vot',
+    description: 'Túi lớn 2 ngăn, chống thấm, phù hợp tập luyện và thi đấu.',
+    fullDescription: 'Túi cầu lông Lining ABJN074 có thiết kế 2 ngăn lớn đựng vợt và đồ cá nhân. Chất liệu chống nước, dây đeo êm, tiện lợi khi mang vác.',
+    isPromotional: false,
+    countInStock: 35,
+    warranty: '1 tháng',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Chất liệu', value: 'Polyester chống thấm' },
+      { key: 'Ngăn chứa', value: '2 ngăn chính, 1 ngăn phụ' },
+      { key: 'Kích thước', value: '72 x 24 x 30 cm' }
+    ])
+  },
+  {
+    name: 'Băng Bảo Vệ Cổ Tay Victor 8208',
+    price: 165000,
+    originalPrice: null,
+    image: '/images/products/bang-tay-victor-8208.jpg',
+    images: JSON.stringify([]),
+    brand: 'Victor',
+    mainCategory: 'phu-kien',
+    subCategory: 'bao-ho',
+    description: 'Hỗ trợ và bảo vệ cổ tay, chất liệu đàn hồi tốt.',
+    fullDescription: 'Băng cổ tay Victor 8208 giúp giảm áp lực lên cổ tay khi đánh cầu. Phù hợp người mới hoặc người có tiền sử đau khớp. Dễ đeo và tháo lắp.',
+    isPromotional: false,
+    countInStock: 70,
+    warranty: 'Không có',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Chất liệu', value: 'Nylon + Spandex' },
+      { key: 'Độ co giãn', value: 'Cao' },
+      { key: 'Màu sắc', value: 'Đen' }
+    ])
+  },
+  {
+    name: 'Băng Dán Cơ Mizuno Kinesiology Tape',
+    price: 220000,
+    originalPrice: null,
+    image: '/images/products/bang-dan-co-mizuno.jpg',
+    images: JSON.stringify([]),
+    brand: 'Mizuno',
+    mainCategory: 'phu-kien',
+    subCategory: 'bao-ho',
+    description: 'Hỗ trợ cơ bắp, giảm đau và phục hồi nhanh chóng.',
+    fullDescription: 'Kinesiology Tape của Mizuno được thiết kế để hỗ trợ cơ, tăng lưu thông máu và giảm chấn thương khi chơi thể thao. Dễ sử dụng và độ dính cao.',
+    isPromotional: false,
+    countInStock: 60,
+    warranty: 'Không có',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Chiều dài', value: '5 m' },
+      { key: 'Độ dính', value: 'Rất tốt' },
+      { key: 'Màu', value: 'Đen/Xanh dương' }
+    ])
+  },
+  {
+    name: 'Túi Vợt Mizuno Duffle MZ-BG1806',
+    price: 950000,
+    originalPrice: null,
+    image: '/images/products/tui-vot-mizuno-bg1806.jpg',
+    images: JSON.stringify([]),
+    brand: 'Mizuno',
+    mainCategory: 'phu-kien',
+    subCategory: 'tui-vot',
+    description: 'Thiết kế thể thao, sức chứa lớn, phù hợp đi thi đấu.',
+    fullDescription: 'Mizuno Duffle BG1806 là túi thể thao đa năng, mang phong cách trẻ trung, chất liệu bền, chống thấm nhẹ, ngăn chứa rộng rãi.',
+    isPromotional: false,
+    countInStock: 22,
+    warranty: '1 tháng',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Kích thước', value: '70 x 32 x 30 cm' },
+      { key: 'Chất liệu', value: 'Polyester cao cấp' },
+      { key: 'Tính năng', value: 'Chống thấm nhẹ, ngăn lớn' }
+    ])
+  },
+  {
+    name: 'Hộp Cầu Lông Victor Master Ace',
+    price: 390000,
+    originalPrice: null,
+    image: '/images/products/caulong-victor-masterace.jpg',
+    images: JSON.stringify([]),
+    brand: 'Victor',
+    mainCategory: 'phu-kien',
+    subCategory: 'cau-long',
+    description: 'Loại cầu thi đấu chất lượng cao, độ bền và độ ổn định tốt.',
+    fullDescription: 'Victor Master Ace là dòng cầu lông thi đấu chuẩn quốc tế với độ bền cao, bay ổn định, được nhiều CLB sử dụng trong thi đấu chính thức.',
+    isPromotional: false,
+    countInStock: 90,
+    warranty: 'Không có',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Chất liệu', value: 'Lông vũ tự nhiên' },
+      { key: 'Loại', value: 'Thi đấu' },
+      { key: 'Hộp', value: '12 quả' }
+    ])
+  },
+  {
+    name: 'Băng Trán Yonex AC414',
+    price: 90000,
+    originalPrice: null,
+    image: '/images/products/bang-tran-yonex-ac414.jpg',
+    images: JSON.stringify([]),
+    brand: 'Yonex',
+    mainCategory: 'phu-kien',
+    subCategory: 'bang-tran',
+    description: 'Thấm hút mồ hôi tốt, thoáng khí, phù hợp thi đấu.',
+    fullDescription: 'Băng trán Yonex AC414 thiết kế với chất liệu cotton mềm mại, thấm hút mồ hôi hiệu quả trong quá trình vận động cường độ cao.',
+    isPromotional: false,
+    countInStock: 100,
+    warranty: 'Không có',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Chất liệu', value: 'Cotton + Spandex' },
+      { key: 'Tính năng', value: 'Thấm hút mồ hôi, co giãn' },
+      { key: 'Kích thước', value: 'Free size' }
+    ])
+  },
+  {
+    name: 'Tất Cầu Lông Lining Premium',
+    price: 65000,
+    originalPrice: null,
+    image: '/images/products/tat-lining-premium.jpg',
+    images: JSON.stringify([]),
+    brand: 'Lining',
+    mainCategory: 'phu-kien',
+    subCategory: 'tat',
+    description: 'Chất liệu mềm, thoáng khí, giảm trượt và mùi hôi.',
+    fullDescription: 'Tất thể thao Lining Premium sử dụng sợi cotton pha co giãn, đế dày, giúp bảo vệ chân và tạo cảm giác thoải mái trong suốt buổi chơi.',
+    isPromotional: false,
+    countInStock: 150,
+    warranty: 'Không có',
+    youtubeLink: null,
+    specifications: JSON.stringify([
+      { key: 'Chất liệu', value: 'Cotton + Spandex' },
+      { key: 'Màu', value: 'Trắng, Đen, Xám' },
+      { key: 'Tính năng', value: 'Thoáng khí, khử mùi, chống trượt' }
+    ])
+  }
+
 ];
 
-// Hàm để tính toán lại rating và numReviews dựa trên mảng reviews
 const updatedProducts = products.map(product => {
-    if (product.reviews && product.reviews.length > 0) {
-        const numReviews = product.reviews.length;
-        const rating = product.reviews.reduce((acc, item) => item.rating + acc, 0) / numReviews;
-        return { ...product, numReviews, rating: parseFloat(rating.toFixed(1)) };
-    }
-    return { ...product, numReviews: 0, rating: 0 };
+return { ...product, rating: product.rating || 0, numReviews: product.numReviews || 0 };
 });
 
 module.exports = updatedProducts;

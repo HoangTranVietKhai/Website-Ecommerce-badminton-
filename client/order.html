@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết đơn hàng - SportStore</title>
+    <meta name="description" content="Xem chi tiết đơn hàng của bạn tại SportStore.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .status-badge {
+            display: inline-block;
+            padding: 0.3em 0.8em;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 20px;
+            margin-top: 0.5rem;
+        }
+        .status-badge.paid, .status-badge.delivered {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-badge:not(.paid):not(.delivered) {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .summary-cart-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--color-border);
+        }
+        .summary-cart-item:last-child {
+            border-bottom: none;
+        }
+        .summary-cart-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .summary-cart-item .item-info {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+</head>
+<body class="order-detail-page">
+    <main class="container" id="order-detail-container">
+        <!-- JS sẽ render nội dung chi tiết đơn hàng vào đây -->
+    </main>
+    <script type="module" src="/js/main.js"></script>
+</body>
+</html>

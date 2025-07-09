@@ -1,41 +1,118 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hồ sơ của tôi - UMT Instruments</title>
+    <title>Hồ Sơ Của Tôi - SportStore</title>
+    <meta name="description" content="Quản lý thông tin cá nhân và xem lịch sử đơn hàng của bạn tại SportStore.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/style.css">
-    <!-- ... các link font và icon khác ... -->
 </head>
+
 <body class="profile-page">
-    <!-- Header sẽ được chèn bởi JS -->
     <main class="container">
         <div class="page-header">
             <h1>Hồ Sơ Của Tôi</h1>
+            <p>Quản lý thông tin tài khoản của bạn.</p>
         </div>
-        <div class="form-card" style="max-width: 600px; margin: 0 auto;">
-            <form id="profile-form" class="auth-form">
-                <div class="form-group">
-                    <label for="profile-name">Họ và Tên</label>
-                    <input type="text" id="profile-name" required>
-                </div>
-                <div class="form-group">
-                    <label for="profile-email">Email</label>
-                    <input type="email" id="profile-email" required>
-                </div>
-                <div class="form-group">
-                    <label for="profile-password">Mật khẩu mới (để trống nếu không đổi)</label>
-                    <input type="password" id="profile-password">
-                </div>
-                <div class="form-group">
-                    <label for="profile-confirm-password">Xác nhận mật khẩu mới</label>
-                    <input type="password" id="profile-confirm-password">
-                </div>
-                <button type="submit" class="btn primary-btn">Cập Nhật Thông Tin</button>
-            </form>
+
+        <div class="profile-layout"
+            style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; align-items: start;">
+            <div class="profile-sidebar card-section">
+                <h3>Tùy chọn</h3>
+                <ul class="profile-nav" style="list-style: none; padding: 1rem 0 0 0; margin: 0;">
+                    <li><a href="/profile.html" class="active"
+                            style="display:block; padding: 0.75rem; border-radius: 8px; background-color: var(--color-background-light);">Thông
+                            tin cá nhân</a></li>
+                    <li><a href="/myorders.html" style="display:block; padding: 0.75rem; border-radius: 8px;">Đơn hàng
+                            của tôi</a></li>
+                </ul>
+            </div>
+            <div class="profile-content card-section">
+                <h3>Cập nhật thông tin</h3>
+                <form id="profile-update-form" class="auth-form" style="padding-top: 1rem;">
+                    <div class="form-group">
+                        <label for="profile-name">Họ và Tên</label>
+                        <input type="text" id="profile-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-email">Email</label>
+                        <input type="email" id="profile-email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-password">Mật khẩu mới (để trống nếu không đổi)</label>
+                        <input type="password" id="profile-password" name="password">
+                    </div>
+                    <button type="submit" class="btn primary-btn">Cập Nhật</button>
+                    <p id="profile-update-error" class="form-error"></p>
+                </form>
+            </div>
         </div>
     </main>
-    <!-- Footer và Modals sẽ được chèn bởi JS -->
+
     <script type="module" src="/js/main.js"></script>
+    <script type="module">
+        import store from './js/store.js';
+        import * as api from './js/api.js';
+        import { showToast } from './js/utils.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = store.getUser();
+            if (!user) {
+                alert('Vui lòng đăng nhập.');
+                localStorage.setItem('redirectAfterLogin', window.location.pathname);
+                window.location.href = '/index.html';
+                return;
+            }
+
+            const nameInput = document.getElementById('profile-name');
+            const emailInput = document.getElementById('profile-email');
+            const form = document.getElementById('profile-update-form');
+            const errorEl = document.getElementById('profile-update-error');
+
+            if (nameInput) nameInput.value = user.name;
+            if (emailInput) emailInput.value = user.email;
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                errorEl.textContent = '';
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Đang cập nhật...';
+
+                const name = nameInput.value;
+                const email = emailInput.value;
+                const password = document.getElementById('profile-password').value;
+
+                const updateData = { name, email };
+                if (password && password.length >= 6) {
+                    updateData.password = password;
+                } else if (password && password.length < 6) {
+                    errorEl.textContent = 'Mật khẩu mới phải có ít nhất 6 ký tự.';
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Cập Nhật';
+                    return;
+                }
+
+                try {
+                    const result = await api.updateUserProfile(updateData, store.getToken());
+
+                    // Cập nhật lại thông tin trong store và localStorage
+                    const updatedUser = { ...store.getUser(), ...result.user };
+                    store.setUser(updatedUser, store.getToken());
+
+                    showToast('Cập nhật thông tin thành công!', 'success');
+                    setTimeout(() => window.location.reload(), 1500);
+                } catch (error) {
+                    errorEl.textContent = error.message;
+                } finally {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Cập Nhật';
+                }
+            });
+        });
+    </script>
 </body>
+
 </html>

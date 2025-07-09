@@ -1,80 +1,256 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UMT Instruments - Không Gian Nhạc Cụ Trầm Ấm</title>
-    <meta name="description" content="Khám phá bộ sưu tập guitar, piano và nhạc cụ thủ công tại UMT Instruments.">
-    
-    <!-- FONTS -->
+    <title>SportStore - SHOP CẦU LÔNG GOSTORE</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    
-    <!-- ICONS -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Karla:wght@400;600&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <link rel="stylesheet" href="/style.css">
 </head>
+
+<!-- ++ THAY ĐỔI 1: Thêm class 'home-page' để nhận diện trang chủ an toàn ++ -->
 <body class="home-page">
-    <!-- Header sẽ được chèn bởi JS -->
-
     <main>
-        <!-- CẢI TIẾN: Hero Section với Video nền để tạo cảm giác sống động, nghệ thuật -->
-        <section class="hero-section">
-            <video class="hero-video" autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1510915361894-db8b60106945?q=80&w=2070&auto=format&fit=crop">
-                <!-- Sử dụng một video miễn phí chất lượng cao về làm đàn hoặc chơi đàn -->
-                <source src="https://videos.pexels.com/video-files/4769372/4769372-hd_1920_1080_25fps.mp4" type="video/mp4">
-                Trình duyệt của bạn không hỗ trợ video.
-            </video>
-            <div class="hero-overlay"></div>
-            <div class="container hero-content">
-                <h1 class="fade-in-element">Khơi Nguồn Giai Điệu</h1>
-                <p class="fade-in-element" style="--delay: 0.2s;">Tìm kiếm người bạn đồng hành hoàn hảo trên hành trình âm nhạc của bạn.</p>
-                <a href="products.html" class="btn primary-btn fade-in-element" style="--delay: 0.4s;">Khám Phá Nhạc Cụ</a>
+     
+        <!-- ++ THAY ĐỔI 2: Đổi tên class 'hero-carousel' thành 'main-slideshow' để tránh Ad-Blocker ++ -->
+        <section class="main-slideshow">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <a href="/products.html?category=quan-ao">
+                        <!-- ++ THAY ĐỔI 3: Đổi tên class 'carousel-banner-image' thành 'slideshow-image' ++ -->
+                        <img src="images/banner/banner8.png" alt="Giải Phóng Cú Đập Của Bạn" class="slideshow-image">
+                    </a>
+                </div>
+                 
+                <div class="carousel-item">
+                    <a href="/products.html?category=giay">
+                        <img src="images/banner/banner9.png" alt="Ưu đãi đặc biệt" class="slideshow-image">
+                    </a>
+                </div>
+
+                <div class="carousel-item">
+                    <a href="/products.html?category=vot-cau-long">
+                        <img src="images/banner/banner10.png" alt="Sản phẩm bán chạy" class="slideshow-image">
+                    </a>
+                </div>
+                  <div class="carousel-item">
+                    <a href="/products.html?category=giay">
+                        <img src="images/banner/banner11.png" alt="Sản phẩm bán chạy" class="slideshow-image">
+                    </a>
+                </div>
+                  <div class="carousel-item">
+                    <!-- SỬA LỖI Ở ĐÂY: vowt -> vot -->
+                    <a href="/products.html?category=vot-cau-long">
+                        <img src="images/banner/banner12.png" alt="Sản phẩm bán chạy" class="slideshow-image">
+                    </a>
+                </div>
+            </div>
+
+            <button class="carousel-control-prev" aria-label="Previous">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="carousel-control-next" aria-label="Next">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+
+            <div class="carousel-indicators">
+                <span class="indicator active" data-slide-to="0"></span>
+                <span class="indicator" data-slide-to="1"></span>
+                <span class="indicator" data-slide-to="2"></span>
+                <span class="indicator" data-slide-to="3"></span>
+                <span class="indicator" data-slide-to="4"></span>
             </div>
         </section>
 
-        <!-- CẢI TIẾN: Thêm khối giới thiệu câu chuyện để xây dựng thương hiệu -->
-        <section class="story-section-home container fade-in-element">
-            <div class="story-content">
-                <h2>Một Nơi Cho Những Tâm Hồn Đồng Điệu</h2>
-                <p>Tại UMT, chúng tôi không chỉ bán nhạc cụ. Chúng tôi kết nối những người nghệ sĩ với tri kỷ của họ. Mỗi sản phẩm là một lời hứa về chất lượng, đam mê và những giai điệu bất tận.</p>
-                <a href="about.html" class="btn secondary-btn">Câu Chuyện Của Chúng Tôi</a>
-            </div>
-            <div class="story-image">
-                <img src="data:image/webp;base64,UklGRlJPAABXRUJQVlA4IEZPAAAwBAGdASpdAQYBPp0+mEiloyIhLtetILATiWNrCVi5HvX340Fx7YzSeH/" alt="Xưởng chế tác nhạc cụ UMT">
-            </div>
-        </section>
-
-        <section class="products-section-home container">
-            <h2 class="fade-in-element">Sản Phẩm Nổi Bật</h2>
-            <div class="product-grid">   </div>
-        </section>
-        
-        <!-- CẢI TIẾN: Thêm khối Testimonials để tăng độ tin cậy -->
-        <section class="testimonials-section fade-in-element">
-            <div class="container">
-                <h2>Khách Hàng Nói Gì Về UMT</h2>
-                <div class="testimonials-grid">
-                    <div class="testimonial-card">
-                        <p>"Cây đàn guitar từ UMT thực sự là một tác phẩm nghệ thuật. Âm thanh ấm và vang, vượt xa mong đợi của tôi. Cảm ơn đội ngũ!"</p>
-                        <h4>- Huy DuckDuck, Nhạc sĩ</h4>
+        <section class="commitment-section">
+            <div class="container commitment-grid">
+                <div class="commitment-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <h4>100% Chính Hãng</h4>
+                        <p>Cam kết sản phẩm từ các thương hiệu hàng đầu.</p>
                     </div>
-                    <div class="testimonial-card">
-                        <p>"Dịch vụ tư vấn rất tận tâm. Họ đã giúp tôi chọn được cây piano điện hoàn hảo cho việc học của con gái tôi. Rất đáng tin cậy."</p>
-                        <h4>- Huy DuckDuck, Phụ huynh</h4>
+                </div>
+                <div class="commitment-item">
+                    <i class="fas fa-shipping-fast"></i>
+                    <div>
+                        <h4>Giao Hàng Nhanh</h4>
+                        <p>Miễn phí vận chuyển cho đơn hàng từ 2.000.000₫.</p>
                     </div>
-                    <div class="testimonial-card">
-                        <p>"Tôi yêu không gian và con người ở UMT. Mua một chiếc ukulele và nhận lại cả một nguồn cảm hứng mới. Sẽ quay lại chắc chắn."</p>
-                        <h4>- Duck Huy, Sinh viên</h4>
+                </div>
+                <div class="commitment-item">
+                    <i class="fas fa-headset"></i>
+                    <div>
+                        <h4>Tư Vấn Chuyên Nghiệp</h4>
+                        <p>Hỗ trợ chọn sản phẩm phù hợp với lối chơi của bạn.</p>
                     </div>
                 </div>
             </div>
         </section>
-    </main>
 
-    <!-- Footer và Modals sẽ được chèn bởi JS -->
-    <script type="module" src="/js/main.js"></script> 
+        <section class="category-section fade-in-element">
+            <div class="container">
+                <h2 class="section-title">Danh Mục Nổi Bật</h2>
+                <div class="category-grid">
+                    <div class="category-card" data-link="/products.html?mainCategory=vot-cau-long">
+                        <h3 class="category-title">VỢT CẦU LÔNG</h3>
+                        <p class="category-subtitle">Vợt chuyên nghiệp & phong trào</p>
+                        <img src="images/banner/banner5.png" alt=""
+                            style="width: 100%; height: 80%; object-fit: cover; display: block; border-radius: 12px;">
+
+                    </div>
+                    <div class="category-card" data-link="/products.html?mainCategory=quan-ao">
+                        <h3 class="category-title">ÁO CẦU LÔNG</h3>
+                        <p class="category-subtitle">Chuyên nghiệp, mát mẻ</p>
+                        <img src="images/banner/banner13.png" alt=""
+                            style="width: 100%; height: 80%; object-fit: cover; display: block; border-radius: 12px;">
+
+
+                    </div>
+                    <div class="category-card" data-link="/products.html?mainCategory=quan-ao">
+                        <h3 class="category-title">QUẦN CẦU LÔNG</h3>
+                        <p class="category-subtitle">Chuyên nghiệp, mát mẻ</p>
+                        <img src="images/banner/banner14.png" alt=""
+                            style="width: 100%; height: 80%; object-fit: cover; display: block; border-radius: 12px;">
+
+
+                    </div>
+                    <div class="category-card" data-link="/products.html?mainCategory=giay">
+                        <h3 class="category-title">GIÀY THỂ THAO</h3>
+                        <p class="category-subtitle">Bám sân, êm ái, bứt tốc</p>
+                        <img src="images/banner/banner6.png" alt=""
+                            style="width: 100%; height: 80%; object-fit: cover; display: block; border-radius: 12px;">
+
+
+                    </div>
+                    <div class="category-card" data-link="/products.html?mainCategory=phu-kien">
+                        <h3 class="category-title">PHỤ KIỆN</h3>
+                        <p class="category-subtitle">Cước, quấn cán, túi vợt...</p>
+                        <img src="images/banner/banner7.png" alt=""
+                            style="width: 100%; height: 80%; object-fit: cover; display: block; border-radius: 12px;">
+
+                    </div>
+                    <div class="category-card" data-link="/products.html?mainCategory=phu-kien">
+                        <h3 class="category-title">tÚI VỢT CẦU LÔNG</h3>
+                        <p class="category-subtitle">Cước, quấn cán, túi vợt...</p>
+                        <img src="images/banner/banner15.png" alt=""
+                            style="width: 100%; height: 80%; object-fit: cover; display: block; border-radius: 12px;">
+
+                    </div>
+                    <div class="category-card" data-link="/products.html?mainCategory=phu-kien">
+                        <h3 class="category-title">bALO CẦU LÔNG</h3>
+                        <p class="category-subtitle">Cước, quấn cán, túi vợt...</p>
+                        <img src="images/banner/banner16.png" alt=""
+                            style="width: 100%; height: 80%; object-fit: cover; display: block; border-radius: 12px;">
+
+                    </div>
+                    <div class="category-card" data-link="/products.html?mainCategory=phu-kien">
+                        <h3 class="category-title">VÁY CẦU LÔNG</h3>
+                        <p class="category-subtitle">Sành điệu, cá tính</p>
+                        <img src="images/banner/banner17.png" alt=""
+                            style="width: 100%; height: 80%; object-fit: cover; display: block; border-radius: 12px;">
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="products-section fade-in-element">
+            <div class="container">
+                <div class="tabs-header">
+                    <h2 class="section-title">Khám Phá Sản Phẩm</h2>
+                    <div class="product-tabs">
+                        <button class="product-tab-btn active" data-filter="newest">Mới Nhất</button>
+                        <button class="product-tab-btn" data-filter="bestseller">Bán Chạy</button>
+                        <button class="product-tab-btn" data-filter="promo">Khuyến Mãi</button>
+                    </div>
+                </div>
+                <div class="products-grid-container">
+                    <div id="homepage-product-grid" class="products-grid">
+                    </div>
+                    <div id="homepage-spinner" class="spinner-overlay hidden"
+                        style="position: absolute; border-radius: 12px;">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="brands-section fade-in-element">
+            <div class="container">
+                <h2 class="section-title">Thương Hiệu Hàng Đầu</h2>
+
+                <div class="brands-grid">
+                    <div class="brand-logo"><img src="images/brands/yonex-logo.png" alt="Yonex Logo"></div>
+                    <div class="brand-logo"><img src="images/brands/lining-logo.png" alt="Lining Logo"></div>
+                    <div class="brand-logo"><img src="images/brands/victor-logo.png" alt="Victor Logo"></div>
+                    <div class="brand-logo"><img src="images/brands/mizuno-logo.png" alt="Mizuno Logo"></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="blog-section fade-in-element">
+            <div class="container">
+                <h2 class="section-title">Góc Tư Vấn & Tin Tức</h2>
+                <div class="blog-grid">
+                    <article class="blog-post-card">
+                        <a href="https://shopvnb.com/top-5-cac-cay-vot-cau-long-tot-gia-re-den-tu-cac-thuong-hieu-hang-dau-tren-thi-truong-hien-nay.html"
+                            class="blog-post-image"><img src="images/blog/blog1.png" alt="Blog post 1"></a>
+                        <div class="blog-post-content">
+                            <span class="blog-post-category">Tư vấn chọn vợt</span>
+                            <h3 class="blog-post-title"><a
+                                    href="https://shopvnb.com/top-5-cac-cay-vot-cau-long-tot-gia-re-den-tu-cac-thuong-hieu-hang-dau-tren-thi-truong-hien-nay.html">Top
+                                    5 các cây vợt cầu lông tốt giá rẻ đến từ các thương hiệu hàng đầu trên thị trường
+                                    hiện nay</a>
+                            </h3>
+                            <p class="blog-post-excerpt">Dành cho những ai yêu thích cầu lông nhưng chưa biết chọn vợt
+                                nào phù hợp. Bài viết này sẽ giúp bạn tìm ra
+                                những "vũ khí" bạn không thể bỏ qua...</p>
+                            <a href="https://shopvnb.com/top-5-cac-cay-vot-cau-long-tot-gia-re-den-tu-cac-thuong-hieu-hang-dau-tren-thi-truong-hien-nay.html"
+                                class="read-more-link">Đọc thêm →</a>
+                        </div>
+                    </article>
+                    <article class="blog-post-card">
+                        <a href="https://youtu.be/_cQpUs8ut0s?si=cvKKUyhlu2LJWNKy" class="blog-post-image"><img
+                                src="images/blog/blog2.png" alt="Blog post 2"></a>
+                        <div class="blog-post-content">
+                            <span class="blog-post-category">Kỹ thuật</span>
+                            <h3 class="blog-post-title"><a href="https://youtu.be/_cQpUs8ut0s?si=cvKKUyhlu2LJWNKy">Hướng
+                                    Dẫn Kỹ Thuật Smash (Đập Cầu) Đúng Cách</a>
+                            </h3>
+                            <p class="blog-post-excerpt">Cải thiện uy lực và độ chính xác cho cú đập của bạn với những
+                                hướng dẫn chi tiết từ chuyên gia.</p>
+                            <a href="https://cabasports.vn/goc-chia-se/ky-thuat-cau-long/cach-smash-cau-long-manh-dung-ky-thuat/"
+                                class="read-more-link">Đọc thêm →</a>
+                        </div>
+                    </article>
+                    <article class="blog-post-card">
+                        <a href="https://shopvnb.com/huong-dan-cach-ve-sinh-bao-quan-giay-cau-long-luon-nhu-moi-cho-vot-thu.html"
+                            class="blog-post-image"><img src="/images/blog/blog3.png" alt="Blog post 3"></a>
+                        <div class="blog-post-content">
+                            <span class="blog-post-category">Bảo quản</span>
+                            <h3 class="blog-post-title"><a
+                                    href="https://shopvnb.com/huong-dan-cach-ve-sinh-bao-quan-giay-cau-long-luon-nhu-moi-cho-vot-thu.html">Mẹo
+                                    Bảo Quản Vợt & Giày Để Tăng Tuổi Thọ</a></h3>
+                            <p class="blog-post-excerpt">Những dụng cụ đắt tiền cần được chăm sóc đúng cách. Hãy cùng
+                                tìm hiểu các mẹo hữu ích nhé!</p>
+                            <a href="https://shopvnb.com/huong-dan-cach-ve-sinh-bao-quan-giay-cau-long-luon-nhu-moi-cho-vot-thu.html"
+                                class="read-more-link">Đọc thêm →</a>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script type="module" src="/js/main.js"></script>
+
+
 </body>
+
 </html>

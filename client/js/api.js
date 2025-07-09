@@ -1,20 +1,59 @@
-// Sứ Giả Giao Tiếp với Server -Trừu tượng hóa-Xử lý lỗi chung
+// ===== File: client/js/api.js (PHIÊN BẢN HOÀN CHỈNH - ĐÃ XỬ LÝ LỖI TOKEN) =====
 
 const API_BASE_URL = '/api';
 
 async function request(endpoint, options = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
-    const response = await fetch(url, options);
+    
+    const config = {
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers,
+        },
+    };
+
+    const response = await fetch(url, config);
+
+    // =======================================================================
+    // SỬA LỖI Ở ĐÂY: TỰ ĐỘNG XỬ LÝ KHI TOKEN HẾT HẠN (LỖI 401)
+    // =======================================================================
+    if (response.status === 401) {
+        // Token không hợp lệ hoặc đã hết hạn
+        // 1. Xóa thông tin đăng nhập cũ trong localStorage
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        
+        // 2. Thông báo cho người dùng
+        alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+        
+        // 3. Tải lại trang để đưa người dùng về trang chủ
+        window.location.href = '/index.html';
+        
+        // 4. Dừng việc thực thi và ném ra lỗi để không xử lý các logic phía sau
+        throw new Error('Unauthorized');
+    }
+    // =======================================================================
+    // KẾT THÚC PHẦN SỬA LỖI
+    // =======================================================================
+
     if (!response.ok) {
-        const errorData = await response.json();
+        let errorData;
+        try {
+            errorData = await response.json();
+        } catch (e) {
+            const text = await response.text();
+            errorData = { message: text || 'An unknown error occurred' };
+        }
         throw new Error(errorData.message || 'Something went wrong');
     }
-    // Handle cases where response might be empty (e.g., DELETE request)
-    const contentType = response.headers.get("content-type");
-    if (contentType && contentType.indexOf("application/json") !== -1) {
-        return response.json();
-    }
-    return {};
+
+    const text = await response.text();
+    // Xử lý trường hợp response không có body (ví dụ: DELETE request)
+    if (!text) return {}; 
+    
+    // Chỉ parse JSON nếu có nội dung
+    return JSON.parse(text);
 }
 
 // Product APIs
@@ -24,27 +63,142 @@ export const fetchRelatedProducts = (id) => request(`/products/${id}/related`);
 export const submitReview = (productId, reviewData, token) => {
     return request(`/products/${productId}/reviews`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-        },
+        headers: { 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(reviewData)
     });
 };
+export const createProduct = (productData, token) => {
+    return request('/products', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify(productData)
+    });
+};
+export const updateProduct = (id, productData, token) => {
+    return request(`/products/${id}`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify(productData)
+    });
+};
+export const deleteProduct = (id, token) => {
+    return request(`/products/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+};
+
+// Brand APIs
+export const fetchBrands = () => request(`/brands`);
+export const createBrand = (brandData, token) => request('/brands', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${token}` },
+    body: JSON.stringify(brandData)
+});
+export const updateBrand = (id, brandData, token) => request(`/brands/${id}`, {
+    method: 'PUT',
+    headers: { 'Authorization': `Bearer ${token}` },
+    body: JSON.stringify(brandData)
+});
+export const deleteBrand = (id, token) => request(`/brands/${id}`, {
+    method: 'DELETE',
+    headers: { 'Authorization': `Bearer ${token}` }
+});
+
+// Category APIs
+export const fetchCategories = () => request(`/categories`);
+export const createCategory = (categoryData, token) => request('/categories', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${token}` },
+    body: JSON.stringify(categoryData)
+});
+export const updateCategory = (id, categoryData, token) => request(`/categories/${id}`, {
+    method: 'PUT',
+    headers: { 'Authorization': `Bearer ${token}` },
+    body: JSON.stringify(categoryData)
+});
+export const deleteCategory = (id, token) => request(`/categories/${id}`, {
+    method: 'DELETE',
+    headers: { 'Authorization': `Bearer ${token}` }
+});
 
 // User APIs
 export const loginUser = (credentials) => {
     return request('/users/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials)
     });
 };
-
 export const registerUser = (userData) => {
     return request('/users/register', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData)
+    });
+};
+export const updateUserProfile = (userData, token) => {
+    return request('/users/profile', {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify(userData)
+    });
+};
+export const checkFirstOrderDiscount = (token) => {
+    return request('/users/check-discount', {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+};
+// Order APIs
+export const createOrder = (orderData, token) => {
+    return request('/orders', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify(orderData)
+    });
+};
+export const fetchMyOrders = (token) => {
+    return request('/orders/myorders', {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+};
+export const fetchOrderById = (id, token) => {
+    return request(`/orders/${id}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+};
+
+// Dashboard API
+export const fetchDashboardStats = (token) => {
+    return request(`/dashboard/stats`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+};
+
+// ADMIN APIs
+export const fetchAllUsers = (token, queryParams = '') => {
+    return request(`/users?${queryParams}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+};
+export const getUserById = (id, token) => {
+    return request(`/users/${id}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+};
+export const deleteUser = (id, token) => {
+    return request(`/users/${id}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+};
+export const fetchAllOrders = (token, queryParams = '') => {
+    return request(`/orders?${queryParams}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+};
+export const updateUserByAdmin = (id, userData, token) => {
+    return request(`/users/${id}`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${token}` },
         body: JSON.stringify(userData)
     });
 };

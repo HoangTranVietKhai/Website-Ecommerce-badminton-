@@ -3,53 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sản Phẩm - UMT Instruments</title>
-    <link rel="stylesheet" href="/style.css">
+    <title>Sản Phẩm - SportStore</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.css">
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body class="products-page">
-    <!-- Header sẽ được chèn bởi JS -->
-
     <main class="container">
-        <div class="page-header fade-in-element">
-            <h1 id="page-main-title">Tất Cả Sản Phẩm</h1>
+        <div class="breadcrumb">
+            <a href="/index.html">Trang chủ</a> / <span>Cửa hàng</span>
         </div>
+        
+        <!-- ++ THAY ĐỔI: Layout trang sản phẩm giờ chỉ còn 1 cột ++ -->
+        <div class="products-page-content fade-in-element">
+            
+            <!-- ++ XÓA HOÀN TOÀN KHỐI <aside> TỪ ĐÂY ++ -->
 
-        <!-- Các thẻ lọc danh mục con -->
-        <div id="category-tags-container" class="category-tags-container fade-in-element"></div>
-
-        <div class="products-page-layout">
-            <aside class="products-sidebar fade-in-element" style="--delay: 0.2s;">
-                <div class="filter-group">
-                    <h3>Lọc theo</h3>
-                    <label for="brand-filter">Thương Hiệu:</label>
-                    <select id="brand-filter">
-                        <option value="all">Tất cả thương hiệu</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Lọc theo giá:</label>
-                    <div id="price-slider"></div>
-                    <div id="price-slider-values" style="margin-top: 10px; text-align: center;">
-                        <span id="price-min-value"></span> - <span id="price-max-value"></span>
+            <section class="product-listing-v2">
+                <div class="listing-header">
+                    <h1 class="page-title">Cửa Hàng</h1>
+                    <div class="listing-controls">
+                        <button id="open-filter-btn" class="action-btn">
+                            <i class="fas fa-filter" style="margin-right: 8px;"></i>
+                            Bộ lọc
+                        </button>
+                        <span id="product-count-display"></span>
+                        <select id="sort-by-filter" class="sort-by-select">
+                            <option value="newest">Mới nhất</option>
+                            <option value="price_asc">Giá: Tăng dần</option>
+                            <option value="price_desc">Giá: Giảm dần</option>
+                            <option value="rating_desc">Đánh giá cao</option>
+                        </select>
                     </div>
                 </div>
-            </aside>
-            
-            <section class="product-listing">
-                <p id="product-count-display"></p>
-                <div class="product-grid">
-                    <!-- JS sẽ render sản phẩm vào đây -->
+
+                <div id="active-filters-container" class="active-filters-container"></div>
+                
+                <div id="product-grid-wrapper" style="position: relative; min-height: 400px;">
+                    <div id="product-grid-container" class="products-grid-v2"></div>
+                    <div id="spinner-overlay" class="spinner-overlay hidden">
+                        <div class="spinner"></div>
+                    </div>
                 </div>
-                <p id="no-products-found-detailed" class="no-products-message" style="display: none;">Không có sản phẩm nào phù hợp.</p>
+
+                <div id="no-products-found-detailed" class="no-products-message" style="display: none;">
+                    <i class="fas fa-search" style="font-size: 3rem; color: var(--color-border); margin-bottom: 1rem;"></i>
+                    <h4>Không tìm thấy sản phẩm phù hợp</h4>
+                    <p>Vui lòng thử lại với bộ lọc khác.</p>
+                </div>
+                <div id="pagination-container" class="pagination-container"></div>
             </section>
         </div>
     </main>
-
-    <!-- Footer và Modals sẽ được chèn bởi JS -->
-
-    <!-- QUAN TRỌNG: Tải thư viện noUiSlider TRƯỚC khi chạy main.js -->
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.js"></script>
     <script type="module" src="/js/main.js"></script>
 </body>

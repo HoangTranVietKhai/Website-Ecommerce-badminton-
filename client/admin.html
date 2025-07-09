@@ -3,269 +3,643 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - UMT Instruments</title>
+    <title>Admin Dashboard - SportStore</title>
     <link rel="stylesheet" href="/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --admin-sidebar-bg: #2c3e50;
+            --admin-sidebar-text: #ecf0f1;
+            --admin-sidebar-active-bg: #34495e;
+            --admin-sidebar-hover-bg: #3b5368;
+            --admin-sidebar-heading: #95a5a6;
+        }
         body.admin-page { display: block; }
         .admin-layout { display: flex; min-height: 100vh; }
-        .admin-sidebar { width: 250px; background-color: var(--color-dark-bg); color: #fff; padding: 2rem 1.5rem; flex-shrink: 0; }
-        .admin-sidebar h2 { color: #fff; margin-bottom: 2rem; }
-        .admin-nav a { display: block; color: rgba(255,255,255,0.8); padding: 0.8rem; border-radius: var(--border-radius); transition: all 0.2s; text-decoration: none; margin-bottom: 0.5rem; }
-        .admin-nav a:hover { background-color: rgba(255,255,255,0.1); }
-        .admin-nav a.active { background-color: var(--color-accent); color: var(--color-dark-bg); font-weight: 600; }
-        .admin-main-content { flex-grow: 1; padding: 2rem; }
+        .admin-sidebar { 
+            width: 260px; 
+            background-color: var(--admin-sidebar-bg); 
+            color: var(--admin-sidebar-text); 
+            padding: 1.5rem 1rem; 
+            flex-shrink: 0; 
+            transition: width 0.3s ease;
+        }
+        .admin-sidebar-header {
+            color: #fff;
+            margin-bottom: 2rem;
+            padding: 0 0.5rem;
+        }
+        .admin-sidebar-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        .admin-nav .nav-group-heading {
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--admin-sidebar-heading);
+            padding: 1.5rem 0.8rem 0.5rem;
+            letter-spacing: 0.5px;
+        }
+        .admin-nav .nav-link { 
+            display: flex; 
+            align-items: center;
+            gap: 0.8rem;
+            color: var(--admin-sidebar-text); 
+            padding: 0.8rem; 
+            border-radius: 8px; 
+            transition: all 0.2s; 
+            text-decoration: none; 
+            margin-bottom: 0.25rem; 
+            font-weight: 500;
+        }
+        .admin-nav .nav-link i {
+            width: 20px;
+            text-align: center;
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+        .admin-nav .nav-link:hover { 
+            background-color: var(--admin-sidebar-hover-bg); 
+            color: #fff; 
+        }
+        .admin-nav .nav-link.active {
+            background-color: var(--admin-sidebar-active-bg);
+            color: #fff;
+            font-weight: 600;
+        }
+        .admin-main-content { flex-grow: 1; padding: 2rem; background-color: var(--color-background-light); position: relative; }
+        .admin-main-content .content-loader {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            display: none;
+        }
+        .admin-main-content .content-loader.active { display: block; }
         .admin-main-content h1 { border-bottom: 1px solid var(--color-border); padding-bottom: 1rem; margin-bottom: 2rem; }
         .protected-content { display: none; }
-        .product-table { width: 100%; border-collapse: collapse; margin-top: 2rem; }
-        .product-table th, .product-table td { border: 1px solid var(--color-border); padding: 0.8rem; text-align: left; vertical-align: middle; }
-        .product-table th { background-color: #f9f9f9; }
-        .product-table img { width: 50px; height: 50px; object-fit: cover; border-radius: 4px; }
-        .product-table .btn { padding: 0.4rem 0.8rem; font-size: 0.8rem; margin-right: 5px; cursor: pointer; }
-        .btn.edit-btn { background-color: #3498db; color: #fff; border-color: #3498db; }
-        .btn.delete-btn { background-color: #e74c3c; color: #fff; border-color: #e74c3c; }
+        .table-wrapper { overflow-x: auto; }
+        .product-table { width: 100%; border-collapse: collapse; margin-top: 1rem; background-color: #fff; box-shadow: var(--shadow-main); border-radius: 12px; overflow: hidden; font-size: 0.9rem; }
+        .product-table th, .product-table td { padding: 0.8rem 1rem; text-align: left; vertical-align: middle; border-bottom: 1px solid var(--color-border); }
+        .product-table th { background-color: #f9f9f9; font-family: var(--font-main); font-weight: 600; }
+        .product-table img { width: 50px; height: 50px; object-fit: cover; border-radius: 8px; }
+        .product-table .btn { padding: 0.4rem 0.8rem; font-size: 0.8rem; margin-right: 5px; cursor: pointer; border: none; border-radius: 6px; transition: background-color 0.2s; }
+        .btn.edit-btn { background-color: #3498db; color: #fff; }
+        .btn.edit-btn:hover { background-color: #2980b9; }
+        .btn.delete-btn { background-color: #e74c3c; color: #fff; }
+        .btn.delete-btn:hover { background-color: #c0392b; }
+        .add-form-container { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
+        .add-form-container input { padding: 0.6rem; flex-grow: 1; border: 1px solid var(--color-border); border-radius: 8px; }
+        #product-modal .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        #product-modal .full-width { grid-column: 1 / -1; }
+        #product-modal .form-group label { font-weight: 600; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+        .stat-card { background: #fff; padding: 1.5rem; border-radius: 12px; box-shadow: var(--shadow-subtle); }
+        .stat-card h4 { font-size: 1rem; color: #555; }
+        .stat-card p { font-size: 2rem; font-weight: bold; }
+        .stat-card p#stats-total-sales { color: var(--color-primary-start); }
+        .status-badge { display: inline-block; padding: 0.2em 0.6em; font-size: 0.8rem; font-weight: 600; border-radius: 10px; }
+        .status-badge.paid, .status-badge.delivered { background-color: #d4edda; color: #155724; }
+        .status-badge.not-paid, .status-badge.not-delivered { background-color: #fff3cd; color: #856404; }
+        .pagination-container { display: flex; justify-content: center; align-items: center; gap: 0.5rem; padding: 2rem 0; }
+        .pagination-btn { border: 1px solid var(--color-border); background-color: #fff; color: var(--color-text-dark); padding: 0.5rem 1rem; cursor: pointer; border-radius: 8px; transition: all 0.3s ease; font-size: 1rem; min-width: 40px; }
+        .pagination-btn:hover:not(:disabled) { background-color: var(--color-background-light); border-color: var(--color-primary-start); }
+        .pagination-btn.active { background-color: var(--color-primary-start); color: #fff; border-color: var(--color-primary-start); font-weight: bold; cursor: default; }
+        .pagination-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .pagination-dots { padding: 0.5rem; }
     </style>
 </head>
 <body class="admin-page">
     
-    <div id="admin-auth-layer">
+    <div id="admin-auth-layer" style="padding: 2rem; text-align: center; font-size: 1.2rem;">
         <p>Đang kiểm tra quyền truy cập...</p>
     </div>
 
     <div class="admin-layout protected-content">
         <aside class="admin-sidebar">
-            <h2>UMT Admin</h2>
+            <div class="admin-sidebar-header">
+                <h2>SportStore</h2>
+            </div>
             <nav class="admin-nav">
-                <a href="#dashboard" class="nav-link" data-target="dashboard-section">Bảng Điều Khiển</a>
-                <a href="#products" class="nav-link active" data-target="products-section">Quản Lý Sản Phẩm</a>
-                <a href="index.html" style="margin-top: 2rem; opacity: 0.7;">Về trang chính</a>
+                <a href="#dashboard" class="nav-link active" data-target="dashboard">
+                    <i class="fas fa-tachometer-alt"></i><span>Bảng Điều Khiển</span>
+                </a>
+
+                <div class="nav-group-heading">Bán Hàng</div>
+                <a href="#orders" class="nav-link" data-target="orders">
+                    <i class="fas fa-file-invoice-dollar"></i><span>Quản Lý Đơn Hàng</span>
+                </a>
+
+                <div class="nav-group-heading">Sản Phẩm</div>
+                <a href="#products" class="nav-link" data-target="products">
+                    <i class="fas fa-box-open"></i><span>Quản Lý Sản Phẩm</span>
+                </a>
+                <a href="#categories" class="nav-link" data-target="categories">
+                     <i class="fas fa-sitemap"></i><span>Quản Lý Danh Mục</span>
+                </a>
+                <a href="#brands" class="nav-link" data-target="brands">
+                    <i class="fas fa-copyright"></i><span>Quản Lý Thương Hiệu</span>
+                </a>
+
+                <div class="nav-group-heading">Khách Hàng</div>
+                <a href="#users" class="nav-link" data-target="users">
+                    <i class="fas fa-users"></i><span>Quản Lý Người Dùng</span>
+                </a>
+                
+                <a href="/index.html" class="nav-link" style="margin-top: 2rem; opacity: 0.7;">
+                     <i class="fas fa-home"></i><span>Về trang chính</span>
+                </a>
             </nav>
         </aside>
 
-        <main class="admin-main-content">
-            <section id="dashboard-section" class="admin-section" style="display: none;">
-                <h1>Bảng Điều Khiển</h1>
-                <p>Chào mừng bạn đến với trang quản trị của UMT Instruments.</p>
-            </section>
-
-            <section id="products-section" class="admin-section">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h1>Quản Lý Sản Phẩm</h1>
-                    <button id="add-product-btn" class="btn primary-btn">Thêm Sản Phẩm Mới</button>
-                </div>
-                <table class="product-table">
-                    <thead>
-                        <tr>
-                            <th>Ảnh</th>
-                            <th>Tên Sản Phẩm</th>
-                            <th>Giá</th>
-                            <th>Thương Hiệu</th>
-                            <th>Hành Động</th>
-                        </tr>
-                    </thead>
-                    <tbody id="product-list-body"></tbody>
-                </table>
-            </section>
+        <main id="admin-main-content" class="admin-main-content">
+            <!-- Spinner loading -->
+            <div class="content-loader spinner-overlay active">
+                <div class="spinner"></div>
+            </div>
+            <!-- Nội dung động sẽ được JS chèn vào đây -->
         </main>
     </div>
 
-    <!-- Modal (cửa sổ pop-up) để Thêm/Sửa sản phẩm -->
-    <div id="product-modal-overlay" class="auth-modal-overlay" style="display: none;"></div>
-    <div id="product-modal" class="auth-modal" style="display: none;">
-        <button id="close-product-modal" class="close-auth-modal">×</button>
+    <div id="product-modal-overlay" class="page-overlay"></div>
+    <div id="product-modal" class="auth-modal" style="display: none; max-width: 800px; max-height: 90vh; overflow-y: auto;">
+       <button id="close-product-modal" class="close-auth-modal">×</button>
         <h3 id="product-modal-title">Thêm Sản Phẩm Mới</h3>
-        <!-- TRONG FILE admin.html, TÌM ĐẾN FORM VÀ THÊM ĐOẠN NÀY -->
+        <form id="product-form" class="auth-form">
+            <input type="hidden" id="product-id">
+            <div class="form-grid">
+                <div class="form-group full-width"><label for="product-name">Tên sản phẩm</label><input type="text" id="product-name" required></div>
+                <div class="form-group"><label for="product-price">Giá bán (VNĐ)</label><input type="number" id="product-price" required></div>
+                <div class="form-group"><label for="product-original-price">Giá gốc</label><input type="number" id="product-original-price"></div>
+                <div class="form-group"><label for="product-brandId">Thương Hiệu</label><select id="product-brandId" required></select></div>
+                <div class="form-group"><label for="product-categoryId">Danh mục</label><select id="product-categoryId" required></select></div>
+                <div class="form-group"><label for="product-countInStock">Tồn kho</label><input type="number" id="product-countInStock" required></div>
+                <div class="form-group full-width"><label for="product-image">Link ảnh chính</label><input type="text" id="product-image" required></div>
+                <div class="form-group full-width"><label for="product-images">Link ảnh phụ (JSON array)</label><textarea id="product-images" rows="2"></textarea></div>
+                <div class="form-group full-width"><label for="product-description">Mô tả ngắn</label><textarea id="product-description" rows="3"></textarea></div>
+                <div class="form-group full-width"><label for="product-fullDescription">Mô tả đầy đủ</label><textarea id="product-fullDescription" rows="5"></textarea></div>
+                <div class="form-group"><label for="product-warranty">Bảo hành</label><input type="text" id="product-warranty"></div>
+                <div class="form-group"><label for="product-youtubeLink">Link Youtube</label><input type="text" id="product-youtubeLink"></div>
+                <div class="form-group full-width"><label for="product-specifications">Thông số (JSON)</label><textarea id="product-specifications" rows="5"></textarea></div>
+                <div class="form-group full-width" style="display: flex; align-items: center; gap: 10px;"><input type="checkbox" id="product-isPromotional" style="width: auto;"><label for="product-isPromotional" style="margin-bottom: 0;">Là sản phẩm khuyến mãi?</label></div>
+            </div>
+            <button type="submit" class="btn primary-btn" style="width: 100%; margin-top: 1.5rem;">Lưu Sản Phẩm</button>
+        </form>
+    </div>
 
-<form id="product-form" class="auth-form">
-    <input type="hidden" id="product-id">
-    <div class="form-group"><label for="product-name">Tên sản phẩm</label><input type="text" id="product-name" required></div>
-    
-    <!-- THÊM MỚI: Form group cho giá gốc -->
-    <div class="form-group"><label for="product-original-price">Giá gốc (VNĐ, điền nếu có giảm giá)</label><input type="number" id="product-original-price"></div>
+    <script type="module">
+        import * as api from './js/api.js';
+        import { formatCurrency, showToast } from './js/utils.js';
 
-    <div class="form-group"><label for="product-price">Giá bán (VNĐ)</label><input type="number" id="product-price" required></div>
-    <div class="form-group"><label for="product-image">Link hình ảnh</label><input type="text" id="product-image" required></div>
-    <!-- ... các form group còn lại giữ nguyên ... -->
-</form>
-
-<!-- SAU ĐÓ, TÌM ĐẾN THẺ SCRIPT Ở CUỐI FILE VÀ CẬP NHẬT 2 HÀM BÊN TRONG -->
-
-<script>
-    // ... code javascript hiện có của bạn ...
-
-    // HÀM 1: CẬP NHẬT openProductModal
-    function openProductModal(product = null) {
-        productForm.reset();
-        if (product) {
-            productModalTitle.textContent = 'Chỉnh Sửa Sản Phẩm';
-            productIdInput.value = product._id;
-            document.getElementById('product-name').value = product.name;
-            document.getElementById('product-price').value = product.price;
-            // THÊM DÒNG NÀY
-            document.getElementById('product-original-price').value = product.originalPrice || '';
-            document.getElementById('product-image').value = product.image;
-            document.getElementById('product-brand').value = product.brand;
-            document.getElementById('product-description').value = product.description;
-            document.getElementById('product-isPromotional').checked = product.isPromotional;
-        } else {
-            productModalTitle.textContent = 'Thêm Sản Phẩm Mới';
-            productIdInput.value = '';
-        }
-        productModal.style.display = 'block';
-        productModalOverlay.style.display = 'block';
-    }
-
-    // HÀM 2: CẬP NHẬT EVENT LISTENER CỦA productForm
-    productForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const id = productIdInput.value;
-        const productData = {
-            name: document.getElementById('product-name').value,
-            price: document.getElementById('product-price').value,
-            // THÊM DÒNG NÀY
-            originalPrice: document.getElementById('product-original-price').value || null,
-            image: document.getElementById('product-image').value,
-            brand: document.getElementById('product-brand').value,
-            description: document.getElementById('product-description').value,
-            isPromotional: document.getElementById('product-isPromotional').checked,
-        };
-        // ... code gửi request giữ nguyên ...
-    });
-
-    // ... các code còn lại giữ nguyên ...
-</script>
-    <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // === AUTHENTICATION CHECK ===
             const user = JSON.parse(localStorage.getItem('user'));
             const token = localStorage.getItem('token');
-            
             if (!user || user.role !== 'admin' || !token) {
-                document.getElementById('admin-auth-layer').innerHTML = '<p style="color: red;">Truy cập bị từ chối. Bạn không phải là Admin.</p>';
+                document.getElementById('admin-auth-layer').innerHTML = '<p style="color: red;">Truy cập bị từ chối. Bạn không phải là Admin hoặc chưa đăng nhập.</p>';
                 setTimeout(() => { window.location.href = 'index.html'; }, 2000);
                 return;
             }
-
             document.getElementById('admin-auth-layer').style.display = 'none';
             document.querySelector('.protected-content').style.display = 'flex';
-            
-            const productListBody = document.getElementById('product-list-body');
+
+            // === DOM ELEMENTS ===
+            const mainContentContainer = document.getElementById('admin-main-content');
             const productModal = document.getElementById('product-modal');
             const productModalOverlay = document.getElementById('product-modal-overlay');
             const productForm = document.getElementById('product-form');
-            const productModalTitle = document.getElementById('product-modal-title');
-           async function fetchAndRenderProducts() {
-    try {
-        const res = await fetch(`${API_URL}/products`);
-        const data = await res.json(); // Lấy cả object data
-        const products = data.products; // Lấy ra mảng products từ object
 
-        productListBody.innerHTML = '';
-        products.forEach(p => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td><img src="${p.image}" alt="${p.name}"></td>
-                <td>${p.name}</td>
-                <td>${p.price.toLocaleString('vi-VN')} VNĐ</td>
-                <td>${p.brand}</td>
-                <td>
-                    <button class="btn edit-btn" data-id="${p._id}">Sửa</button>
-                    <button class="btn delete-btn" data-id="${p._id}">Xóa</button>
-                </td>
-            `;
-            productListBody.appendChild(row);
-        });
-    } catch (error) { console.error('Lỗi khi lấy sản phẩm:', error); }
-}
-            function openProductModal(product = null) {
-                productForm.reset();
-                if (product) {
-                    productModalTitle.textContent = 'Chỉnh Sửa Sản Phẩm';
-                    productIdInput.value = product._id;
-                    document.getElementById('product-name').value = product.name;
-                    document.getElementById('product-price').value = product.price;
-                    document.getElementById('product-image').value = product.image;
-                    document.getElementById('product-brand').value = product.brand;
-                    document.getElementById('product-description').value = product.description;
-                    document.getElementById('product-isPromotional').checked = product.isPromotional;
-                } else {
-                    productModalTitle.textContent = 'Thêm Sản Phẩm Mới';
-                    productIdInput.value = '';
+            // === STATE ===
+            let currentView = null;
+
+            // === TEMPLATE LOADER ===
+            async function loadTemplateIntoMain(viewName) {
+                const loader = mainContentContainer.querySelector('.content-loader');
+                if(loader) loader.classList.add('active');
+                
+                try {
+                    const response = await fetch(`/templates/admin/${viewName}.html`);
+                    if (!response.ok) throw new Error(`Không thể tải template: ${viewName}`);
+                    mainContentContainer.innerHTML = await response.text();
+                    currentView = viewName;
+                } catch (error) {
+                    mainContentContainer.innerHTML = `<p style="color:red;">Lỗi tải trang: ${error.message}</p>`;
                 }
+            }
+            
+            // === RENDER FUNCTIONS ===
+            function renderAdminPagination(totalPages, currentPage, containerSelector, targetSection) {
+                const container = document.querySelector(containerSelector);
+                if (!container) return;
+                container.innerHTML = '';
+                if (totalPages <= 1) return;
+                
+                const createButton = (text, page, isActive = false, isDisabled = false) => {
+                    const btn = document.createElement('button');
+                    btn.innerHTML = text;
+                    btn.className = 'pagination-btn';
+                    if (isActive) btn.classList.add('active');
+                    btn.disabled = isDisabled;
+                    btn.dataset.page = page;
+                    btn.dataset.target = targetSection;
+                    return btn;
+                };
+
+                container.appendChild(createButton('«', currentPage - 1, false, currentPage === 1));
+                const pagesToShow = [];
+                if (totalPages <= 7) {
+                    for (let i = 1; i <= totalPages; i++) pagesToShow.push(i);
+                } else {
+                    pagesToShow.push(1);
+                    if (currentPage > 3) pagesToShow.push('...');
+                    for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) pagesToShow.push(i);
+                    if (currentPage < totalPages - 2) pagesToShow.push('...');
+                    pagesToShow.push(totalPages);
+                }
+                pagesToShow.forEach(p => {
+                    if (p === '...') {
+                        const span = document.createElement('span'); span.textContent = '...'; span.className = 'pagination-dots'; container.appendChild(span);
+                    } else { container.appendChild(createButton(p, p, p === currentPage)); }
+                });
+                container.appendChild(createButton('»', currentPage + 1, false, currentPage === totalPages));
+            }
+
+            async function fetchAdminStats() {
+                try {
+                    const stats = await api.fetchDashboardStats(token);
+                    document.getElementById('stats-total-sales').textContent = formatCurrency(stats.totalSales);
+                    document.getElementById('stats-total-orders').textContent = stats.totalOrders.toLocaleString('vi-VN');
+                    document.getElementById('stats-total-users').textContent = stats.totalUsers.toLocaleString('vi-VN');
+                    document.getElementById('stats-total-products').textContent = stats.totalProducts.toLocaleString('vi-VN');
+                } catch (error) {
+                    if (error.message !== 'Unauthorized') {
+                        document.querySelectorAll('.stat-card p').forEach(p => p.textContent = 'Lỗi');
+                    }
+                }
+            }
+
+            async function fetchAndRenderProducts(page = 1) {
+                const productListBody = document.getElementById('product-list-body');
+                if (!productListBody) return;
+                try {
+                    const data = await api.fetchProducts(`page=${page}&pageSize=10`);
+                    if (data && data.products) {
+                        productListBody.innerHTML = data.products.map(p => `
+                            <tr>
+                                <td><img src="${p.image || '/images/placeholder.png'}" alt="${p.name}"></td>
+                                <td>${p.name}</td><td>${formatCurrency(p.price)}</td><td>${p.brand || 'N/A'}</td><td>${p.countInStock}</td>
+                                <td><button class="btn edit-btn product-edit-btn" data-id="${p.id}">Sửa</button><button class="btn delete-btn product-delete-btn" data-id="${p.id}">Xóa</button></td>
+                            </tr>`).join('');
+                        renderAdminPagination(data.pages, data.page, '#products-pagination-container', 'products');
+                    }
+                } catch (error) {
+                    if (error.message !== 'Unauthorized' && productListBody) {
+                        productListBody.innerHTML = `<tr><td colspan="6" style="text-align: center;">${error.message}</td></tr>`;
+                    }
+                }
+            }
+            
+            async function fetchAndRenderCategories() {
+                const categoryListBody = document.getElementById('category-list-body');
+                if (!categoryListBody) return;
+                try {
+                    const categories = await api.fetchCategories();
+                    categoryListBody.innerHTML = categories.map(c => `
+                        <tr data-id="${c.id}">
+                            <td>${c.id}</td><td class="editable-name">${c.name}</td><td>${c.productCount}</td>
+                            <td><button class="btn edit-btn category-edit-btn">Sửa</button><button class="btn delete-btn category-delete-btn" data-id="${c.id}">Xóa</button></td>
+                        </tr>`).join('');
+                } catch (error) {
+                    if (error.message !== 'Unauthorized' && categoryListBody) {
+                        categoryListBody.innerHTML = `<tr><td colspan="4" style="text-align: center;">${error.message}</td></tr>`;
+                    }
+                }
+            }
+
+            async function fetchAndRenderBrands() {
+                const brandListBody = document.getElementById('brand-list-body');
+                if (!brandListBody) return;
+                try {
+                    const brands = await api.fetchBrands();
+                    brandListBody.innerHTML = brands.map(b => `
+                        <tr data-id="${b.id}">
+                            <td>${b.id}</td><td class="editable-name">${b.name}</td><td>${b.productCount}</td>
+                            <td><button class="btn edit-btn brand-edit-btn">Sửa</button><button class="btn delete-btn brand-delete-btn" data-id="${b.id}">Xóa</button></td>
+                        </tr>`).join('');
+                } catch (error) {
+                    if (error.message !== 'Unauthorized' && brandListBody) {
+                        brandListBody.innerHTML = `<tr><td colspan="4" style="text-align: center;">${error.message}</td></tr>`;
+                    }
+                }
+            }
+            
+            async function fetchAndRenderUsers(page = 1) {
+                const userListBody = document.getElementById('user-list-body');
+                if (!userListBody) return;
+                try {
+                    const data = await api.fetchAllUsers(token, `page=${page}&pageSize=10`);
+                    userListBody.innerHTML = data.users.map(u => `
+                        <tr>
+                            <td>${u.id}</td><td><a href="/order.html?userId=${u.id}" target="_blank">${u.name}</a></td><td>${u.email}</td>
+                            <td><span class="status-badge ${u.role === 'admin' ? 'paid' : ''}">${u.role}</span></td>
+                            <td><button class="btn edit-btn user-edit-role-btn" data-id="${u.id}" data-role="${u.role}" ${u.id === user.id ? 'disabled' : ''}>Sửa vai trò</button><button class="btn delete-btn user-delete-btn" data-id="${u.id}" ${u.id === user.id ? 'disabled' : ''}>Xóa</button></td>
+                        </tr>`).join('');
+                    renderAdminPagination(data.pages, data.page, '#users-pagination-container', 'users');
+                } catch (error) {
+                    if (error.message !== 'Unauthorized' && userListBody) {
+                        userListBody.innerHTML = `<tr><td colspan="5" style="text-align: center;">${error.message}</td></tr>`;
+                    }
+                }
+            }
+            
+            async function fetchAndRenderOrders(page = 1) {
+                const orderListBody = document.getElementById('order-list-body');
+                if (!orderListBody) return;
+                try {
+                    const keyword = document.getElementById('order-search-input').value;
+                    const status = document.getElementById('order-status-filter').value;
+                    let queryParams = `page=${page}&pageSize=10`;
+                    if (keyword) queryParams += `&keyword=${encodeURIComponent(keyword)}`;
+                    if (status) queryParams += `&status=${status}`;
+                    const data = await api.fetchAllOrders(token, queryParams);
+                    orderListBody.innerHTML = data.orders.map(o => `
+                        <tr>
+                            <td>#${o.id}</td><td>${o.userName}</td><td>${new Date(o.createdAt).toLocaleDateString('vi-VN')}</td><td>${formatCurrency(o.totalPrice)}</td>
+                            <td><span class="status-badge ${o.isPaid ? 'paid' : 'not-paid'}">${o.isPaid ? 'Đã TT' : 'Chưa TT'}</span></td>
+                            <td><span class="status-badge ${o.isDelivered ? 'delivered' : 'not-delivered'}">${o.isDelivered ? 'Đã giao' : 'Xử lý'}</span></td>
+                            <td><a href="/order.html?id=${o.id}" class="btn edit-btn" target="_blank">Chi tiết</a></td>
+                        </tr>`).join('');
+                    renderAdminPagination(data.pages, data.page, '#orders-pagination-container', 'orders');
+                } catch (error) {
+                    if (error.message !== 'Unauthorized' && orderListBody) {
+                        orderListBody.innerHTML = `<tr><td colspan="7" style="text-align: center;">${error.message}</td></tr>`;
+                    }
+                }
+            }
+
+            // === MODAL & FORM HANDLERS (IMPROVED VERSION) ===
+            async function openProductModal(product = null) {
+                productForm.reset();
+                document.getElementById('product-modal-title').textContent = 'Đang tải...';
+                document.getElementById('product-id').value = '';
+                
+                const brandSelect = document.getElementById('product-brandId');
+                const categorySelect = document.getElementById('product-categoryId');
+                
+                brandSelect.innerHTML = '<option value="">Đang tải thương hiệu...</option>';
+                categorySelect.innerHTML = '<option value="">Đang tải danh mục...</option>';
+                brandSelect.disabled = true;
+                categorySelect.disabled = true;
+
+                productModalOverlay.classList.add('is-visible');
                 productModal.style.display = 'block';
-                productModalOverlay.style.display = 'block';
+                setTimeout(() => productModal.style.opacity = 1, 10);
+                
+                try {
+                    const [brands, categories] = await Promise.all([
+                        api.fetchBrands(), 
+                        api.fetchCategories()
+                    ]);
+
+                    brandSelect.innerHTML = '<option value="">-- Chọn thương hiệu --</option>' + brands.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+                    categorySelect.innerHTML = '<option value="">-- Chọn danh mục --</option>' + categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+                    
+                    brandSelect.disabled = false;
+                    categorySelect.disabled = false;
+                    
+                    if (product) {
+                        document.getElementById('product-modal-title').textContent = 'Chỉnh Sửa Sản Phẩm';
+                        document.getElementById('product-id').value = product.id;
+                        document.getElementById('product-name').value = product.name || '';
+                        document.getElementById('product-price').value = product.price || 0;
+                        document.getElementById('product-original-price').value = product.originalPrice || '';
+                        document.getElementById('product-countInStock').value = product.countInStock || 0;
+                        document.getElementById('product-image').value = product.image || '';
+                        document.getElementById('product-images').value = typeof product.images === 'object' ? JSON.stringify(product.images, null, 2) : (product.images || '[]');
+                        document.getElementById('product-description').value = product.description || '';
+                        document.getElementById('product-fullDescription').value = product.fullDescription || '';
+                        document.getElementById('product-warranty').value = product.warranty || '';
+                        document.getElementById('product-youtubeLink').value = product.youtubeLink || '';
+                        document.getElementById('product-specifications').value = typeof product.specifications === 'object' ? JSON.stringify(product.specifications, null, 2) : (product.specifications || '[]');
+                        document.getElementById('product-isPromotional').checked = product.isPromotional || false;
+                        brandSelect.value = product.brandId || '';
+                        categorySelect.value = product.categoryId || '';
+                    } else { 
+                        document.getElementById('product-modal-title').textContent = 'Thêm Sản Phẩm Mới';
+                        document.getElementById('product-id').value = ''; 
+                    }
+                } catch(error) { 
+                    if (error.message !== 'Unauthorized') {
+                        showToast('Lỗi khi tải dữ liệu cho form: ' + error.message, 'error'); 
+                    }
+                    closeProductModal(); 
+                }
             }
 
             function closeProductModal() {
-                productModal.style.display = 'none';
-                productModalOverlay.style.display = 'none';
+                 productModal.style.opacity = 0;
+                 setTimeout(() => { 
+                    productModalOverlay.classList.remove('is-visible'); 
+                    productModal.style.display = 'none'; 
+                }, 300);
             }
-            
-            productForm.addEventListener('submit', async (e) => {
+
+            async function onProductFormSubmit(e) {
                 e.preventDefault();
-                const id = productIdInput.value;
-                const productData = {
-                    name: document.getElementById('product-name').value,
-                    price: document.getElementById('product-price').value,
-                    image: document.getElementById('product-image').value,
-                    brand: document.getElementById('product-brand').value,
-                    description: document.getElementById('product-description').value,
-                    isPromotional: document.getElementById('product-isPromotional').checked,
-                };
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                const originalBtnText = submitBtn.textContent;
+                submitBtn.disabled = true; 
+                submitBtn.textContent = 'Đang lưu...';
                 
-                const method = id ? 'PUT' : 'POST';
-                const url = id ? `${API_URL}/products/${id}` : `${API_URL}/products`;
+                const id = document.getElementById('product-id').value;
+                const originalPriceValue = document.getElementById('product-original-price').value;
+
+                const productData = {
+                    name: document.getElementById('product-name').value.trim(),
+                    price: parseFloat(document.getElementById('product-price').value),
+                    originalPrice: originalPriceValue ? parseFloat(originalPriceValue) : null,
+                    brandId: document.getElementById('product-brandId').value,
+                    categoryId: document.getElementById('product-categoryId').value,
+                    countInStock: parseInt(document.getElementById('product-countInStock').value, 10),
+                    image: document.getElementById('product-image').value.trim(),
+                    images: document.getElementById('product-images').value.trim(),
+                    description: document.getElementById('product-description').value.trim(),
+                    fullDescription: document.getElementById('product-fullDescription').value.trim(),
+                    warranty: document.getElementById('product-warranty').value.trim(),
+                    youtubeLink: document.getElementById('product-youtubeLink').value.trim(),
+                    specifications: document.getElementById('product-specifications').value.trim(),
+                    isPromotional: document.getElementById('product-isPromotional').checked
+                };
+
+                if (!productData.name || !productData.brandId || !productData.categoryId) {
+                    showToast('Vui lòng điền Tên sản phẩm, Thương hiệu và Danh mục.', 'error');
+                    submitBtn.disabled = false; 
+                    submitBtn.textContent = originalBtnText;
+                    return;
+                }
 
                 try {
-                    const res = await fetch(url, {
-                        method: method,
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-                        body: JSON.stringify(productData)
-                    });
-                    if (!res.ok) throw new Error((await res.json()).message);
-                    closeProductModal();
-                    fetchAndRenderProducts();
-                } catch (error) { alert('Lỗi: ' + error.message); }
-            });
-
-            document.body.addEventListener('click', async (e) => {
-                const target = e.target;
-                if (target.id === 'add-product-btn') openProductModal();
-                if (target.id === 'close-product-modal' || target.id === 'product-modal-overlay') closeProductModal();
-                
-                if (target.classList.contains('delete-btn')) {
-                    const id = target.dataset.id;
-                    if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')) {
-                        try {
-                            await fetch(`${API_URL}/products/${id}`, { method: 'DELETE', headers: { 'Authorization': `Bearer ${token}` } });
-                            fetchAndRenderProducts();
-                        } catch (error) { alert('Xóa thất bại!'); }
+                    if (id) { 
+                        await api.updateProduct(id, productData, token); 
+                        showToast('Cập nhật sản phẩm thành công!', 'success'); 
+                    } else { 
+                        await api.createProduct(productData, token); 
+                        showToast('Thêm sản phẩm thành công!', 'success'); 
                     }
+                    closeProductModal();
+                    const currentPage = document.querySelector('#products-pagination-container .active')?.dataset.page || 1;
+                    fetchAndRenderProducts(currentPage);
+                } catch (error) { 
+                    if (error.message !== 'Unauthorized') {
+                        showToast(`Lỗi: ${error.message}`, 'error'); 
+                    }
+                } finally { 
+                    submitBtn.disabled = false; 
+                    submitBtn.textContent = originalBtnText;
                 }
-                
-                if (target.classList.contains('edit-btn')) {
-                    const id = target.dataset.id;
-                    const res = await fetch(`${API_URL}/products/${id}`);
-                    const product = await res.json();
-                    openProductModal(product);
+            }
+            
+            // === EVENT HANDLER & ROUTER ===
+            async function handleViewChange(viewName) {
+                await loadTemplateIntoMain(viewName);
+                switch(viewName) {
+                    case 'dashboard': fetchAdminStats(); break;
+                    case 'products': fetchAndRenderProducts(1); break;
+                    case 'categories': fetchAndRenderCategories(); break;
+                    case 'brands': fetchAndRenderBrands(); break;
+                    case 'users': fetchAndRenderUsers(1); break;
+                    case 'orders': fetchAndRenderOrders(1); break;
                 }
-            });
+            }
 
-            const navLinks = document.querySelectorAll('.admin-nav .nav-link');
-            const sections = document.querySelectorAll('.admin-section');
-            navLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    navLinks.forEach(l => l.classList.remove('active'));
-                    sections.forEach(s => s.style.display = 'none');
-                    link.classList.add('active');
-                    const targetId = link.dataset.target;
-                    document.getElementById(targetId).style.display = 'block';
-                    if (targetId === 'products-section') fetchAndRenderProducts();
+            function setupEventListeners() {
+                document.body.addEventListener('click', async (e) => {
+                    const target = e.target;
+                    const closest = (selector) => target.closest(selector);
+                    
+                    const navLink = closest('.admin-nav .nav-link');
+                    if (navLink && !navLink.href.endsWith('/index.html')) {
+                        e.preventDefault();
+                        const targetView = navLink.dataset.target;
+                        if (currentView !== targetView) {
+                            document.querySelectorAll('.admin-nav .nav-link').forEach(l => l.classList.remove('active'));
+                            navLink.classList.add('active');
+                            window.location.hash = targetView;
+                            handleViewChange(targetView);
+                        }
+                        return;
+                    }
+
+                    if (target.id === 'add-product-btn') { openProductModal(); }
+                    if (target.id === 'close-product-modal' || target.id === 'product-modal-overlay') { closeProductModal(); }
+                    
+                    const editBtn = closest('.product-edit-btn');
+                    if (editBtn) {
+                        editBtn.textContent = '...'; editBtn.disabled = true;
+                        try { const product = await api.fetchProductById(editBtn.dataset.id); openProductModal(product); } 
+                        catch(error) { 
+                            if (error.message !== 'Unauthorized') showToast(`Lỗi: ${error.message}`, 'error'); 
+                        } 
+                        finally { editBtn.textContent = 'Sửa'; editBtn.disabled = false; }
+                    }
+
+                    const deleteProductBtn = closest('.product-delete-btn');
+                    if (deleteProductBtn) {
+                        if (confirm('Xóa sản phẩm này? Thao tác này không thể hoàn tác.')) {
+                            try { 
+                                await api.deleteProduct(deleteProductBtn.dataset.id, token); 
+                                showToast('Xóa thành công'); 
+                                const currentPage = document.querySelector('#products-pagination-container .active')?.dataset.page || 1;
+                                fetchAndRenderProducts(currentPage);
+                                fetchAdminStats(); 
+                            } 
+                            catch (error) { if (error.message !== 'Unauthorized') showToast(`Lỗi: ${error.message}`, 'error'); }
+                        }
+                    }
+
+                    if (target.id === 'add-brand-btn') {
+                        const nameInput = document.getElementById('new-brand-name');
+                        if (!nameInput.value) return showToast('Vui lòng nhập tên thương hiệu', 'error');
+                        try { await api.createBrand({ name: nameInput.value }, token); showToast('Thêm thành công'); nameInput.value = ''; fetchAndRenderBrands(); } catch (error) { if (error.message !== 'Unauthorized') showToast(error.message, 'error'); }
+                    }
+
+                    if (target.id === 'add-category-btn') {
+                        const nameInput = document.getElementById('new-category-name');
+                        if (!nameInput.value) return showToast('Vui lòng nhập tên danh mục', 'error');
+                        try { await api.createCategory({ name: nameInput.value }, token); showToast('Thêm thành công'); nameInput.value = ''; fetchAndRenderCategories(); } catch (error) { if (error.message !== 'Unauthorized') showToast(error.message, 'error'); }
+                    }
+
+                    const editCategoryBtn = closest('.category-edit-btn');
+                    if (editCategoryBtn) {
+                        const row = editCategoryBtn.closest('tr'); const nameCell = row.querySelector('.editable-name');
+                        const newName = prompt('Nhập tên danh mục mới:', nameCell.textContent);
+                        if (newName && newName.trim() !== '' && newName !== nameCell.textContent) {
+                            try { await api.updateCategory(row.dataset.id, { name: newName }, token); showToast('Cập nhật thành công'); fetchAndRenderCategories(); } catch (error) { if (error.message !== 'Unauthorized') showToast(error.message, 'error'); }
+                        }
+                    }
+
+                    const editBrandBtn = closest('.brand-edit-btn');
+                    if (editBrandBtn) {
+                        const row = editBrandBtn.closest('tr'); const nameCell = row.querySelector('.editable-name');
+                        const newName = prompt('Nhập tên thương hiệu mới:', nameCell.textContent);
+                        if (newName && newName.trim() !== '' && newName !== nameCell.textContent) {
+                            try { await api.updateBrand(row.dataset.id, { name: newName }, token); showToast('Cập nhật thành công'); fetchAndRenderBrands(); } catch (error) { if (error.message !== 'Unauthorized') showToast(error.message, 'error'); }
+                        }
+                    }
+                    
+                    const deleteBrandBtn = closest('.brand-delete-btn');
+                    if(deleteBrandBtn) {
+                        if(confirm('Xóa thương hiệu này? Thao tác này không thể hoàn tác và có thể ảnh hưởng đến sản phẩm liên quan.')) {
+                           try { await api.deleteBrand(deleteBrandBtn.dataset.id, token); showToast('Xóa thành công'); fetchAndRenderBrands(); } catch (error) { if (error.message !== 'Unauthorized') showToast(error.message, 'error'); }
+                        }
+                    }
+                    
+                    const deleteCategoryBtn = closest('.category-delete-btn');
+                    if(deleteCategoryBtn) {
+                         if(confirm('Xóa danh mục này? Thao tác này không thể hoàn tác và có thể ảnh hưởng đến sản phẩm liên quan.')) {
+                           try { await api.deleteCategory(deleteCategoryBtn.dataset.id, token); showToast('Xóa thành công'); fetchAndRenderCategories(); } catch (error) { if (error.message !== 'Unauthorized') showToast(error.message, 'error'); }
+                        }
+                    }
+
+                    const paginationBtn = closest('.pagination-btn');
+                    if (paginationBtn && !paginationBtn.disabled && !paginationBtn.classList.contains('active')) {
+                        const page = Number(paginationBtn.dataset.page);
+                        const targetSection = paginationBtn.dataset.target;
+                        if (targetSection === 'products') fetchAndRenderProducts(page);
+                        if (targetSection === 'users') fetchAndRenderUsers(page);
+                        if (targetSection === 'orders') fetchAndRenderOrders(page);
+                    }
+
+                    if (target.id === 'apply-order-filters-btn') {
+                        fetchAndRenderOrders(1);
+                    }
+
                 });
-            });
+                
+               document.addEventListener('submit', (e) => {
+    if (e.target.id === 'product-form') {
+        onProductFormSubmit(e);
+    }
+                });
+            }
 
-            fetchAndRenderProducts(); // Tải danh sách sản phẩm khi vào trang
+            function initializePage() {
+                setupEventListeners();
+                const viewName = window.location.hash.substring(1) || 'dashboard';
+                const activeLink = document.querySelector(`.admin-nav a[data-target="${viewName}"]`);
+                if (activeLink) {
+                    activeLink.click();
+                } else {
+                    document.querySelector('.admin-nav a[data-target="dashboard"]').click();
+                }
+            }
+
+            initializePage();
         });
     </script>
+
+    <!-- ======================================================================
+         SỬA LỖI: Thêm phần tử Toast vào cuối Body
+         ====================================================================== -->
+    <div id="toast-notification" class="toast"><span id="toast-message"></span></div>
+
 </body>
 </html>
