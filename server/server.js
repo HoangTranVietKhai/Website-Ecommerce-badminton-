@@ -115,6 +115,8 @@ const orderRoutes = require('./routes/orderRoutes.js');
 const dashboardRoutes = require('./routes/dashboardRoutes.js');
 const brandRoutes = require('./routes/brandRoutes.js');
 const categoryRoutes = require('./routes/categoryRoutes.js');
+const newsletterRoutes = require('./routes/newsletterRoutes.js');
+const trackingRoutes = require('./routes/trackingRoutes.js');
 const { notFound, errorHandler } = require('./middleware/errorMiddleware.js');
 const { poolConnect, closePool } = require('./config/db.js');
 
@@ -153,6 +155,7 @@ const apiLimiter = rateLimit({
     max: 200,
     standardHeaders: true,
     legacyHeaders: false,
+    message: 'Too many requests from this IP, please try again after 15 minutes',
 });
 app.use('/api', apiLimiter); // Áp dụng rate limit cho tất cả các route /api
 
@@ -162,7 +165,8 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/brands', brandRoutes);
 app.use('/api/categories', categoryRoutes);
-
+app.use('/api/newsletter', newsletterRoutes);
+app.use('/api/tracking', trackingRoutes);
 
 // ==========================================================
 //        PHẦN PHỤC VỤ FILE TĨNH (STATIC FILES) CHO SPA
@@ -170,16 +174,10 @@ app.use('/api/categories', categoryRoutes);
 const __projectRoot = path.resolve(__dirname, '..');
 const clientPath = path.join(__projectRoot, 'client');
 
-// 1. Phục vụ các file tĩnh (CSS, JS, images) từ thư mục client.
-//    Express sẽ tự động tìm các file như /css/style.css, /js/main.js, etc.
-app.use(express.static(clientPath));
 
-// 2. Đối với bất kỳ request GET nào không phải là API và không phải là một file tĩnh đã tồn tại,
-//    hãy trả về file index.html để client-side router xử lý.
-//    Đây là cách xử lý chuẩn cho Single Page Application (SPA).
+app.use(express.static(clientPath));
 app.get('*', (req, res) => {
-    // Kiểm tra để đảm bảo request không bắt đầu bằng /api/
-    // Mặc dù các route api đã được định nghĩa ở trên, đây là một lớp bảo vệ bổ sung.
+    
     if (req.originalUrl.startsWith('/api/')) {
         return next(new Error('API route not found')); // Hoặc để middleware notFound xử lý
     }
@@ -196,15 +194,15 @@ app.use(errorHandler);
 const startServer = async () => {
     try {
         await poolConnect;
-        console.log('✅ Database connection pool is ready.');
+        console.log('Cổng database đã sẵn sàng.');
 
         app.listen(PORT, () => {
             const url = `http://localhost:${PORT}`;
-            console.log(`🚀 Server is running in ${process.env.NODE_ENV} mode on port: ${PORT}`);
-            console.log(`🌐 Website is available at: ${url}`);
+            console.log(`Server đang chạy in ${process.env.NODE_ENV} tại cổng: ${PORT}`);
+            console.log(`URL trang web là : ${url}`);
         });
     } catch (err) {
-        console.error('❌ Database Connection Failed!', err);
+        console.error('Kết nối Database thất bại!', err);
         process.exit(1);
     }
 };
@@ -212,8 +210,8 @@ const startServer = async () => {
 startServer();
 
 process.on('SIGINT', async () => {
-    console.log('🔌 Server is shutting down...');
+    console.log('Ngắt kết nối máy chủ...');
     await closePool();
-    console.log('✅ Database pool closed.');
+    console.log('Cổng database đã đóng.');
     process.exit(0);
 });

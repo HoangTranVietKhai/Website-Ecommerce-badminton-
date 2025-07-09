@@ -131,6 +131,7 @@ const destroyData = async () => {
         await new sql.Request(transaction).query('DELETE FROM Users'); // THÊM XÓA USERS
         await new sql.Request(transaction).query('DELETE FROM Categories');
         await new sql.Request(transaction).query('DELETE FROM Brands');
+        await new sql.Request(transaction).query('DELETE FROM Discounts'); // THÊM XÓA DISCOUNTS
         
         await transaction.commit();
         console.log('🎉 Transaction committed.');
