@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Câu Hỏi Thường Gặp (FAQ) - Khải Hoàng</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .faq-container { max-width: 800px; margin: 0 auto; }
+        .faq-item { border: 1px solid var(--color-border); border-radius: 8px; margin-bottom: 1rem; overflow: hidden; }
+        .faq-question {
+            width: 100%;
+            background-color: #f9f9f9;
+            padding: 1rem 1.5rem;
+            text-align: left;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .faq-question:hover { background-color: #f1f1f1; }
+        .faq-question .icon { transition: transform 0.3s ease; }
+        .faq-item.active .faq-question .icon { transform: rotate(180deg); }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.4s ease;
+            line-height: 1.7;
+            padding: 0 1.5rem;
+        }
+        .faq-item.active .faq-answer {
+            padding: 1.5rem;
+            max-height: 500px; /* Một giá trị đủ lớn */
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <div class="page-header">
+            <h1>Câu Hỏi Thường Gặp</h1>
+            <p>Giải đáp những thắc mắc phổ biến nhất khi mua sắm tại SportStore.</p>
+        </div>
+        <div class="faq-container">
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>Sản phẩm của SportStore có chính hãng không?</span>
+                    <i class="fas fa-chevron-down icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>SportStore cam kết 100% sản phẩm bán ra là hàng chính hãng, được nhập khẩu trực tiếp từ các thương hiệu lớn như Yonex, Lining, Victor, Mizuno. Mỗi sản phẩm đều có tem, mã code để quý khách kiểm tra.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>Shop có nhận căng cước vợt không?</span>
+                    <i class="fas fa-chevron-down icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Có. Khi mua vợt tại SportStore, bạn có thể chọn loại cước và mức căng mong muốn ngay trên trang sản phẩm. Chúng tôi sử dụng máy căng điện tử hiện đại để đảm bảo độ chính xác và an toàn cho khung vợt.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>Bao lâu thì tôi nhận được hàng?</span>
+                    <i class="fas fa-chevron-down icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Thời gian giao hàng dự kiến là từ 1-2 ngày đối với nội thành TP.HCM và 3-5 ngày đối với các tỉnh thành khác, không tính Chủ nhật và ngày lễ. Để biết thêm chi tiết, bạn có thể xem <a href="/shipping-policy.html">Chính sách giao hàng</a> của chúng tôi.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question">
+                    <span>Làm thế nào để tôi chọn được cây vợt phù hợp?</span>
+                    <i class="fas fa-chevron-down icon"></i>
+                </button>
+                <div class="faq-answer">
+                    <p>Việc chọn vợt phụ thuộc vào nhiều yếu tố như lối chơi (công, thủ, toàn diện), trình độ và lực cổ tay. Bạn có thể tham khảo các bộ lọc trên trang sản phẩm của chúng tôi hoặc đọc bài viết <a href="#">"Hướng dẫn chọn vợt cho người mới bắt đầu"</a> (chúng ta sẽ làm trang này sau). Nếu cần tư vấn kỹ hơn, đừng ngần ngại liên hệ với đội ngũ của SportStore qua hotline hoặc fanpage.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script type="module" src="/js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const faqItems = document.querySelectorAll('.faq-item');
+            faqItems.forEach(item => {
+                const questionBtn = item.querySelector('.faq-question');
+                questionBtn.addEventListener('click', () => {
+                    // Đóng tất cả các item khác trước khi mở item hiện tại
+                    faqItems.forEach(otherItem => {
+                        if (otherItem !== item) {
+                            otherItem.classList.remove('active');
+                        }
+                    });
+                    // Toggle item hiện tại
+                    item.classList.toggle('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

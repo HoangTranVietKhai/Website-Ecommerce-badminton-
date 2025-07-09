@@ -100,19 +100,21 @@ const headerHTML = `
                     </div>
                 </div>
                 <div class="footer-section">
-                    <h3>Chính Sách</h3><ul class="footer-links">
-                    <li><a href="#">Chính sách giao hàng</a></li>
-                    <li><a href="#">Chính sách đổi trả</a>
-                    </li><li><a href="#">Chính sách bảo hành</a>
-                    </li><li><a href="#">Chính sách bảo mật</a></li>
-                    </ul>
+                    <h3>Chính Sách</h3>
+                   <ul class="footer-links">
+                    <li><a href="/shipping-policy.html">Chính sách giao hàng</a></li>
+                    <li><a href="/return-policy.html">Chính sách đổi trả</a></li>
+                    <li><a href="/warranty-policy.html">Chính sách bảo hành</a></li>
+                    <li><a href="/privacy-policy.html">Chính sách bảo mật</a></li>
+                </ul>
                 </div>
                 <div class="footer-section">
-                    <h3>Hỗ Trợ</h3><ul class="footer-links">
-                    <li><a href="/contact.html">Liên hệ & Góp ý</a>
-                    </li><li><a href="#">Hướng dẫn chọn vợt</a>
-                    </li><li><a href="/myorders.html">Kiểm tra đơn hàng</a>
-                    </li><li><a href="#">Câu hỏi thường gặp</a></li>
+                    <h3>Hỗ Trợ</h3>
+                    <ul class="footer-links">
+                      <li><a href="/contact.html">Liên hệ & Góp ý</a></li>
+                    <li><a href="/racquet-guide.html">Hướng dẫn chọn vợt</a></li>
+                    <li><a href="/track-order.html">Kiểm tra đơn hàng</a></li>
+                    <li><a href="/faq.html">Câu hỏi thường gặp</a></li>
                     </ul>
                 </div>
                 <div class="footer-section newsletter">

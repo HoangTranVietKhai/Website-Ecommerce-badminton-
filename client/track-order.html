@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tra Cứu Đơn Hàng - Khải Hoàng </title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .tracking-result { margin-top: 2rem; }
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--color-primary-start);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="tracking-page">
+    <main class="container">
+        <div class="page-header">
+            <h1>Tra Cứu Đơn Hàng</h1>
+            <p>Nhập thông tin để xem chi tiết và trạng thái đơn hàng của bạn.</p>
+        </div>
+
+        <div class="form-card" style="max-width: 600px; margin: auto;">
+            <form id="tracking-form" class="auth-form">
+                <div class="form-group">
+                    <label for="track-order-id">Mã đơn hàng</label>
+                    <input type="text" id="track-order-id" placeholder="VD: 1001" required>
+                </div>
+                <div class="form-group">
+                    <label for="track-email">Email đặt hàng</label>
+                    <input type="email" id="track-email" placeholder="VD: email@example.com" required>
+                </div>
+                <button type="submit" class="btn primary-btn" style="width: 100%;">Tra Cứu</button>
+            </form>
+        </div>
+
+        <div id="tracking-result-container" class="tracking-result">
+            <!-- Kết quả tra cứu sẽ được JS chèn vào đây -->
+        </div>
+    </main>
+
+    <script type="module" src="/js/main.js"></script>
+    <script type="module">
+        // Import các hàm cần thiết
+        import * as api from '/js/api.js';
+        import { generateOrderDetailHTML } from '/js/templates.js';
+
+        // Lấy các element
+        const form = document.getElementById('tracking-form');
+        const resultContainer = document.getElementById('tracking-result-container');
+        
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const orderId = document.getElementById('track-order-id').value.trim();
+            const email = document.getElementById('track-email').value.trim();
+            
+            if (!orderId || !email) {
+                resultContainer.innerHTML = `<p class="error-message">Vui lòng nhập đầy đủ Mã đơn hàng và Email.</p>`;
+                return;
+            }
+
+            // Hiển thị spinner loading
+            resultContainer.innerHTML = `<div class="loading-spinner"></div>`;
+
+            try {
+                // Gọi API để tra cứu
+                const order = await api.trackOrder({ orderId, email });
+                
+                // Hiển thị kết quả
+                // Chúng ta có thể tái sử dụng template của trang chi tiết đơn hàng
+                const orderDetailHTML = generateOrderDetailHTML(order);
+                resultContainer.innerHTML = orderDetailHTML;
+
+            } catch (error) {
+                // Hiển thị lỗi
+                resultContainer.innerHTML = `<p class="error-message" style="text-align:center;">${error.message}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>
