@@ -26,15 +26,16 @@
                 <div class="form-group"><label for="postalCode">Mã bưu chính (Nếu không rõ, nhập 700000)</label><input type="text" id="postalCode" required></div>
                 <div class="form-group"><label for="country">Quốc gia</label><input type="text" id="country" value="Việt Nam" required></div>
 
-                <h3 style="margin-top: 2rem;">Phương thức thanh toán</h3>
-                <div class="form-group">
-                    <input type="radio" id="cod" name="paymentMethod" value="Cash on Delivery" checked>
-                    <label for="cod" style="display: inline-block; margin-left: 0.5rem; margin-bottom: 0;">Thanh toán khi nhận hàng (COD)</label>
-                </div>
-                <div class="form-group">
-                    <input type="radio" id="paypal" name="paymentMethod" value="PayPal" disabled>
-                    <label for="paypal" style="display: inline-block; margin-left: 0.5rem; margin-bottom: 0; color: #999;">PayPal (Chưa hỗ trợ)</label>
-                </div>
+              <!-- THAY THẾ BẰNG ĐOẠN MÃ NÀY -->
+<h3 style="margin-top: 2rem;">Phương thức thanh toán</h3>
+<div class="form-group">
+    <input type="radio" id="cod" name="paymentMethod" value="Cash on Delivery" checked>
+    <label for="cod" style="display: inline-block; margin-left: 0.5rem; margin-bottom: 0;">Thanh toán khi nhận hàng (COD)</label>
+</div>
+<div class="form-group">
+    <input type="radio" id="zalopay" name="paymentMethod" value="ZaloPay">
+    <label for="zalopay" style="display: inline-block; margin-left: 0.5rem; margin-bottom: 0;">Thanh toán bằng ZaloPay</label>
+</div>
                 
                 <button type="submit" class="btn primary-btn" style="margin-top: 2rem;">Tiếp Tục</button>
             </form>

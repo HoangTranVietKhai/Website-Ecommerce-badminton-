@@ -60,7 +60,11 @@ export function generateOrderDetailHTML(order) {
     
     // ++ SỬA LỖI: Lấy trực tiếp phí vận chuyển từ object `order` đã được backend trả về
     const shippingPrice = order.shippingPrice || 0;
-
+    let paymentActionHTML = '';
+    if (!order.isPaid && order.paymentMethod === 'ZaloPay') {
+        // Đây là code cho "Cách 1: Giả lập thanh toán"
+        paymentActionHTML = `<button id="zalopay-payment-btn" class="btn primary-btn" style="width: 100%; margin-top: 1.5rem; background-color: #0068ff;">Thanh toán bằng ZaloPay</button>`;
+    }
     return `
         <div class="page-header"><h1>Chi tiết đơn hàng #${order.id}</h1><p>Đặt lúc: ${new Date(order.createdAt).toLocaleString('vi-VN')}</p></div>
         <div class="placeorder-layout">
@@ -74,6 +78,7 @@ export function generateOrderDetailHTML(order) {
                 <div class="summary-line"><span>Phí căng cước:</span><span>${formatCurrency(stringingPrice)}</span></div>
                 <div class="summary-line"><span>Phí vận chuyển:</span><span>${formatCurrency(shippingPrice)}</span></div>
                 <div class="summary-line total-line"><span>Tổng cộng:</span><span>${formatCurrency(order.totalPrice)}</span></div>
+             ${paymentActionHTML}
             </div>
         </div>`;
 }

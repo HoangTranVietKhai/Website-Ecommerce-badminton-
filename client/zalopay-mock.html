@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>ZaloPay Gateway - MOCK</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background-color: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center; max-width: 400px; }
+        h2 { color: #0068ff; }
+        .order-info { margin: 20px 0; font-size: 1.2rem; }
+        .btn { padding: 15px 30px; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: bold; }
+        .btn-success { background-color: #28a745; color: white; }
+        .btn-fail { background-color: #dc3545; color: white; margin-left: 10px; }
+        .note { font-size: 0.9rem; color: #6c757d; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="images/zalo-pay/zalo.jpg" alt="ZaloPay Logo" width="350px", height="400px" style="margin-bottom: 20px;">
+        <h2>Cổng Thanh Toán ZaloPay</h2>
+        <div class="order-info">
+            <p>Đơn hàng: <strong id="order-id"></strong></p>
+            <p>Số tiền: <strong id="amount"></strong></p>
+        </div>
+        <p>Vui lòng chọn kết quả thanh toán:</p>
+      <div style="display: flex; gap: 20px; max-width: 500px;">
+    <button id="success-btn" class="btn btn-success" style="flex: 1;">Thanh toán thành công</button>
+    <button id="fail-btn" class="btn btn-fail" style="flex: 1;">Thanh toán thất bại</button>
+</div>
+
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const orderId = params.get('orderId');
+            const amount = params.get('amount');
+            const originalUrl = params.get('originalUrl');
+
+            document.getElementById('order-id').textContent = `#${orderId}`;
+            document.getElementById('amount').textContent = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+
+            // Khi nhấn "Thành công", server sẽ được callback và cập nhật đơn hàng
+            document.getElementById('success-btn').addEventListener('click', () => {
+                alert('Giả lập thanh toán thành công! Hệ thống sẽ tự động cập nhật đơn hàng.');
+                // Giả lập ZaloPay gọi callback về server
+                fetch('/api/orders/zalopay-mock-callback', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ orderId: orderId, status: 'success' })
+                }).then(() => {
+                    window.location.href = originalUrl; // Quay về trang chi tiết đơn hàng
+                });
+            });
+
+            document.getElementById('fail-btn').addEventListener('click', () => {
+                alert('Giả lập thanh toán thất bại!');
+                window.location.href = originalUrl; // Quay về trang chi tiết đơn hàng
+            });
+        });
+    </script>
+</body>
+</html>

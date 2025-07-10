@@ -350,4 +350,45 @@ router.put('/:id/pay', protect, admin, asyncHandler(async (req, res) => {
         throw new Error('Không tìm thấy đơn hàng');
     }
 }));
+router.post('/:id/create-zalopay-payment', protect, asyncHandler(async (req, res) => {
+    const orderId = req.params.id;
+    const orderResult = await pool.request()
+        .input('Id', sql.Int, orderId)
+        .input('UserId', sql.Int, req.user.id)
+        .query('SELECT TotalPrice as totalPrice, IsPaid as isPaid FROM Orders WHERE Id = @Id AND UserId = @UserId');
+
+    const order = orderResult.recordset[0];
+    if (!order) {
+        res.status(404);
+        throw new Error('Không tìm thấy đơn hàng.');
+    }
+    if (order.isPaid) {
+        res.status(400);
+        throw new Error('Đơn hàng này đã được thanh toán.');
+    }
+
+    // Tạo URL đến trang mock của chúng ta
+    const mockUrl = `/zalopay-mock.html?orderId=${orderId}&amount=${order.totalPrice}&originalUrl=/order.html?id=${orderId}`;
+
+    // Trả về cấu trúc giống ZaloPay để frontend không cần thay đổi
+    res.json({
+        return_code: 1,
+        order_url: mockUrl,
+    });
+}));
+
+// THÊM ROUTE MỚI NÀY
+router.post('/zalopay-mock-callback', asyncHandler(async (req, res) => {
+    const { orderId, status } = req.body;
+    console.log(`[MOCK CALLBACK] Nhận callback cho đơn hàng ${orderId} với trạng thái ${status}`);
+    
+    if (status === 'success') {
+         await pool.request()
+            .input('Id', sql.Int, orderId)
+            .query("UPDATE Orders SET IsPaid = 1, PaidAt = GETDATE(), PaymentMethod = 'ZaloPay (Mock)' WHERE Id = @Id");
+        console.log(`[MOCK CALLBACK] Đã cập nhật đơn hàng ${orderId} thành công.`);
+    }
+    res.status(200).json({ message: 'Callback received' });
+}));
+
 module.exports = router;

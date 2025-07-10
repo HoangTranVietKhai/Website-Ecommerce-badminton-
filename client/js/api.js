@@ -202,3 +202,10 @@ export const updateUserByAdmin = (id, userData, token) => {
         body: JSON.stringify(userData)
     });
 };
+// api zalop pay
+export const createZaloPayPaymentUrl = (orderId, token) => {
+    return request(`/orders/${orderId}/create-zalopay-payment`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+};

@@ -575,24 +575,44 @@ export async function renderOrderDetailPage() {
 
     try {
         const order = await api.fetchOrderById(orderId, store.getToken());
-        document.title = `Chi tiết đơn hàng #${order.id} - SportStore`;
+        document.title = `Chi tiết đơn hàng #${order.id} - Khải Hoàng`;
         container.innerHTML = templates.generateOrderDetailHTML(order);
 
-        const zaloPayBtn = document.getElementById('zalopay-payment-btn');
+         const zaloPayBtn = document.getElementById('zalopay-payment-btn');
         if (zaloPayBtn) {
             zaloPayBtn.addEventListener('click', async () => {
                 zaloPayBtn.disabled = true;
                 zaloPayBtn.textContent = 'Đang tạo thanh toán...';
                 try {
+                    // Gọi API để lấy URL trang mock
                     const result = await api.createZaloPayPaymentUrl(order.id, store.getToken());
+                    
                     if (result.return_code === 1) {
+                        // Chuyển hướng đến trang mock
                         window.location.href = result.order_url;
                     } else {
-                        showToast(`Lỗi: ${result.return_message}`, 'error');
+                        showToast(`Lỗi: ${result.return_message || 'Không thể tạo thanh toán'}`, 'error');
                         zaloPayBtn.disabled = false;
                         zaloPayBtn.textContent = 'Thanh toán bằng ZaloPay';
                     }
                 } catch (error) {
+                    showToast(`Lỗi: ${error.message}`, 'error');
+                    zaloPayBtn.disabled = false;
+                    zaloPayBtn.textContent = 'Thanh toán bằng ZaloPay ';
+                }
+                try {
+                    // Gọi API để lấy URL trang mock
+                    const result = await api.createZaloPayPaymentUrl(order.id, store.getToken());
+                    
+                    if (result.return_code === 1) {
+                        // Chuyển hướng đến trang mock
+                        window.location.href = result.order_url;
+                    } else {
+                        showToast(`Lỗi: ${result.return_message || 'Không thể tạo thanh toán'}`, 'error');
+                        zaloPayBtn.disabled = false;
+                        zaloPayBtn.textContent = 'Thanh toán bằng ZaloPay';
+                    }
+            } catch (error) {
                     showToast(`Lỗi: ${error.message}`, 'error');
                     zaloPayBtn.disabled = false;
                     zaloPayBtn.textContent = 'Thanh toán bằng ZaloPay';
