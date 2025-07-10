@@ -427,6 +427,8 @@
                         document.getElementById('product-id').value = ''; 
                     }
                 } catch(error) { 
+                    // Cải tiến: Thêm log lỗi để dễ dàng debug
+                    console.error("Lỗi khi tải dữ liệu cho form sản phẩm: ", error);
                     if (error.message !== 'Unauthorized') {
                         showToast('Lỗi khi tải dữ liệu cho form: ' + error.message, 'error'); 
                     }
@@ -599,6 +601,54 @@
                         }
                     }
 
+                    // =========================================================
+                    // SỬA LỖI & BỔ SUNG TẠI ĐÂY
+                    // =========================================================
+                    const editUserRoleBtn = closest('.user-edit-role-btn');
+                    if (editUserRoleBtn) {
+                        const userId = editUserRoleBtn.dataset.id;
+                        const currentRole = editUserRoleBtn.dataset.role;
+                        const newRole = prompt(`Nhập vai trò mới cho người dùng (hiện tại: ${currentRole}):`, currentRole);
+
+                        if (newRole && newRole.trim() !== '' && newRole !== currentRole) {
+                            if (confirm(`Bạn có chắc muốn đổi vai trò của người dùng #${userId} thành "${newRole}"?`)) {
+                                try {
+                                    // Cần lấy thông tin user để gửi đủ dữ liệu update
+                                    const userToUpdate = await api.getUserById(userId, token);
+                                    userToUpdate.role = newRole; // Chỉ thay đổi role
+                                    
+                                    await api.updateUserByAdmin(userId, userToUpdate, token);
+                                    showToast('Cập nhật vai trò thành công!', 'success');
+                                    fetchAndRenderUsers(document.querySelector('#users-pagination-container .active')?.dataset.page || 1);
+                                } catch (error) {
+                                    if (error.message !== 'Unauthorized') {
+                                        showToast(`Lỗi: ${error.message}`, 'error');
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    const deleteUserBtn = closest('.user-delete-btn');
+                    if (deleteUserBtn) {
+                        const userId = deleteUserBtn.dataset.id;
+                        if (confirm(`Bạn có chắc muốn xóa (vô hiệu hóa) người dùng #${userId}?`)) {
+                             try {
+                                await api.deleteUser(userId, token);
+                                showToast('Đã vô hiệu hóa người dùng.', 'success');
+                                fetchAndRenderUsers(document.querySelector('#users-pagination-container .active')?.dataset.page || 1);
+                                fetchAdminStats(); // Cập nhật lại thống kê
+                             } catch (error) {
+                                if (error.message !== 'Unauthorized') {
+                                    showToast(`Lỗi: ${error.message}`, 'error');
+                                }
+                             }
+                        }
+                    }
+                    // =========================================================
+                    // KẾT THÚC PHẦN SỬA LỖI
+                    // =========================================================
+                    
                     const paginationBtn = closest('.pagination-btn');
                     if (paginationBtn && !paginationBtn.disabled && !paginationBtn.classList.contains('active')) {
                         const page = Number(paginationBtn.dataset.page);
@@ -615,9 +665,9 @@
                 });
                 
                document.addEventListener('submit', (e) => {
-    if (e.target.id === 'product-form') {
-        onProductFormSubmit(e);
-    }
+                    if (e.target.id === 'product-form') {
+                        onProductFormSubmit(e);
+                    }
                 });
             }
 
@@ -636,9 +686,7 @@
         });
     </script>
 
-    <!-- ======================================================================
-         SỬA LỖI: Thêm phần tử Toast vào cuối Body
-         ====================================================================== -->
+    <!-- Toast Notification -->
     <div id="toast-notification" class="toast"><span id="toast-message"></span></div>
 
 </body>
