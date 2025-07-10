@@ -1,24 +1,58 @@
 <section id="products-content">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-        <h1>Quản Lý Sản Phẩm</h1>
-        <button id="add-product-btn" class="btn primary-btn" style="background-color: #27ae60;">Thêm Sản Phẩm Mới</button>
+    <h1>Quản Lý Sản Phẩm</h1>
+
+    <!-- Control Panel: Nơi chứa các nút hành động chính và bộ lọc -->
+    <div class="card-section" style="margin-bottom: 2rem; padding: 1.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h3 style="margin: 0;">Bộ lọc & Tìm kiếm</h3>
+            <button id="add-product-btn" class="btn primary-btn" style="background-color: #27ae60;">
+                <i class="fas fa-plus" style="margin-right: 8px;"></i>Thêm Sản Phẩm
+            </button>
+        </div>
+
+        <div class="filter-grid" style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 1rem; align-items: flex-end;">
+            <div class="form-group" style="margin:0;">
+                <label for="product-search-input">Tìm theo tên sản phẩm</label>
+                <input type="text" id="product-search-input" placeholder="Nhập tên sản phẩm...">
+            </div>
+             <div class="form-group" style="margin:0;">
+                <label for="product-brand-filter">Thương hiệu</label>
+                <select id="product-brand-filter">
+                    <option value="">Tất cả</option>
+                    <!-- JS sẽ điền các thương hiệu vào đây -->
+                </select>
+            </div>
+             <div class="form-group" style="margin:0;">
+                <label for="product-category-filter">Danh mục</label>
+                <select id="product-category-filter">
+                    <option value="">Tất cả</option>
+                    <!-- JS sẽ điền các danh mục vào đây -->
+                </select>
+            </div>
+            <button id="apply-product-filters-btn" class="btn primary-btn" style="width: 100%;">Lọc</button>
+        </div>
     </div>
+
+    <!-- Bảng sản phẩm -->
     <div class="table-wrapper">
         <table class="product-table">
             <thead>
                 <tr>
                     <th>Ảnh</th>
                     <th>Tên Sản Phẩm</th>
+                    <th>Danh mục</th>
                     <th>Giá</th>
-                    <th>Thương Hiệu</th>
                     <th>Tồn Kho</th>
+                    <th>Trạng thái</th>
                     <th>Hành Động</th>
                 </tr>
             </thead>
             <tbody id="product-list-body">
-                <!-- Dữ liệu sản phẩm sẽ được JS chèn vào đây -->
+                <!-- Dữ liệu sẽ được JS chèn vào đây -->
             </tbody>
         </table>
     </div>
+
+    <!-- Phân trang -->
     <div id="products-pagination-container" class="pagination-container"></div>
 </section>

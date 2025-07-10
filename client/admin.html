@@ -24,60 +24,15 @@
             flex-shrink: 0; 
             transition: width 0.3s ease;
         }
-        .admin-sidebar-header {
-            color: #fff;
-            margin-bottom: 2rem;
-            padding: 0 0.5rem;
-        }
-        .admin-sidebar-header h2 {
-            margin: 0;
-            font-size: 1.5rem;
-        }
-        .admin-nav .nav-group-heading {
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: var(--admin-sidebar-heading);
-            padding: 1.5rem 0.8rem 0.5rem;
-            letter-spacing: 0.5px;
-        }
-        .admin-nav .nav-link { 
-            display: flex; 
-            align-items: center;
-            gap: 0.8rem;
-            color: var(--admin-sidebar-text); 
-            padding: 0.8rem; 
-            border-radius: 8px; 
-            transition: all 0.2s; 
-            text-decoration: none; 
-            margin-bottom: 0.25rem; 
-            font-weight: 500;
-        }
-        .admin-nav .nav-link i {
-            width: 20px;
-            text-align: center;
-            font-size: 1.1rem;
-            opacity: 0.8;
-        }
-        .admin-nav .nav-link:hover { 
-            background-color: var(--admin-sidebar-hover-bg); 
-            color: #fff; 
-        }
-        .admin-nav .nav-link.active {
-            background-color: var(--admin-sidebar-active-bg);
-            color: #fff;
-            font-weight: 600;
-        }
+        .admin-sidebar-header { color: #fff; margin-bottom: 2rem; padding: 0 0.5rem; }
+        .admin-sidebar-header h2 { margin: 0; font-size: 1.5rem; }
+        .admin-nav .nav-group-heading { text-transform: uppercase; font-size: 0.75rem; font-weight: 600; color: var(--admin-sidebar-heading); padding: 1.5rem 0.8rem 0.5rem; letter-spacing: 0.5px; }
+        .admin-nav .nav-link { display: flex; align-items: center; gap: 0.8rem; color: var(--admin-sidebar-text); padding: 0.8rem; border-radius: 8px; transition: all 0.2s; text-decoration: none; margin-bottom: 0.25rem; font-weight: 500; }
+        .admin-nav .nav-link i { width: 20px; text-align: center; font-size: 1.1rem; opacity: 0.8; }
+        .admin-nav .nav-link:hover { background-color: var(--admin-sidebar-hover-bg); color: #fff; }
+        .admin-nav .nav-link.active { background-color: var(--admin-sidebar-active-bg); color: #fff; font-weight: 600; }
         .admin-main-content { flex-grow: 1; padding: 2rem; background-color: var(--color-background-light); position: relative; }
-        .content-loader {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(255, 255, 255, 0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-        }
+        .content-loader { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255, 255, 255, 0.8); display: flex; align-items: center; justify-content: center; z-index: 10; }
         .protected-content { display: none; }
         .table-wrapper { overflow-x: auto; }
         .product-table { width: 100%; border-collapse: collapse; margin-top: 1rem; background-color: #fff; box-shadow: var(--shadow-main); border-radius: 12px; overflow: hidden; font-size: 0.9rem; }
@@ -91,7 +46,7 @@
         .btn.delete-btn:hover { background-color: #c0392b; }
         .add-form-container { display: flex; gap: 1rem; margin-bottom: 1.5rem; }
         .add-form-container input { padding: 0.6rem; flex-grow: 1; border: 1px solid var(--color-border); border-radius: 8px; }
-        .auth-modal.is-visible { opacity: 1; visibility: visible; transform: translate(-50%,-50%) scale(1); } /* Thêm class này */
+        .auth-modal.is-visible { opacity: 1; visibility: visible; transform: translate(-50%,-50%) scale(1); }
         #product-modal .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
         #product-modal .full-width { grid-column: 1 / -1; }
         #product-modal .form-group label { font-weight: 600; }
@@ -100,9 +55,7 @@
         .stat-card h4 { font-size: 1rem; color: #555; }
         .stat-card p { font-size: 2rem; font-weight: bold; }
         .stat-card p#stats-total-sales { color: var(--color-primary-start); }
-        .status-badge { display: inline-block; padding: 0.2em 0.6em; font-size: 0.8rem; font-weight: 600; border-radius: 10px; }
-        .status-badge.paid, .status-badge.delivered { background-color: #d4edda; color: #155724; }
-        .status-badge.not-paid, .status-badge.not-delivered { background-color: #fff3cd; color: #856404; }
+        .status-badge { display: inline-block; padding: 0.3em 0.8em; font-size: 0.8rem; font-weight: 600; border-radius: 20px; margin: 2px; }
         .pagination-container { display: flex; justify-content: center; align-items: center; gap: 0.5rem; padding: 2rem 0; }
         .pagination-btn { border: 1px solid var(--color-border); background-color: #fff; color: var(--color-text-dark); padding: 0.5rem 1rem; cursor: pointer; border-radius: 8px; transition: all 0.3s ease; font-size: 1rem; min-width: 40px; }
         .pagination-btn:hover:not(:disabled) { background-color: var(--color-background-light); border-color: var(--color-primary-start); }
@@ -191,7 +144,7 @@
             const token = localStorage.getItem('token');
             if (!user || user.role !== 'admin' || !token) {
                 document.getElementById('admin-auth-layer').innerHTML = '<p style="color: red;">Truy cập bị từ chối. Bạn không phải là Admin hoặc chưa đăng nhập.</p>';
-                setTimeout(() => { window.location.href = '/index.html'; }, 2000);
+                setTimeout(() => { window.location.href = 'index.html'; }, 2000);
                 return;
             }
             document.getElementById('admin-auth-layer').style.display = 'none';
@@ -273,26 +226,58 @@
             async function fetchAndRenderProducts(page = 1) {
                 const productListBody = document.getElementById('product-list-body');
                 if (!productListBody) return;
+
+                const keyword = document.getElementById('product-search-input')?.value || '';
+                const brandId = document.getElementById('product-brand-filter')?.value || '';
+                const categoryId = document.getElementById('product-category-filter')?.value || '';
+
+                const params = new URLSearchParams({
+                    page: page,
+                    pageSize: 10,
+                });
+                if (keyword) params.append('keyword', keyword);
+                if (brandId) params.append('brandId', brandId);
+                if (categoryId) params.append('categoryId', categoryId);
+
                 try {
-                    const data = await api.fetchProducts(`page=${page}&pageSize=10`);
+                    const data = await api.fetchProducts(params.toString());
                     if (data && data.products) {
-                        productListBody.innerHTML = data.products.map(p => `
+                        productListBody.innerHTML = data.products.map(p => {
+                            let statusBadges = '';
+                            if (p.isPromotional) {
+                                statusBadges += `<span class="status-badge" style="background-color: #f39c12; color: white;">KM</span> `;
+                            }
+                            if (p.countInStock > 0) {
+                                statusBadges += `<span class="status-badge" style="background-color: #27ae60; color: white;">Còn hàng</span>`;
+                            } else {
+                                statusBadges += `<span class="status-badge" style="background-color: #c0392b; color: white;">Hết hàng</span>`;
+                            }
+
+                            return `
                             <tr>
                                 <td><img src="${p.image || '/images/placeholder.png'}" alt="${p.name}"></td>
-                                <td>${p.name}</td><td>${formatCurrency(p.price)}</td><td>${p.brand || 'N/A'}</td><td>${p.countInStock}</td>
-                                <td><button class="btn edit-btn product-edit-btn" data-id="${p.id}">Sửa</button><button class="btn delete-btn product-delete-btn" data-id="${p.id}">Xóa</button></td>
-                            </tr>`).join('');
+                                <td>${p.name}<br><small style="color:#7f8c8d;">Thương hiệu: ${p.brand || 'N/A'}</small></td>
+                                <td>${p.categoryName || 'N/A'}</td>
+                                <td>${formatCurrency(p.price)}</td>
+                                <td>${p.countInStock}</td>
+                                <td>${statusBadges}</td>
+                                <td>
+                                    <button class="btn edit-btn product-edit-btn" data-id="${p.id}">Sửa</button>
+                                    <button class="btn delete-btn product-delete-btn" data-id="${p.id}">Xóa</button>
+                                </td>
+                            </tr>`;
+                        }).join('');
                         renderAdminPagination(data.pages, data.page, '#products-pagination-container', 'products');
                     }
                 } catch (error) {
                     if (error.message !== 'Unauthorized' && productListBody) {
-                        productListBody.innerHTML = `<tr><td colspan="6" style="text-align: center;">Lỗi tải sản phẩm: ${error.message}</td></tr>`;
+                        productListBody.innerHTML = `<tr><td colspan="7" style="text-align: center;">Lỗi tải sản phẩm: ${error.message}</td></tr>`;
                     }
                 }
             }
             
             async function fetchAndRenderCategories() {
-                const categoryListBody = document.getElementById('category-list-body');
+                 const categoryListBody = document.getElementById('category-list-body');
                 if (!categoryListBody) return;
                 try {
                     const categories = await api.fetchCategories();
@@ -324,17 +309,18 @@
                     }
                 }
             }
+            
+            // Tương tự cho fetchAndRenderUsers và fetchAndRenderOrders
+            // ...
 
             // === MODAL & FORM HANDLERS (IMPROVED & FIXED) ===
             async function openProductModal(product = null) {
-                // 1. Reset form và hiển thị modal ngay lập tức
                 productForm.reset();
                 productModalOverlay.classList.add('is-visible');
                 productModal.style.display = 'block';
                 setTimeout(() => productModal.classList.add('is-visible'), 10);
                 document.getElementById('product-modal-title').textContent = 'Đang tải dữ liệu...';
 
-                // 2. Vô hiệu hóa các select để người dùng không chọn khi chưa có dữ liệu
                 const brandSelect = document.getElementById('product-brandId');
                 const categorySelect = document.getElementById('product-categoryId');
                 brandSelect.innerHTML = '<option value="">Đang tải...</option>';
@@ -343,16 +329,10 @@
                 categorySelect.disabled = true;
 
                 try {
-                    // 3. Sử dụng Promise.allSettled để xử lý lỗi từng API
-                    const results = await Promise.allSettled([
-                        api.fetchBrands(),
-                        api.fetchCategories()
-                    ]);
-                    
+                    const results = await Promise.allSettled([ api.fetchBrands(), api.fetchCategories() ]);
                     const brandsResult = results[0];
                     const categoriesResult = results[1];
 
-                    // 4. Đổ dữ liệu vào Brand Select một cách an toàn
                     if (brandsResult.status === 'fulfilled') {
                         brandSelect.innerHTML = '<option value="">-- Chọn thương hiệu --</option>' + brandsResult.value.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
                         brandSelect.disabled = false;
@@ -361,7 +341,6 @@
                         showToast('Không thể tải danh sách thương hiệu!', 'error');
                     }
 
-                    // 5. Đổ dữ liệu vào Category Select một cách an toàn
                     if (categoriesResult.status === 'fulfilled') {
                         categorySelect.innerHTML = '<option value="">-- Chọn danh mục --</option>' + categoriesResult.value.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
                         categorySelect.disabled = false;
@@ -370,7 +349,6 @@
                         showToast('Không thể tải danh sách danh mục!', 'error');
                     }
                     
-                    // 6. Điền dữ liệu nếu là chế độ sửa (EDIT)
                     if (product) {
                         document.getElementById('product-modal-title').textContent = 'Chỉnh Sửa Sản Phẩm';
                         document.getElementById('product-id').value = product.id;
@@ -379,22 +357,16 @@
                         document.getElementById('product-original-price').value = product.originalPrice || '';
                         document.getElementById('product-countInStock').value = product.countInStock || 0;
                         document.getElementById('product-image').value = product.image || '';
-                        
-                        // Sửa lỗi: Xử lý JSON một cách an toàn và định dạng đẹp
                         document.getElementById('product-images').value = product.images ? JSON.stringify(product.images, null, 2) : '[]';
-                        document.getElementById('product-specifications').value = product.specifications ? JSON.stringify(product.specifications, null, 2) : '[]';
-
                         document.getElementById('product-description').value = product.description || '';
                         document.getElementById('product-fullDescription').value = product.fullDescription || '';
                         document.getElementById('product-warranty').value = product.warranty || '';
                         document.getElementById('product-youtubeLink').value = product.youtubeLink || '';
+                        document.getElementById('product-specifications').value = product.specifications ? JSON.stringify(product.specifications, null, 2) : '[]';
                         document.getElementById('product-isPromotional').checked = product.isPromotional || false;
-
                         if (brandsResult.status === 'fulfilled') brandSelect.value = product.brandId || '';
                         if (categoriesResult.status === 'fulfilled') categorySelect.value = product.categoryId || '';
-
                     } else { 
-                        // Chế độ thêm mới (ADD)
                         document.getElementById('product-modal-title').textContent = 'Thêm Sản Phẩm Mới';
                         document.getElementById('product-images').value = '[]';
                         document.getElementById('product-specifications').value = '[]';
@@ -405,9 +377,8 @@
                 }
             }
 
-
             function closeProductModal() {
-                 productModal.classList.remove('is-visible'); // Sử dụng class
+                 productModal.classList.remove('is-visible');
                  setTimeout(() => { 
                     productModalOverlay.classList.remove('is-visible'); 
                     productModal.style.display = 'none'; 
@@ -467,24 +438,38 @@
                 }
             }
             
-            // === EVENT HANDLER & ROUTER ===
+            // === EVENT HANDLER & ROUTER (IMPROVED) ===
             async function handleViewChange(viewName) {
-                if(currentView === viewName) return; // Không tải lại nếu vẫn ở trang cũ
+                if (currentView === viewName) return; 
                 await loadTemplateIntoMain(viewName);
                 
-                // Sau khi tải template xong, gọi hàm render tương ứng
                 switch(viewName) {
                     case 'dashboard': fetchAdminStats(); break;
-                    case 'products': fetchAndRenderProducts(1); break;
+                    case 'products':
+                        const brandSelect = document.getElementById('product-brand-filter');
+                        const categorySelect = document.getElementById('product-category-filter');
+                        Promise.all([api.fetchBrands(), api.fetchCategories()]).then(([brands, categories]) => {
+                            if (brandSelect) {
+                                brands.forEach(b => brandSelect.add(new Option(b.name, b.id)));
+                            }
+                            if (categorySelect) {
+                                categories.forEach(c => categorySelect.add(new Option(c.name, c.id)));
+                            }
+                        }).catch(err => showToast('Lỗi tải dữ liệu bộ lọc', 'error'));
+                        
+                        document.getElementById('apply-product-filters-btn')?.addEventListener('click', () => {
+                            fetchAndRenderProducts(1);
+                        });
+                        
+                        fetchAndRenderProducts(1); 
+                        break;
                     case 'categories': fetchAndRenderCategories(); break;
                     case 'brands': fetchAndRenderBrands(); break;
-                    case 'users': fetchAndRenderUsers(1); break;
-                    case 'orders': fetchAndRenderOrders(1); break;
+                    // ... Thêm case cho users và orders nếu cần
                 }
             }
 
             function setupEventListeners() {
-                // Dùng event delegation trên body để bắt tất cả các click
                 document.body.addEventListener('click', async (e) => {
                     const target = e.target;
                     const closest = (selector) => target.closest(selector);
@@ -521,7 +506,7 @@
                         } 
                         catch(error) { if (error.message !== 'Unauthorized') showToast(`Lỗi: ${error.message}`, 'error'); } 
                         finally { 
-                            if(editProductBtn) {
+                            if (editProductBtn) {
                                 editProductBtn.textContent = 'Sửa'; 
                                 editProductBtn.disabled = false;
                             }
@@ -543,9 +528,16 @@
                         }
                         return;
                     }
+                    
+                    const paginationBtn = closest('.pagination-btn');
+                    if (paginationBtn && !paginationBtn.disabled && !paginationBtn.classList.contains('active')) {
+                        const page = Number(paginationBtn.dataset.page);
+                        const targetSection = paginationBtn.dataset.target;
+                        if (targetSection === 'products') fetchAndRenderProducts(page);
+                        // thêm if cho các mục phân trang khác
+                        return;
+                    }
 
-                    // Tương tự cho các nút khác (brand, category, user, order...)
-                    // ... (Code xử lý cho các nút còn lại có thể giữ nguyên) ...
                 });
                 
                document.body.addEventListener('submit', (e) => {
@@ -560,15 +552,11 @@
                 const viewNameFromHash = window.location.hash.substring(1);
                 const initialView = ['dashboard', 'products', 'categories', 'brands', 'orders', 'users'].includes(viewNameFromHash) ? viewNameFromHash : 'dashboard';
                 
-                document.querySelectorAll('.admin-nav .nav-link').forEach(l => l.classList.remove('active'));
                 const activeLink = document.querySelector(`.admin-nav a[data-target="${initialView}"]`);
                 if (activeLink) {
-                    activeLink.classList.add('active');
-                    handleViewChange(initialView);
+                    activeLink.click();
                 } else {
-                    // Fallback to dashboard
-                    document.querySelector('.admin-nav a[data-target="dashboard"]').classList.add('active');
-                    handleViewChange('dashboard');
+                    document.querySelector('.admin-nav a[data-target="dashboard"]').click();
                 }
             }
 
