@@ -72,9 +72,6 @@ router.post(
 router.post('/login', asyncHandler(async (req, res) => {
     const { email, password } = req.body;
     
-    // =======================================================================
-    // SỬA LỖI Ở ĐÂY: Dùng alias để thống nhất camelCase
-    // =======================================================================
     const result = await pool.request()
         .input('Email', sql.NVarChar, email)
         .query(`
@@ -85,13 +82,10 @@ router.post('/login', asyncHandler(async (req, res) => {
 
     const user = result.recordset[0];
 
-    // Sửa lỗi: So sánh với user.password (thay vì user.Password)
     if (user && (await bcrypt.compare(password, user.password))) {
-        // Sửa lỗi: Tạo payload từ user.id (thay vì user.Id)
         const payload = { userId: user.id, role: user.role };
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' });
 
-        // Sửa lỗi: Trả về object user đã được chuẩn hóa
         res.json({
             token,
             user: { id: user.id, name: user.name, email: user.email, role: user.role }
@@ -100,9 +94,6 @@ router.post('/login', asyncHandler(async (req, res) => {
         res.status(401);
         throw new Error('Email hoặc mật khẩu không đúng');
     }
-    // =======================================================================
-    // KẾT THÚC PHẦN SỬA LỖI
-    // =======================================================================
 }));
 
 
@@ -289,15 +280,48 @@ router.get('/check-discount', protect, asyncHandler(async (req, res) => {
     const orderCount = result.recordset[0].orderCount;
 
     if (orderCount === 0) {
-        // Đây là người mua lần đầu
         res.json({
             eligible: true,
             discountPercent: 15,
             message: "Chúc mừng! Bạn được giảm giá 15% cho đơn hàng đầu tiên."
         });
     } else {
-        // Người dùng đã có đơn hàng
         res.json({ eligible: false });
+    }
+}));
+
+// THÊM MỚI
+// @route   PUT /api/users/:id/role
+// @desc    Cập nhật vai trò người dùng bởi Admin
+// @access  Private/Admin
+router.put('/:id/role', protect, admin, [
+    body('role').isIn(['user', 'admin']).withMessage('Vai trò không hợp lệ.')
+], asyncHandler(async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        res.status(400);
+        throw new Error(errors.array()[0].msg);
+    }
+
+    const userIdToUpdate = req.params.id;
+    const { role } = req.body;
+
+    if (parseInt(userIdToUpdate, 10) === req.user.id) {
+        res.status(400);
+        throw new Error('Không thể tự thay đổi vai trò của chính mình.');
+    }
+
+    const request = pool.request()
+        .input('Id', sql.Int, userIdToUpdate)
+        .input('Role', sql.NVarChar, role);
+    
+    const result = await request.query('UPDATE Users SET Role = @Role WHERE Id = @Id');
+
+    if (result.rowsAffected[0] > 0) {
+        res.json({ message: 'Cập nhật vai trò thành công' });
+    } else {
+        res.status(404);
+        throw new Error('Không tìm thấy người dùng');
     }
 }));
 

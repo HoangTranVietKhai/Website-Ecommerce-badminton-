@@ -1,4 +1,4 @@
-// ===== File: server/routes/productRoutes.js (PHIÊN BẢN ĐÃ SỬA LỖI HOÀN CHỈNH) =====
+// ===== File: server/routes/productRoutes.js (NÂNG CẤP BỘ LỌC) =====
 const express = require('express');
 const asyncHandler = require('express-async-handler');
 const sql = require('mssql');
@@ -10,19 +10,26 @@ const router = express.Router();
 // @desc    Lấy danh sách sản phẩm với bộ lọc và phân trang
 // @route   GET /api/products
 // @access  Public
-
 router.get('/', asyncHandler(async (req, res) => {
-    // Thêm brandId và categoryId vào đây
+    // SỬA ĐỔI: Đọc thêm các tham số dạng chữ từ query
     const {
-        keyword, brandId, categoryId, sortBy, pageSize: pageSizeQuery, page: pageQuery
+        keyword, brand, mainCategory, subCategory, isPromotional,
+        minPrice, maxPrice, weight, balance,
+        sortBy, pageSize: pageSizeQuery, page: pageQuery
     } = req.query;
 
-    const pageSize = parseInt(pageSizeQuery) || 10;
+    const pageSize = parseInt(pageSizeQuery) || 12; // Tăng pageSize mặc định
     const page = parseInt(pageQuery) || 1;
     const offset = (page - 1) * pageSize;
 
     const request = pool.request();
     const countRequest = pool.request();
+
+    // SỬA ĐỔI: Luôn JOIN với Brands và Categories để có thể lọc theo tên
+    const joinClauses = [
+        "LEFT JOIN Brands b ON p.BrandId = b.Id",
+        "LEFT JOIN Categories c ON p.CategoryId = c.Id"
+    ];
     let whereClauses = ["p.IsDeleted = 0"];
 
     const addInput = (name, type, value) => {
@@ -30,24 +37,46 @@ router.get('/', asyncHandler(async (req, res) => {
         countRequest.input(name, type, value);
     };
 
+    // --- Xây dựng các điều kiện lọc ---
     if (keyword) { whereClauses.push("p.Name LIKE @keyword"); addInput('keyword', sql.NVarChar, `%${keyword}%`); }
-    // Lọc theo ID thay vì tên để chính xác hơn
-    if (brandId) { whereClauses.push("p.BrandId = @brandId"); addInput('brandId', sql.Int, brandId); }
-    if (categoryId) { whereClauses.push("p.CategoryId = @categoryId"); addInput('categoryId', sql.Int, categoryId); }
+    if (isPromotional === 'true') { whereClauses.push("p.IsPromotional = 1"); }
     
+    // SỬA ĐỔI: Lọc theo tên thương hiệu (hỗ trợ nhiều thương hiệu)
+    if (brand) {
+        // Dùng STRING_SPLIT để xử lý chuỗi "Yonex,Lining"
+        whereClauses.push("b.Name IN (SELECT value FROM STRING_SPLIT(@brand, ','))");
+        addInput('brand', sql.NVarChar, brand);
+    }
+
+    // SỬA ĐỔI: Lọc theo tên danh mục chính
+    if (mainCategory) {
+        whereClauses.push("c.Name = @mainCategory");
+        addInput('mainCategory', sql.NVarChar, mainCategory);
+    }
+    
+    if (subCategory) { whereClauses.push("p.SubCategory = @subCategory"); addInput('subCategory', sql.NVarChar, subCategory); }
+    if (minPrice) { whereClauses.push("p.Price >= @minPrice"); addInput('minPrice', sql.Decimal(18, 2), minPrice); }
+    if (maxPrice) { whereClauses.push("p.Price <= @maxPrice"); addInput('maxPrice', sql.Decimal(18, 2), maxPrice); }
+    
+    // (Giữ nguyên logic lọc cho weight, balance nếu có)
+
+    const joinClause = joinClauses.join(' ');
     const whereClause = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
 
+    // --- Xây dựng điều kiện sắp xếp ---
     let orderByClause = 'ORDER BY p.CreatedAt DESC'; // Mặc định
-    if (sortBy) { /* ... giữ nguyên logic sortBy của bạn ... */ }
+    if (sortBy === 'price_asc') orderByClause = 'ORDER BY p.Price ASC';
+    else if (sortBy === 'price_desc') orderByClause = 'ORDER BY p.Price DESC';
+    else if (sortBy === 'rating_desc') orderByClause = 'ORDER BY p.Rating DESC';
+    else if (sortBy === 'newest') orderByClause = 'ORDER BY p.CreatedAt DESC';
 
-    // Thêm JOIN và lấy thêm categoryName
+    // --- Câu query chính ---
     const productQuery = `
         SELECT p.Id as id, p.Name as name, p.Price as price, p.Image as image, 
-               b.Name as brand, c.Name as categoryName, 
+               p.OriginalPrice as originalPrice, b.Name as brand, c.Name as categoryName, 
                p.IsPromotional as isPromotional, p.CountInStock as countInStock
         FROM Products p
-        LEFT JOIN Brands b ON p.BrandId = b.Id
-        LEFT JOIN Categories c ON p.CategoryId = c.Id
+        ${joinClause}
         ${whereClause}
         ${orderByClause}
         OFFSET @offset ROWS FETCH NEXT @pageSize ROWS ONLY
@@ -55,21 +84,24 @@ router.get('/', asyncHandler(async (req, res) => {
     addInput('offset', sql.Int, offset);
     addInput('pageSize', sql.Int, pageSize);
     
-    const countQuery = `SELECT COUNT(*) as total FROM Products p ${whereClause}`;
+    const countQuery = `SELECT COUNT(*) as total FROM Products p ${joinClause} ${whereClause}`;
 
     const [productResult, countResult] = await Promise.all([request.query(productQuery), countRequest.query(countQuery)]);
     
     res.json({
-        products: productResult.recordset,
+        products: productResult.recordset.map(p => ({
+            ...p,
+            price: parseFloat(p.price),
+            originalPrice: p.originalPrice ? parseFloat(p.originalPrice) : null,
+        })),
         page: page,
         pages: Math.ceil(countResult.recordset[0].total / pageSize),
         count: countResult.recordset[0].total
     });
 }));
 
-// @desc    Lấy chi tiết sản phẩm
-// @route   GET /api/products/:id
-// @access  Public
+// (Các route khác trong file này giữ nguyên không đổi)
+// ...
 router.get('/:id', asyncHandler(async (req, res) => {
     const productId = req.params.id;
     const productResult = await pool.request().input('Id', sql.Int, productId).query(`
@@ -116,9 +148,6 @@ router.get('/:id', asyncHandler(async (req, res) => {
     res.json(formattedProduct);
 }));
 
-// @desc    Tạo sản phẩm mới
-// @route   POST /api/products
-// @access  Private/Admin
 router.post('/', protect, admin, asyncHandler(async (req, res) => {
     const { 
         name, price, originalPrice, image, images, brandId, categoryId, 
@@ -172,9 +201,6 @@ router.post('/', protect, admin, asyncHandler(async (req, res) => {
 }));
 
 
-// @desc    Cập nhật sản phẩm
-// @route   PUT /api/products/:id
-// @access  Private/Admin
 router.put('/:id', protect, admin, asyncHandler(async (req, res) => {
     const productId = req.params.id;
     const { 
@@ -226,8 +252,6 @@ router.put('/:id', protect, admin, asyncHandler(async (req, res) => {
     }
 }));
 
-// ... (Các routes còn lại có thể giữ nguyên)
-// DELETE, REVIEWS, RELATED ...
 router.delete('/:id', protect, admin, asyncHandler(async (req, res) => {
     const result = await pool.request()
         .input('Id', sql.Int, req.params.id)
@@ -270,7 +294,12 @@ router.get('/:id/related', asyncHandler(async (req, res) => {
     const categoryId = currentProductResult.recordset[0].CategoryId;
     if (!categoryId) return res.json([]);
     const relatedResult = await pool.request().input('CategoryId', sql.Int, categoryId).input('Id', sql.Int, req.params.id).query(`SELECT TOP 4 p.Id as id, p.Name as name, p.Price as price, p.OriginalPrice as originalPrice, p.Image as image, b.Name as brand, p.IsPromotional as isPromotional FROM Products p LEFT JOIN Brands b ON p.BrandId = b.Id WHERE p.CategoryId = @CategoryId AND p.Id <> @Id AND p.IsDeleted = 0 ORDER BY NEWID()`);
-    res.json(relatedResult.recordset);
+    res.json(relatedResult.recordset.map(p => ({
+            ...p,
+            price: parseFloat(p.price),
+            originalPrice: p.originalPrice ? parseFloat(p.originalPrice) : null,
+        })));
 }));
+
 
 module.exports = router;

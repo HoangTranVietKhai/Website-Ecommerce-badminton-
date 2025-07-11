@@ -1,4 +1,4 @@
-// ===== File: client/js/pages.js (VERSION 2.8 - FINALIZED & CORRECTED) =====
+// ===== File: client/js/pages.js (VERSION 2.9 - FIXED & IMPROVED) =====
 import store from './store.js';
 import * as api from './api.js';
 import { createProductCard, createRatingComponent } from './components.js';
@@ -92,11 +92,8 @@ export async function renderHomePage() {
 // PRODUCT LIST PAGE
 // =======================================================================
 export async function renderProductListPage() {
-    // Lưu ý: hàm fetchProductsMeta() cần được tạo ở api.js nếu chưa có
-    // Nó sẽ gọi đến 1 route mới ở backend, ví dụ: GET /api/products/meta
-    // Route này trả về { brands: ['Yonex', ...], priceRange: {min: ..., max: ...} }
-    // Do file api.js không được cung cấp, tôi sẽ tạm comment phần này.
-    // await initializeFilters(); 
+    // CẢI TIẾN: Khởi tạo bộ lọc khi vào trang
+    await initializeFilters(); 
     
     document.getElementById('apply-filters-btn')?.addEventListener('click', () => applyFiltersAndRender());
     document.getElementById('sort-by-filter')?.addEventListener('change', () => applyFiltersAndRender());
@@ -120,19 +117,24 @@ export async function renderProductListPage() {
     applyFiltersAndRender(new URLSearchParams(window.location.search).get('page') || 1); 
 }
 
+// CẢI TIẾN: Hoàn thiện hàm khởi tạo bộ lọc
 async function initializeFilters() {
-   
     try {
-        const metaData = await api.fetchProductsMeta();
+        const [brands] = await Promise.all([
+            api.fetchBrands()
+            // Có thể thêm fetchCategories hoặc fetchProductsMeta ở đây nếu cần
+        ]);
+        
         const brandContainer = document.getElementById('brand-filter-options');
-        if (brandContainer && metaData.brands) {
-            brandContainer.innerHTML = metaData.brands.map(brand => `<label><input type="checkbox" name="brand" value="${brand}"><span>${brand}</span></label>`).join('');
+        if (brandContainer && brands) {
+            brandContainer.innerHTML = brands.map(brand => `<label><input type="checkbox" name="brand" value="${brand.name}"><span>${brand.name}</span></label>`).join('');
         }
 
+        // Tạm thời hardcode khoảng giá, vì chưa có API `products/meta`
         const sliderEl = document.getElementById('price-slider');
-        if (sliderEl && metaData.priceRange) {
-            const min = Math.floor(metaData.priceRange.minPrice / 10000) * 10000 || 0;
-            const max = Math.ceil(metaData.priceRange.maxPrice / 10000) * 10000 || 5000000;
+        if (sliderEl && typeof noUiSlider !== 'undefined') {
+            const min = 0;
+            const max = 5000000;
             if(priceSliderInstance) priceSliderInstance.destroy();
             priceSliderInstance = noUiSlider.create(sliderEl, { start: [min, max], connect: true, step: 50000, range: { 'min': min, 'max': max }, format: { to: value => Math.round(value), from: value => Number(value) } });
             const lowerValEl = document.getElementById('price-lower-value');
@@ -144,6 +146,7 @@ async function initializeFilters() {
         }
     } catch (error) { console.error("Lỗi khởi tạo bộ lọc:", error); }
 }
+
 
 function buildFilterParamsFromUI() {
     const urlParams = new URLSearchParams();
@@ -159,8 +162,8 @@ function buildFilterParamsFromUI() {
     if (priceSliderInstance) {
         const [minPrice, maxPrice] = priceSliderInstance.get();
         const range = priceSliderInstance.options.range;
-        if (minPrice > range.min) urlParams.set('minPrice', minPrice);
-        if (maxPrice < range.max) urlParams.set('maxPrice', maxPrice);
+        if (Number(minPrice) > range.min) urlParams.set('minPrice', minPrice);
+        if (Number(maxPrice) < range.max) urlParams.set('maxPrice', maxPrice);
     }
     const sortBy = document.getElementById('sort-by-filter')?.value; if (sortBy) urlParams.set('sortBy', sortBy);
     return urlParams;
@@ -170,7 +173,8 @@ function syncFilterUIFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
     document.querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.checked = urlParams.has(cb.name) && urlParams.get(cb.name).split(',').includes(cb.value); });
     if (priceSliderInstance) {
-        const minPrice = urlParams.get('minPrice'), maxPrice = urlParams.get('maxPrice');
+        const minPrice = urlParams.get('minPrice');
+        const maxPrice = urlParams.get('maxPrice');
         const range = priceSliderInstance.options.range;
         priceSliderInstance.set([minPrice || range.min, maxPrice || range.max]);
     }
@@ -188,7 +192,7 @@ function renderActiveFilterTags() {
         if (['page', 'sortBy', 'mainCategory', 'isPromotional', 'subCategory'].includes(key)) return;
         hasFilters = true;
         if (key === 'minPrice' || key === 'maxPrice') {
-             tagsHTML += `<div class="filter-tag">${filterLabels[key]}: ${formatCurrency(value)} <button class="remove-filter-btn" data-key="${key}" data-value="${value}">×</button></div>`;
+             tagsHTML += `<div class="filter-tag">${filterLabels[key]}: ${formatCurrency(parseInt(value))} <button class="remove-filter-btn" data-key="${key}" data-value="${value}">×</button></div>`;
         } else {
             value.split(',').forEach(val => { tagsHTML += `<div class="filter-tag">${filterLabels[key] || key}: ${val} <button class="remove-filter-btn" data-key="${key}" data-value="${val}">×</button></div>`; });
         }
@@ -212,7 +216,7 @@ function removeFilter(key, value) {
 
 function clearAllFilters() {
     const urlParams = new URLSearchParams(window.location.search);
-    const preservedParams = ['mainCategory', 'sortBy', 'isPromotional', 'subCategory', 'keyword'];
+    const preservedParams = ['mainCategory', 'subCategory', 'isPromotional', 'keyword'];
     const newParams = new URLSearchParams();
     preservedParams.forEach(key => { if(urlParams.has(key)) newParams.set(key, urlParams.get(key)); });
     newParams.set('page', '1');
@@ -220,7 +224,7 @@ function clearAllFilters() {
 }
 
 async function applyFiltersAndRender(page = 1, newParams = null) {
-    document.body.classList.remove('overlay-is-active', 'modal-is-open');
+    document.body.classList.remove('overlay-is-active', 'modal-is-open', 'filter-is-open');
     document.getElementById('filter-drawer')?.classList.remove('is-open');
 
     const productGridEl = document.getElementById('product-grid-container');
@@ -234,11 +238,8 @@ async function applyFiltersAndRender(page = 1, newParams = null) {
     let urlParams;
     if (newParams) {
         urlParams = newParams;
-    } else if (page === undefined) {
-        urlParams = buildFilterParamsFromUI();
-        urlParams.set('page', '1');
     } else {
-        urlParams = new URLSearchParams(window.location.search);
+        urlParams = buildFilterParamsFromUI();
         urlParams.set('page', page);
     }
     
@@ -274,7 +275,7 @@ function renderProductGrid(products) {
     const noProductsMessage = document.getElementById('no-products-found-detailed');
     if (!gridWrapper || !noProductsMessage) return;
     
-    const oldGrid = gridWrapper.querySelector('.products-grid-v2');
+    const oldGrid = gridWrapper.querySelector('#product-grid-container');
     if(oldGrid) oldGrid.remove();
     
     const productGridEl = document.createElement('div');
@@ -362,10 +363,11 @@ function initImageGallery() {
     if (!mainImage || !galleryContainer) return;
 
     galleryContainer.addEventListener('click', (e) => {
-        if(e.target.matches('.thumbnail-item')) {
-            mainImage.src = e.target.src;
+        const thumbnail = e.target.closest('.thumbnail-item');
+        if (thumbnail) {
+            mainImage.src = thumbnail.querySelector('img').src;
             galleryContainer.querySelectorAll('.thumbnail-item').forEach(t => t.classList.remove('active'));
-            e.target.classList.add('active');
+            thumbnail.classList.add('active');
         }
     });
 }
@@ -388,7 +390,7 @@ function initProductTabs() {
 }
 
 async function initStringingOptions(product) {
-    if (product.category !== 'vot-cau-long' && product.mainCategory !== 'vot-cau-long') return;
+    if (product.mainCategory !== 'vot-cau-long') return;
     const stringSelect = document.getElementById('string-select');
     const tensionGroup = document.getElementById('tension-group');
     if (!stringSelect || !tensionGroup) return;
@@ -575,20 +577,19 @@ export async function renderOrderDetailPage() {
 
     try {
         const order = await api.fetchOrderById(orderId, store.getToken());
-        document.title = `Chi tiết đơn hàng #${order.id} - Khải Hoàng`;
+        document.title = `Chi tiết đơn hàng #${order.id} - SportStore`;
         container.innerHTML = templates.generateOrderDetailHTML(order);
 
-         const zaloPayBtn = document.getElementById('zalopay-payment-btn');
+        const zaloPayBtn = document.getElementById('zalopay-payment-btn');
         if (zaloPayBtn) {
             zaloPayBtn.addEventListener('click', async () => {
                 zaloPayBtn.disabled = true;
                 zaloPayBtn.textContent = 'Đang tạo thanh toán...';
+                // SỬA LỖI: Xóa bỏ khối try...catch lồng nhau bị thừa
                 try {
-                    // Gọi API để lấy URL trang mock
                     const result = await api.createZaloPayPaymentUrl(order.id, store.getToken());
                     
                     if (result.return_code === 1) {
-                        // Chuyển hướng đến trang mock
                         window.location.href = result.order_url;
                     } else {
                         showToast(`Lỗi: ${result.return_message || 'Không thể tạo thanh toán'}`, 'error');
@@ -596,23 +597,6 @@ export async function renderOrderDetailPage() {
                         zaloPayBtn.textContent = 'Thanh toán bằng ZaloPay';
                     }
                 } catch (error) {
-                    showToast(`Lỗi: ${error.message}`, 'error');
-                    zaloPayBtn.disabled = false;
-                    zaloPayBtn.textContent = 'Thanh toán bằng ZaloPay ';
-                }
-                try {
-                    // Gọi API để lấy URL trang mock
-                    const result = await api.createZaloPayPaymentUrl(order.id, store.getToken());
-                    
-                    if (result.return_code === 1) {
-                        // Chuyển hướng đến trang mock
-                        window.location.href = result.order_url;
-                    } else {
-                        showToast(`Lỗi: ${result.return_message || 'Không thể tạo thanh toán'}`, 'error');
-                        zaloPayBtn.disabled = false;
-                        zaloPayBtn.textContent = 'Thanh toán bằng ZaloPay';
-                    }
-            } catch (error) {
                     showToast(`Lỗi: ${error.message}`, 'error');
                     zaloPayBtn.disabled = false;
                     zaloPayBtn.textContent = 'Thanh toán bằng ZaloPay';
@@ -624,6 +608,7 @@ export async function renderOrderDetailPage() {
         container.innerHTML = `<h1 class="page-title">Lỗi: ${error.message}</h1>`;
     }
 }
+
 
 export async function renderMyOrdersPage() {
     if (!checkAuthStateAndRedirect()) return;

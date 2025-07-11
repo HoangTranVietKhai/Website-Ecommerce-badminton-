@@ -31,6 +31,7 @@ const headerHTML = `
                             <div class="mega-menu-column">
                                 <h4 class="mega-menu-heading">Vợt Theo Thương Hiệu</h4>
                                 <ul class="mega-menu-links">
+                                    <!-- SỬA Ở ĐÂY -->
                                     <li><a href="/products.html?mainCategory=vot-cau-long&brand=Yonex">Yonex</a></li>
                                     <li><a href="/products.html?mainCategory=vot-cau-long&brand=Lining">Lining</a></li>
                                     <li><a href="/products.html?mainCategory=vot-cau-long&brand=Victor">Victor</a></li>
@@ -40,6 +41,7 @@ const headerHTML = `
                             <div class="mega-menu-column">
                                 <h4 class="mega-menu-heading">Vợt Theo Lối Chơi</h4>
                                 <ul class="mega-menu-links">
+                                    <!-- SỬA Ở ĐÂY -->
                                     <li><a href="/products.html?mainCategory=vot-cau-long&subCategory=tan-cong">Tấn công (Nặng đầu)</a></li>
                                     <li><a href="/products.html?mainCategory=vot-cau-long&subCategory=can-bang">Công thủ toàn diện</a></li>
                                     <li><a href="/products.html?mainCategory=vot-cau-long&subCategory=phong-thu">Phòng thủ, phản tạt</a></li>
@@ -48,6 +50,7 @@ const headerHTML = `
                             <div class="mega-menu-column">
                                 <h4 class="mega-menu-heading">Vợt Theo Mức Giá</h4>
                                 <ul class="mega-menu-links">
+                                    <!-- SỬA Ở ĐÂY -->
                                     <li><a href="/products.html?mainCategory=vot-cau-long&maxPrice=1000000">Dưới 1 triệu</a></li>
                                     <li><a href="/products.html?mainCategory=vot-cau-long&minPrice=1000000&maxPrice=2000000">Từ 1 - 2 triệu</a></li>
                                     <li><a href="/products.html?mainCategory=vot-cau-long&minPrice=2000000&maxPrice=3000000">Từ 2 - 3 triệu</a></li>
@@ -55,13 +58,15 @@ const headerHTML = `
                                 </ul>
                             </div>
                             <div class="mega-menu-column mega-menu-banner">
+                                <!-- SỬA Ở ĐÂY -->
                                 <a href="/products.html?mainCategory=vot-cau-long&isPromotional=true">
-                                    <img src="/images/products/halbtec9000limited.png" alt="Vợt khuyến mãi">
+                                    <img src="/images/products/halbtec9000limited.png" alt="Vợt khuyến mãi" loading="lazy">
                                     <span>Xem Ngay Vợt<br>Đang Khuyến Mãi</span>
                                 </a>
                             </div>
                         </div>
                     </li>
+                    <!-- SỬA Ở ĐÂY -->
                     <li><a href="/products.html?mainCategory=quan-ao">Quần áo</a></li>
                     <li><a href="/products.html?mainCategory=giay">Giày</a></li>
                     <li><a href="/products.html?mainCategory=phu-kien">Phụ Kiện</a></li>
@@ -167,7 +172,6 @@ const headerHTML = `
                     <button type="submit" class="btn primary-btn">Đăng Nhập</button><p id="login-error" class="form-error"></p>
                 </form>
                 
-                <!-- ****** THAY ĐỔI Ở ĐÂY ****** -->
                 <form id="register-form" class="auth-form" style="display: none;">
                     <h3>Tạo tài khoản mới</h3>
                     <div class="form-group"><label for="register-name">Họ và Tên</label><input type="text" id="register-name" name="name" required></div>
@@ -176,7 +180,6 @@ const headerHTML = `
                     <div class="form-group"><label for="register-confirm-password">Xác nhận mật khẩu</label><input type="password" id="register-confirm-password" name="confirmPassword" required></div>
                     <button type="submit" class="btn primary-btn">Đăng Ký</button><p id="register-error" class="form-error"></p>
                 </form>
-                <!-- ****** KẾT THÚC THAY ĐỔI ****** -->
 
             </div>
         </div>

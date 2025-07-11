@@ -15,27 +15,13 @@ async function request(endpoint, options = {}) {
 
     const response = await fetch(url, config);
 
-    // =======================================================================
-    // SỬA LỖI Ở ĐÂY: TỰ ĐỘNG XỬ LÝ KHI TOKEN HẾT HẠN (LỖI 401)
-    // =======================================================================
     if (response.status === 401) {
-        // Token không hợp lệ hoặc đã hết hạn
-        // 1. Xóa thông tin đăng nhập cũ trong localStorage
         localStorage.removeItem('user');
         localStorage.removeItem('token');
-        
-        // 2. Thông báo cho người dùng
         alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
-        
-        // 3. Tải lại trang để đưa người dùng về trang chủ
         window.location.href = '/index.html';
-        
-        // 4. Dừng việc thực thi và ném ra lỗi để không xử lý các logic phía sau
         throw new Error('Unauthorized');
     }
-    // =======================================================================
-    // KẾT THÚC PHẦN SỬA LỖI
-    // =======================================================================
 
     if (!response.ok) {
         let errorData;
@@ -49,10 +35,8 @@ async function request(endpoint, options = {}) {
     }
 
     const text = await response.text();
-    // Xử lý trường hợp response không có body (ví dụ: DELETE request)
     if (!text) return {}; 
     
-    // Chỉ parse JSON nếu có nội dung
     return JSON.parse(text);
 }
 
@@ -202,6 +186,17 @@ export const updateUserByAdmin = (id, userData, token) => {
         body: JSON.stringify(userData)
     });
 };
+
+// THÊM MỚI
+export const updateUserRoleByAdmin = (id, role, token) => {
+    return request(`/users/${id}/role`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ role })
+    });
+};
+
+
 // api zalop pay
 export const createZaloPayPaymentUrl = (orderId, token) => {
     return request(`/orders/${orderId}/create-zalopay-payment`, {
