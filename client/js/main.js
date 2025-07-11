@@ -317,7 +317,7 @@ async function handleAuthFormSubmit(form) {
         submitBtn.disabled = false;
         submitBtn.textContent = originalBtnText;
     }
-}   
+}   //aa//
 function logout() {
     store.logout();
     updateAuthUI();
