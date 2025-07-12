@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // === TEMPLATE LOADER ===
     async function loadTemplateIntoMain(viewName) {
-        mainContentContainer.innerHTML = `<div class="content-loader"><div class="spinner"></div></div>`;
+        mainContentContainer.innerHTML = `<div class="content-loader" style="display:flex; justify-content:center; align-items:center; position:absolute; inset:0; background:rgba(255,255,255,0.8);"><div class="spinner"></div></div>`;
         try {
             const response = await fetch(`/templates/admin/${viewName}.html`);
             if (!response.ok) throw new Error(`Không thể tải template: ${response.statusText}`);
@@ -48,9 +48,9 @@ document.addEventListener('DOMContentLoaded', () => {
         container.innerHTML = '';
         if (totalPages <= 1) return;
 
-        const createButton = (text, page, isActive = false, isDisabled = false) => {
+        const createButton = (html, page, isActive = false, isDisabled = false) => {
             const btn = document.createElement('button');
-            btn.innerHTML = text;
+            btn.innerHTML = html;
             btn.className = 'pagination-btn';
             if (isActive) btn.classList.add('active');
             btn.disabled = isDisabled;
@@ -58,25 +58,29 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.dataset.target = targetSection;
             return btn;
         };
-
+        
         container.appendChild(createButton('«', currentPage - 1, false, currentPage === 1));
-        const pagesToShow = [];
+
+        let pages = [];
         if (totalPages <= 7) {
-            for (let i = 1; i <= totalPages; i++) pagesToShow.push(i);
+            for (let i = 1; i <= totalPages; i++) pages.push(i);
         } else {
-            pagesToShow.push(1);
-            if (currentPage > 3) pagesToShow.push('...');
-            for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) pagesToShow.push(i);
-            if (currentPage < totalPages - 2) pagesToShow.push('...');
-            pagesToShow.push(totalPages);
+            pages.push(1);
+            if (currentPage > 3) pages.push('...');
+            for (let i = Math.max(2, currentPage - 2); i <= Math.min(totalPages - 1, currentPage + 2); i++) pages.push(i);
+            if (currentPage < totalPages - 3) pages.push('...');
+            pages.push(totalPages);
         }
-        pagesToShow.forEach(p => {
+
+        pages.forEach(p => {
             if (p === '...') {
                 const span = document.createElement('span'); span.textContent = '...'; span.className = 'pagination-dots'; container.appendChild(span);
             } else { container.appendChild(createButton(p, p, p === currentPage)); }
         });
+
         container.appendChild(createButton('»', currentPage + 1, false, currentPage === totalPages));
     }
+
 
     // === DATA FETCH & RENDER ===
     async function fetchAdminStats() {
@@ -100,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 api.fetchCategories()
             ]);
             cachedData.brands = brands;
-            cachedData.categories = categories;
+            cachedData.categories = categories.filter(c => !c.parentId); // Chỉ lấy danh mục cha
         } catch(error) {
             showToast('Lỗi tải dữ liệu cho bộ lọc', 'error');
         }
@@ -122,13 +126,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!productListBody) return;
 
         const keyword = document.getElementById('product-search-input')?.value || '';
-        const brandId = document.getElementById('product-brand-filter')?.value || '';
-        const categoryId = document.getElementById('product-category-filter')?.value || '';
+        // Cải tiến: Lọc theo tên thay vì ID để nhất quán với API
+        const brand = cachedData.brands.find(b => b.id == document.getElementById('product-brand-filter')?.value)?.name || '';
+        const category = cachedData.categories.find(c => c.id == document.getElementById('product-category-filter')?.value)?.name || '';
 
         const params = new URLSearchParams({ page: page, pageSize: 10 });
         if (keyword) params.append('keyword', keyword);
-        if (brandId) params.append('brandId', brandId);
-        if (categoryId) params.append('categoryId', categoryId);
+        if (brand) params.append('brand', brand);
+        if (category) params.append('mainCategory', category);
 
         try {
             const data = await api.fetchProducts(params.toString());
@@ -258,7 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // === MODAL & FORM HANDLERS ===
-    async function openProductModal(product = null) {
+    async function openProductModal(productId = null) {
         productForm.reset();
         document.getElementById('product-id').value = '';
         productModalOverlay.classList.add('is-visible');
@@ -272,23 +277,29 @@ document.addEventListener('DOMContentLoaded', () => {
         brandSelect.innerHTML = '<option value="">-- Chọn thương hiệu --</option>' + cachedData.brands.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
         categorySelect.innerHTML = '<option value="">-- Chọn danh mục --</option>' + cachedData.categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
         
-        if (product) {
-            document.getElementById('product-modal-title').textContent = 'Chỉnh Sửa Sản Phẩm';
-            document.getElementById('product-id').value = product.id;
-            document.getElementById('product-name').value = product.name || '';
-            document.getElementById('product-price').value = product.price || 0;
-            document.getElementById('product-original-price').value = product.originalPrice || '';
-            document.getElementById('product-countInStock').value = product.countInStock || 0;
-            document.getElementById('product-image').value = product.image || '';
-            document.getElementById('product-images').value = product.images ? JSON.stringify(product.images, null, 2) : '[]';
-            document.getElementById('product-description').value = product.description || '';
-            document.getElementById('product-fullDescription').value = product.fullDescription || '';
-            document.getElementById('product-warranty').value = product.warranty || '';
-            document.getElementById('product-youtubeLink').value = product.youtubeLink || '';
-            document.getElementById('product-specifications').value = product.specifications ? JSON.stringify(product.specifications, null, 2) : '[]';
-            document.getElementById('product-isPromotional').checked = product.isPromotional || false;
-            brandSelect.value = product.brandId || '';
-            categorySelect.value = product.categoryId || '';
+        if (productId) {
+            try {
+                const product = await api.fetchProductById(productId);
+                document.getElementById('product-modal-title').textContent = 'Chỉnh Sửa Sản Phẩm';
+                document.getElementById('product-id').value = product.id;
+                document.getElementById('product-name').value = product.name || '';
+                document.getElementById('product-price').value = product.price || 0;
+                document.getElementById('product-original-price').value = product.originalPrice || '';
+                document.getElementById('product-countInStock').value = product.countInStock || 0;
+                document.getElementById('product-image').value = product.image || '';
+                document.getElementById('product-images').value = JSON.stringify(product.images || [], null, 2);
+                document.getElementById('product-description').value = product.description || '';
+                document.getElementById('product-fullDescription').value = product.fullDescription || '';
+                document.getElementById('product-warranty').value = product.warranty || '';
+                document.getElementById('product-youtubeLink').value = product.youtubeLink || '';
+                document.getElementById('product-specifications').value = JSON.stringify(product.specifications || [], null, 2);
+                document.getElementById('product-isPromotional').checked = product.isPromotional || false;
+                brandSelect.value = product.brandId || '';
+                categorySelect.value = product.categoryId || '';
+            } catch (error) {
+                showToast(`Lỗi tải chi tiết sản phẩm: ${error.message}`, 'error');
+                closeProductModal();
+            }
         } else { 
             document.getElementById('product-modal-title').textContent = 'Thêm Sản Phẩm Mới';
             document.getElementById('product-images').value = '[]';
@@ -412,7 +423,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.querySelectorAll('.admin-nav .nav-link').forEach(l => l.classList.remove('active'));
                     navLink.classList.add('active');
                     window.location.hash = targetView;
-                    handleViewChange(targetView);
+                    // handleViewChange(targetView) sẽ được gọi bởi onhashchange
                 }
                 return;
             }
@@ -432,13 +443,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const editProductBtn = closest('.product-edit-btn');
             if (editProductBtn) {
-                editProductBtn.textContent = '...'; editProductBtn.disabled = true;
-                try { 
-                    const product = await api.fetchProductById(editProductBtn.dataset.id); 
-                    openProductModal(product); 
-                } 
-                catch(error) { if (error.message !== 'Unauthorized') showToast(`Lỗi: ${error.message}`, 'error'); } 
-                finally { if (editProductBtn) { editProductBtn.textContent = 'Sửa'; editProductBtn.disabled = false; } }
+                const productId = editProductBtn.dataset.id;
+                openProductModal(productId);
                 return;
             }
 
@@ -447,7 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (confirm('Xóa sản phẩm này? (Hành động này chỉ ẩn sản phẩm)')) {
                     try { 
                         await api.deleteProduct(deleteProductBtn.dataset.id, token); 
-                        showToast('Xóa thành công'); 
+                        showToast('Xóa thành công', 'success'); 
                         const currentPage = document.querySelector('#products-pagination-container .active')?.dataset.page || 1;
                         fetchAndRenderProducts(currentPage);
                         fetchAdminStats(); 
@@ -460,13 +466,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (closest('#add-category-btn')) {
                 const nameInput = document.getElementById('new-category-name');
                 const name = nameInput.value.trim();
-                if(name) try { await api.createCategory({ name }, token); showToast('Thêm thành công'); fetchAndRenderCategories(); nameInput.value = ''; } catch(e) { showToast(e.message, 'error'); }
+                if(name) try { await api.createCategory({ name }, token); showToast('Thêm thành công', 'success'); fetchAndRenderCategories(); nameInput.value = ''; await cacheDropdownData(); } catch(e) { showToast(e.message, 'error'); }
                 return;
             }
              if (closest('#add-brand-btn')) {
                 const nameInput = document.getElementById('new-brand-name');
                 const name = nameInput.value.trim();
-                if(name) try { await api.createBrand({ name }, token); showToast('Thêm thành công'); fetchAndRenderBrands(); nameInput.value = ''; } catch(e) { showToast(e.message, 'error'); }
+                if(name) try { await api.createBrand({ name }, token); showToast('Thêm thành công', 'success'); fetchAndRenderBrands(); nameInput.value = ''; await cacheDropdownData(); } catch(e) { showToast(e.message, 'error'); }
                 return;
             }
             if (closest('.category-delete-btn') || closest('.brand-delete-btn')) {
@@ -477,8 +483,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     try { 
                         if (isBrand) await api.deleteBrand(id, token);
                         else await api.deleteCategory(id, token);
-                        showToast('Xóa thành công'); 
-                        isBrand ? fetchAndRenderBrands() : fetchAndRenderCategories();
+                        showToast('Xóa thành công', 'success'); 
+                        if(isBrand) fetchAndRenderBrands(); else fetchAndRenderCategories();
+                        await cacheDropdownData();
                     } catch (e) { showToast(e.message, 'error'); }
                 }
                 return;
@@ -494,18 +501,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 const type = isBrand ? 'thương hiệu' : 'danh mục';
 
                 if (editBtn.textContent === 'Sửa') {
-                    nameCell.innerHTML = `<input type="text" value="${originalName}" class="form-control" style="padding: 5px;">`;
+                    nameCell.innerHTML = `<input type="text" value="${originalName}" class="form-control" style="padding: 5px; width:100%;">`;
                     editBtn.textContent = 'Lưu';
-                    editBtn.style.backgroundColor = '#27ae60'; // Green color for save
+                    editBtn.style.backgroundColor = '#27ae60';
                 } else {
                     const newName = nameCell.querySelector('input').value.trim();
                     if (newName && newName !== originalName) {
                         try {
                             if (isBrand) await api.updateBrand(id, { name: newName }, token);
                             else await api.updateCategory(id, { name: newName }, token);
-                            showToast(`Cập nhật ${type} thành công`);
+                            showToast(`Cập nhật ${type} thành công`, 'success');
                             nameCell.textContent = newName;
                             nameCell.dataset.originalName = newName;
+                            await cacheDropdownData();
                         } catch(e) {
                              showToast(e.message, 'error');
                              nameCell.textContent = originalName;
@@ -514,7 +522,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         nameCell.textContent = originalName;
                     }
                      editBtn.textContent = 'Sửa';
-                     editBtn.style.backgroundColor = ''; // Revert to default
+                     editBtn.style.backgroundColor = '';
                 }
                 return;
             }
@@ -523,7 +531,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (confirm('Vô hiệu hóa người dùng này?')) {
                     try { 
                         await api.deleteUser(target.dataset.id, token); 
-                        showToast('Xóa thành công'); 
+                        showToast('Vô hiệu hóa thành công', 'success'); 
                         fetchAndRenderUsers(document.querySelector('#users-pagination-container .active')?.dataset.page || 1);
                         fetchAdminStats();
                     } catch (e) { showToast(e.message, 'error'); }
@@ -537,6 +545,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 onProductFormSubmit(e);
             }
         });
+
+        window.addEventListener('hashchange', () => {
+            const viewName = window.location.hash.substring(1) || 'dashboard';
+            document.querySelectorAll('.admin-nav .nav-link').forEach(l => l.classList.remove('active'));
+            document.querySelector(`.admin-nav a[data-target="${viewName}"]`)?.classList.add('active');
+            handleViewChange(viewName);
+        });
     }
 
     async function initializePage() {
@@ -546,8 +561,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const initialView = ['dashboard', 'products', 'categories', 'brands', 'orders', 'users'].includes(viewNameFromHash) ? viewNameFromHash : 'dashboard';
         
         const activeLink = document.querySelector(`.admin-nav a[data-target="${initialView}"]`);
-        if (activeLink) activeLink.click();
-        else document.querySelector('.admin-nav a[data-target="dashboard"]').click();
+        document.querySelectorAll('.admin-nav .nav-link').forEach(l => l.classList.remove('active'));
+        if (activeLink) {
+            activeLink.classList.add('active');
+        } else {
+            document.querySelector('.admin-nav a[data-target="dashboard"]').classList.add('active');
+        }
+        handleViewChange(initialView);
     }
 
     initializePage();

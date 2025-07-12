@@ -1,7 +1,7 @@
-// ===== File: client/js/pages.js (VERSION 2.9 - FIXED & IMPROVED) =====
+// ===== File: client/js/pages.js (TÁCH BIỆT LOGIC RENDER TỪNG TRANG) =====
 import store from './store.js';
 import * as api from './api.js';
-import { createProductCard, createRatingComponent } from './components.js';
+import { createProductCard } from './components.js';
 import { formatCurrency, showToast } from './utils.js';
 import * as templates from './templates.js';
 
@@ -41,20 +41,18 @@ export async function renderHomePage() {
     if (!tabsContainer || !productGridEl) return;
     
     const renderProductsByFilter = async (filter = 'newest') => {
-        if (productGridEl) {
-            productGridEl.innerHTML = ''; // Clear old products
-            for (let i = 0; i < 8; i++) {
-                productGridEl.innerHTML += `
-                    <div class="skeleton-card">
-                        <div class="skeleton-image"></div>
-                        <div class="skeleton-info">
-                            <div class="skeleton-line short"></div>
-                            <div class="skeleton-line medium"></div>
-                            <div class="skeleton-line"></div>
-                        </div>
+        productGridEl.innerHTML = ''; // Clear old products
+        for (let i = 0; i < 8; i++) {
+            productGridEl.innerHTML += `
+                <div class="skeleton-card">
+                    <div class="skeleton-image"></div>
+                    <div class="skeleton-info">
+                        <div class="skeleton-line short"></div>
+                        <div class="skeleton-line medium"></div>
+                        <div class="skeleton-line"></div>
                     </div>
-                `;
-            }
+                </div>
+            `;
         }
         
         try {
@@ -62,14 +60,13 @@ export async function renderHomePage() {
             if (filter === 'promo') query += '&isPromotional=true';
             else if (filter === 'bestseller') query += '&sortBy=rating_desc';
             
-            let { products } = await api.fetchProducts(query);
+            const { products } = await api.fetchProducts(query);
             
             productGridEl.innerHTML = '';
-            
             if (products && products.length > 0) {
                 products.forEach(p => productGridEl.appendChild(createProductCard(p)));
             } else {
-                productGridEl.innerHTML = '<p>Không tìm thấy sản phẩm phù hợp.</p>';
+                productGridEl.innerHTML = '<p class="no-products-message">Không tìm thấy sản phẩm phù hợp.</p>';
             }
         } catch (error) {
             console.error(error);
@@ -92,7 +89,6 @@ export async function renderHomePage() {
 // PRODUCT LIST PAGE
 // =======================================================================
 export async function renderProductListPage() {
-    // CẢI TIẾN: Khởi tạo bộ lọc khi vào trang
     await initializeFilters(); 
     
     document.getElementById('apply-filters-btn')?.addEventListener('click', () => applyFiltersAndRender());
@@ -117,24 +113,18 @@ export async function renderProductListPage() {
     applyFiltersAndRender(new URLSearchParams(window.location.search).get('page') || 1); 
 }
 
-// CẢI TIẾN: Hoàn thiện hàm khởi tạo bộ lọc
 async function initializeFilters() {
     try {
-        const [brands] = await Promise.all([
-            api.fetchBrands()
-            // Có thể thêm fetchCategories hoặc fetchProductsMeta ở đây nếu cần
-        ]);
+        const [brands] = await Promise.all([api.fetchBrands()]);
         
         const brandContainer = document.getElementById('brand-filter-options');
         if (brandContainer && brands) {
             brandContainer.innerHTML = brands.map(brand => `<label><input type="checkbox" name="brand" value="${brand.name}"><span>${brand.name}</span></label>`).join('');
         }
 
-        // Tạm thời hardcode khoảng giá, vì chưa có API `products/meta`
         const sliderEl = document.getElementById('price-slider');
         if (sliderEl && typeof noUiSlider !== 'undefined') {
-            const min = 0;
-            const max = 5000000;
+            const min = 0; const max = 6000000;
             if(priceSliderInstance) priceSliderInstance.destroy();
             priceSliderInstance = noUiSlider.create(sliderEl, { start: [min, max], connect: true, step: 50000, range: { 'min': min, 'max': max }, format: { to: value => Math.round(value), from: value => Number(value) } });
             const lowerValEl = document.getElementById('price-lower-value');
@@ -147,7 +137,6 @@ async function initializeFilters() {
     } catch (error) { console.error("Lỗi khởi tạo bộ lọc:", error); }
 }
 
-
 function buildFilterParamsFromUI() {
     const urlParams = new URLSearchParams();
     const currentParams = new URLSearchParams(window.location.search);
@@ -157,8 +146,6 @@ function buildFilterParamsFromUI() {
 
     const getCheckedValues = (name) => Array.from(document.querySelectorAll(`input[name="${name}"]:checked`)).map(cb => cb.value).join(',');
     const brands = getCheckedValues('brand'); if (brands) urlParams.set('brand', brands);
-    const weight = getCheckedValues('weight'); if (weight) urlParams.set('weight', weight);
-    const balance = getCheckedValues('balance'); if (balance) urlParams.set('balance', balance);
     if (priceSliderInstance) {
         const [minPrice, maxPrice] = priceSliderInstance.get();
         const range = priceSliderInstance.options.range;
@@ -187,7 +174,7 @@ function renderActiveFilterTags() {
     const container = document.getElementById('active-filters-container'); if (!container) return;
     const urlParams = new URLSearchParams(window.location.search);
     let tagsHTML = ''; let hasFilters = false;
-    const filterLabels = { brand: "Thương hiệu", weight: "Trọng lượng", balance: "Cân bằng", minPrice: "Giá từ", maxPrice: "Giá đến", keyword: "Từ khóa" };
+    const filterLabels = { brand: "Thương hiệu", minPrice: "Giá từ", maxPrice: "Giá đến", keyword: "Từ khóa" };
     urlParams.forEach((value, key) => {
         if (['page', 'sortBy', 'mainCategory', 'isPromotional', 'subCategory'].includes(key)) return;
         hasFilters = true;
@@ -197,7 +184,7 @@ function renderActiveFilterTags() {
             value.split(',').forEach(val => { tagsHTML += `<div class="filter-tag">${filterLabels[key] || key}: ${val} <button class="remove-filter-btn" data-key="${key}" data-value="${val}">×</button></div>`; });
         }
     });
-    if (hasFilters) tagsHTML += `<button id="clear-all-filters-btn">Xóa tất cả</button>`;
+    if (hasFilters) tagsHTML += `<button id="clear-all-filters-btn" class="link-like-btn">Xóa tất cả</button>`;
     container.innerHTML = tagsHTML;
 }
 
@@ -216,7 +203,7 @@ function removeFilter(key, value) {
 
 function clearAllFilters() {
     const urlParams = new URLSearchParams(window.location.search);
-    const preservedParams = ['mainCategory', 'subCategory', 'isPromotional', 'keyword'];
+    const preservedParams = ['mainCategory', 'subCategory', 'isPromotional'];
     const newParams = new URLSearchParams();
     preservedParams.forEach(key => { if(urlParams.has(key)) newParams.set(key, urlParams.get(key)); });
     newParams.set('page', '1');
@@ -252,19 +239,13 @@ async function applyFiltersAndRender(page = 1, newParams = null) {
     try {
         const { products, count, page: currentPage, pages: totalPages } = await api.fetchProducts(urlParams.toString());
         
-        const countDisplay = document.getElementById('product-count-display');
-        if (countDisplay) {
-            countDisplay.innerHTML = `Tìm thấy <strong>${count}</strong> sản phẩm`;
-        }
+        document.getElementById('product-count-display').innerHTML = `Tìm thấy <strong>${count}</strong> sản phẩm`;
         renderProductGrid(products);
         renderPagination(totalPages, currentPage);
 
     } catch (error) {
         console.error("Lỗi khi áp dụng bộ lọc và render sản phẩm:", error);
-        const gridWrapper = document.getElementById('product-grid-wrapper');
-        if (gridWrapper) {
-            gridWrapper.innerHTML = `<p class="error-message">Không thể tải sản phẩm. Vui lòng thử lại.</p>`;
-        }
+        document.getElementById('product-grid-wrapper').innerHTML = `<p class="error-message">Không thể tải sản phẩm. Vui lòng thử lại.</p>`;
     } finally {
         if (spinner) spinner.classList.add('hidden');
     }
@@ -273,16 +254,10 @@ async function applyFiltersAndRender(page = 1, newParams = null) {
 function renderProductGrid(products) {
     const gridWrapper = document.getElementById('product-grid-wrapper');
     const noProductsMessage = document.getElementById('no-products-found-detailed');
-    if (!gridWrapper || !noProductsMessage) return;
+    const productGridEl = document.getElementById('product-grid-container');
     
-    const oldGrid = gridWrapper.querySelector('#product-grid-container');
-    if(oldGrid) oldGrid.remove();
+    productGridEl.innerHTML = ''; // Clear previous results or skeletons
     
-    const productGridEl = document.createElement('div');
-    productGridEl.id = 'product-grid-container';
-    productGridEl.className = 'products-grid-v2';
-    gridWrapper.prepend(productGridEl);
-
     if (products && products.length > 0) {
         products.forEach(p => productGridEl.appendChild(createProductCard(p)));
         noProductsMessage.style.display = 'none';
@@ -298,13 +273,9 @@ function renderPagination(totalPages, currentPage) {
     if (totalPages <= 1) return;
 
     const createButton = (text, page, isActive = false, isDisabled = false) => {
-        const btn = document.createElement('button');
-        btn.innerHTML = text;
-        btn.className = 'pagination-btn';
+        const btn = document.createElement('button'); btn.innerHTML = text; btn.className = 'pagination-btn';
         if (isActive) btn.classList.add('active');
-        btn.disabled = isDisabled;
-        btn.dataset.page = page;
-        return btn;
+        btn.disabled = isDisabled; btn.dataset.page = page; return btn;
     };
     
     container.appendChild(createButton('«', currentPage - 1, false, currentPage === 1));
@@ -320,13 +291,8 @@ function renderPagination(totalPages, currentPage) {
     }
     pagesToShow.forEach(p => {
         if (p === '...') {
-            const span = document.createElement('span');
-            span.textContent = '...';
-            span.className = 'pagination-dots';
-            container.appendChild(span);
-        } else {
-            container.appendChild(createButton(p, p, p === currentPage));
-        }
+            const span = document.createElement('span'); span.textContent = '...'; span.className = 'pagination-dots'; container.appendChild(span);
+        } else { container.appendChild(createButton(p, p, p === currentPage)); }
     });
     container.appendChild(createButton('»', currentPage + 1, false, currentPage === totalPages));
 }
@@ -365,7 +331,7 @@ function initImageGallery() {
     galleryContainer.addEventListener('click', (e) => {
         const thumbnail = e.target.closest('.thumbnail-item');
         if (thumbnail) {
-            mainImage.src = thumbnail.querySelector('img').src;
+            mainImage.src = thumbnail.dataset.fullSrc;
             galleryContainer.querySelectorAll('.thumbnail-item').forEach(t => t.classList.remove('active'));
             thumbnail.classList.add('active');
         }
@@ -441,24 +407,23 @@ async function renderRelatedProducts(productId) {
 // =======================================================================
 // CHECKOUT FLOW (Shipping, Place Order, Order Detail)
 // =======================================================================
-function checkAuthStateAndRedirect() {
+function checkAuthStateAndRedirect(checkCart = false) {
     if (!store.getUser()) {
         alert('Vui lòng đăng nhập để tiếp tục.');
         localStorage.setItem('redirectAfterLogin', window.location.pathname + window.location.search); 
         window.location.href = '/index.html';
         return false;
     }
+    if (checkCart && store.getCart().length === 0) {
+        alert("Giỏ hàng của bạn đang trống.");
+        window.location.href = '/products.html';
+        return false;
+    }
     return true;
 }
 
 export function renderShippingPage() {
-    if (!checkAuthStateAndRedirect()) return;
-
-    if (store.getCart().length === 0) {
-        alert("Giỏ hàng của bạn đang trống.");
-        window.location.href = '/index.html';
-        return;
-    }
+    if (!checkAuthStateAndRedirect(true)) return;
 
     const savedAddress = store.getShippingAddress();
     document.getElementById('address').value = savedAddress.address || '';
@@ -482,12 +447,7 @@ export function handleShippingFormSubmit(form) {
 }
 
 export async function renderPlaceOrderPage() {
-    if (!checkAuthStateAndRedirect()) return;
-    if (store.getCart().length === 0) {
-        alert("Giỏ hàng của bạn đang trống.");
-        window.location.href = '/index.html';
-        return;
-    }
+    if (!checkAuthStateAndRedirect(true)) return;
 
     const shippingAddress = store.getShippingAddress();
     const paymentMethod = store.getPaymentMethod();
@@ -529,7 +489,7 @@ export async function renderPlaceOrderPage() {
 
     document.getElementById('items-price').textContent = formatCurrency(subtotal);
     document.getElementById('shipping-price').textContent = formatCurrency(shippingPrice);
-    document.getElementById('tax-price').textContent = formatCurrency(0);
+    document.getElementById('tax-price').textContent = formatCurrency(0); // Assuming no tax
     document.getElementById('total-price').textContent = formatCurrency(totalPrice);
 
     document.getElementById('place-order-btn').addEventListener('click', async (e) => {
@@ -543,16 +503,9 @@ export async function renderPlaceOrderPage() {
         try {
             const orderData = {
                 orderItems: cartItems.map(item => ({
-                    product: item.id,
-                    name: item.name,
-                    qty: item.quantity,
-                    image: item.image,
-                    price: item.price,
-                    stringingInfo: item.stringingInfo,
+                    product: item.id, name: item.name, qty: item.quantity, image: item.image, price: item.price, stringingInfo: item.stringingInfo,
                 })),
-                shippingAddress, 
-                paymentMethod,
-                applyFirstOrderDiscount: isDiscountEligible,
+                shippingAddress, paymentMethod, applyFirstOrderDiscount: isDiscountEligible,
             };
             
             const createdOrder = await api.createOrder(orderData, store.getToken());
@@ -585,16 +538,12 @@ export async function renderOrderDetailPage() {
             zaloPayBtn.addEventListener('click', async () => {
                 zaloPayBtn.disabled = true;
                 zaloPayBtn.textContent = 'Đang tạo thanh toán...';
-                // SỬA LỖI: Xóa bỏ khối try...catch lồng nhau bị thừa
                 try {
                     const result = await api.createZaloPayPaymentUrl(order.id, store.getToken());
-                    
-                    if (result.return_code === 1) {
+                    if (result.return_code === 1 && result.order_url) {
                         window.location.href = result.order_url;
                     } else {
-                        showToast(`Lỗi: ${result.return_message || 'Không thể tạo thanh toán'}`, 'error');
-                        zaloPayBtn.disabled = false;
-                        zaloPayBtn.textContent = 'Thanh toán bằng ZaloPay';
+                        throw new Error(result.return_message || 'Không thể tạo thanh toán ZaloPay.');
                     }
                 } catch (error) {
                     showToast(`Lỗi: ${error.message}`, 'error');
@@ -603,7 +552,6 @@ export async function renderOrderDetailPage() {
                 }
             });
         }
-
     } catch (error) {
         container.innerHTML = `<h1 class="page-title">Lỗi: ${error.message}</h1>`;
     }

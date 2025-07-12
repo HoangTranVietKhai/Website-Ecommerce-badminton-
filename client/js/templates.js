@@ -1,3 +1,5 @@
+// ===== File: client/js/templates.js (TÁCH CÁC CHUỖI HTML LỚN) =====
+
 import { formatCurrency } from './utils.js';
 import { createRatingComponent } from './components.js';
 
@@ -26,7 +28,6 @@ export function generateOrderDetailHTML(order) {
         let stringingDetailHTML = '';
         if (item.stringingInfo) {
              try {
-                // Backend trả về JSON, nên không cần parse lại
                 const info = item.stringingInfo;
                 if (info && info.stringName) {
                     stringingDetailHTML = `<p style="font-size: 0.9rem; color: #555;">+ Cước: ${info.stringName}<br>+ Căng: ${info.tension || 'N/A'} kg</p>`;
@@ -47,38 +48,43 @@ export function generateOrderDetailHTML(order) {
 
     const itemsPrice = order.orderItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
     const stringingPrice = order.orderItems.reduce((acc, item) => {
-        if(item.stringingInfo){
-            try {
-                const info = item.stringingInfo;
-                if(info && info.stringPrice) {
-                    return acc + (info.stringPrice * item.quantity);
-                }
-            } catch(e) {}
+        if(item.stringingInfo && item.stringingInfo.stringPrice){
+            return acc + (item.stringingInfo.stringPrice * item.quantity);
         }
         return acc;
     }, 0);
     
-    // ++ SỬA LỖI: Lấy trực tiếp phí vận chuyển từ object `order` đã được backend trả về
     const shippingPrice = order.shippingPrice || 0;
+    
     let paymentActionHTML = '';
     if (!order.isPaid && order.paymentMethod === 'ZaloPay') {
-        // Đây là code cho "Cách 1: Giả lập thanh toán"
         paymentActionHTML = `<button id="zalopay-payment-btn" class="btn primary-btn" style="width: 100%; margin-top: 1.5rem; background-color: #0068ff;">Thanh toán bằng ZaloPay</button>`;
     }
     return `
         <div class="page-header"><h1>Chi tiết đơn hàng #${order.id}</h1><p>Đặt lúc: ${new Date(order.createdAt).toLocaleString('vi-VN')}</p></div>
         <div class="placeorder-layout">
             <div class="placeorder-details">
-                <div class="shipping-info card-section"><h3>Thông Tin Giao Hàng</h3><p><strong>Người nhận:</strong> ${order.userName}</p><p><strong>Email:</strong> ${order.userEmail}</p><p><strong>Địa chỉ:</strong> ${order.shippingAddress}, ${order.city}, ${order.postalCode}, ${order.country}</p><div class="status-badge ${order.isDelivered ? 'delivered' : ''}">${order.isDelivered ? `Đã giao hàng vào ${new Date(order.deliveredAt).toLocaleDateString('vi-VN')}` : 'Chưa giao hàng'}</div></div>
-                <div class="shipping-info card-section" style="margin-top: 1rem;"><h3>Thanh Toán</h3><p><strong>Phương thức:</strong> ${order.paymentMethod}</p><div class="status-badge ${order.isPaid ? 'paid' : ''}">${order.isPaid ? `Đã thanh toán vào ${new Date(order.paidAt).toLocaleDateString('vi-VN')}` : 'Chưa thanh toán'}</div></div>
+                <div class="shipping-info card-section">
+                    <h3>Thông Tin Giao Hàng</h3>
+                    <p><strong>Người nhận:</strong> ${order.userName}</p>
+                    <p><strong>Email:</strong> ${order.userEmail}</p>
+                    <p><strong>Địa chỉ:</strong> ${order.shippingAddress}, ${order.city}, ${order.postalCode}, ${order.country}</p>
+                    <div class="status-badge ${order.isDelivered ? 'delivered' : ''}">${order.isDelivered ? `Đã giao hàng vào ${new Date(order.deliveredAt).toLocaleDateString('vi-VN')}` : 'Chưa giao hàng'}</div>
+                </div>
+                <div class="shipping-info card-section" style="margin-top: 1rem;">
+                    <h3>Thanh Toán</h3>
+                    <p><strong>Phương thức:</strong> ${order.paymentMethod}</p>
+                    <div class="status-badge ${order.isPaid ? 'paid' : ''}">${order.isPaid ? `Đã thanh toán vào ${new Date(order.paidAt).toLocaleDateString('vi-VN')}` : 'Chưa thanh toán'}</div>
+                </div>
                 <div class="order-items card-section"><h3>Sản Phẩm Đã Đặt</h3><div>${orderItemsHTML}</div></div>
             </div>
-            <div class="order-summary-card card-section"><h3>Tóm Tắt Đơn Hàng</h3>
+            <div class="order-summary-card card-section">
+                <h3>Tóm Tắt Đơn Hàng</h3>
                 <div class="summary-line"><span>Giá sản phẩm:</span><span>${formatCurrency(itemsPrice)}</span></div>
                 <div class="summary-line"><span>Phí căng cước:</span><span>${formatCurrency(stringingPrice)}</span></div>
                 <div class="summary-line"><span>Phí vận chuyển:</span><span>${formatCurrency(shippingPrice)}</span></div>
                 <div class="summary-line total-line"><span>Tổng cộng:</span><span>${formatCurrency(order.totalPrice)}</span></div>
-             ${paymentActionHTML}
+                ${paymentActionHTML}
             </div>
         </div>`;
 }
@@ -86,7 +92,7 @@ export function generateOrderDetailHTML(order) {
 export function generateProductDetailHTML(product) {
     const allImages = [product.image, ...(product.images || [])].filter(Boolean);
     const thumbnailsHTML = allImages.map((img, index) => 
-        `<img src="${img}" alt="Thumbnail ${product.name} ${index + 1}" class="thumbnail-item ${index === 0 ? 'active' : ''}" data-index="${index}" loading="lazy">`
+        `<img src="${img}" data-full-src="${img}" alt="Thumbnail ${product.name} ${index + 1}" class="thumbnail-item ${index === 0 ? 'active' : ''}" data-index="${index}" loading="lazy">`
     ).join('');
     
     let priceHTML = `<div class="product-price-main">${formatCurrency(product.price)}</div>`;
@@ -98,17 +104,8 @@ export function generateProductDetailHTML(product) {
             </div>`;
     }
 
-    let specsData = [];
-    try {
-        if (typeof product.specifications === 'string' && product.specifications.trim().startsWith('[')) {
-             specsData = JSON.parse(product.specifications);
-        } else if (Array.isArray(product.specifications)) {
-            specsData = product.specifications;
-        }
-    } catch (e) { console.error("Lỗi parse JSON thông số:", e); }
-    
-    const specsHTML = specsData.length > 0
-        ? `<ul class="specs-list">${specsData.map(spec => `<li><span class="spec-key">${spec.key}</span><span class="spec-value">${spec.value}</span></li>`).join('')}</ul>`
+    const specsHTML = (product.specifications && product.specifications.length > 0)
+        ? `<ul class="specs-list">${product.specifications.map(spec => `<li><span class="spec-key">${spec.key}</span><span class="spec-value">${spec.value}</span></li>`).join('')}</ul>`
         : '<p>Chưa có thông số kỹ thuật.</p>';
 
     let videoHTML = '<p>Chưa có video review.</p>';
@@ -131,7 +128,18 @@ export function generateProductDetailHTML(product) {
     return `
         <div class="product-detail-grid">
             <div class="product-media"><div class="main-image-container"><img id="main-product-image" src="${product.image}" alt="${product.name}"></div><div id="thumbnail-gallery" class="thumbnail-gallery">${thumbnailsHTML}</div></div>
-            <div class="product-details-main"><h1 class="product-title">${product.name}</h1><div class="product-meta"><span>Thương hiệu: <strong>${product.brand}</strong></span><div class="rating-container-detail">${createRatingComponent(product.rating, `${product.numReviews} đánh giá`)}</div></div>${priceHTML}<div class="info-blocks"><div class="info-block"><i class="fas fa-check-circle"></i> Tình trạng: <strong>${product.countInStock > 0 ? 'Còn hàng' : 'Hết hàng'}</strong></div><div class="info-block"><i class="fas fa-shield-alt"></i> Bảo hành: <strong>${product.warranty || 'Không có'}</strong></div></div><p class="product-short-description">${product.description}</p>${stringingOptionsHTML}<div class="product-actions"><button id="add-to-cart-detail" class="btn primary-btn btn-lg" data-product-id="${product.id}" ${product.countInStock === 0 ? 'disabled' : ''}><i class="fas fa-shopping-cart"></i> ${product.countInStock === 0 ? 'Hết hàng' : 'Thêm vào giỏ'}</button></div></div>
+            <div class="product-details-main">
+                <h1 class="product-title">${product.name}</h1>
+                <div class="product-meta"><span>Thương hiệu: <strong>${product.brand}</strong></span><div class="rating-container-detail">${createRatingComponent(product.rating, `${product.numReviews} đánh giá`)}</div></div>
+                ${priceHTML}
+                <div class="info-blocks">
+                    <div class="info-block"><i class="fas fa-check-circle"></i> Tình trạng: <strong class="${product.countInStock > 0 ? '' : 'text-danger'}">${product.countInStock > 10 ? 'Còn hàng' : (product.countInStock > 0 ? `Chỉ còn ${product.countInStock}` : 'Hết hàng')}</strong></div>
+                    <div class="info-block"><i class="fas fa-shield-alt"></i> Bảo hành: <strong>${product.warranty || 'Không có'}</strong></div>
+                </div>
+                <p class="product-short-description">${product.description}</p>
+                ${stringingOptionsHTML}
+                <div class="product-actions"><button id="add-to-cart-detail" class="btn primary-btn btn-lg" data-product-id="${product.id}" ${product.countInStock === 0 ? 'disabled' : ''}><i class="fas fa-shopping-cart"></i> ${product.countInStock === 0 ? 'Hết hàng' : 'Thêm vào giỏ'}</button></div>
+            </div>
         </div>
         <div class="product-tabs-container"><div class="tab-buttons"><button class="tab-btn active" data-tab="description">Mô Tả</button><button class="tab-btn" data-tab="specs">Thông Số</button><button class="tab-btn" data-tab="video">Video</button><button class="tab-btn" data-tab="reviews">Đánh Giá (${product.numReviews})</button></div><div class="tab-content-container"><div id="description" class="tab-content active">${product.fullDescription ? `<p>${product.fullDescription.replace(/\n/g, '</p><p>')}</p>` : 'Chưa có mô tả chi tiết.'}</div><div id="specs" class="tab-content">${specsHTML}</div><div id="video" class="tab-content">${videoHTML}</div><div id="reviews" class="tab-content"><div class="reviews-layout"><div class="reviews-list">${reviewsHTML}</div><div class="review-form-container"></div></div></div></div></div>
         <section id="related-products-section" class="related-products-section" style="display: none;"><h2 class="section-title">Sản phẩm liên quan</h2><div id="related-products-grid" class="products-grid"></div></section>`;
@@ -145,11 +153,11 @@ export function generateReviewFormHTML() {
                 <label for="rating">Xếp hạng</label>
                 <select id="rating" required>
                     <option value="">Chọn...</option>
-                    <option value="1">1 - Tệ</option>
-                    <option value="2">2 - Tạm</option>
-                    <option value="3">3 - Ổn</option>
-                    <option value="4">4 - Tốt</option>
                     <option value="5">5 - Tuyệt vời</option>
+                    <option value="4">4 - Tốt</option>
+                    <option value="3">3 - Ổn</option>
+                    <option value="2">2 - Tạm</option>
+                    <option value="1">1 - Tệ</option>
                 </select>
             </div>
             <div class="form-group">

@@ -1,4 +1,4 @@
-// ===== File: server/routes/productRoutes.js (NÂNG CẤP BỘ LỌC) =====
+// ===== File: server/routes/productRoutes.js (ĐÃ SỬA LỖI THỨ TỰ ROUTE) =====
 const express = require('express');
 const asyncHandler = require('express-async-handler');
 const sql = require('mssql');
@@ -11,21 +11,19 @@ const router = express.Router();
 // @route   GET /api/products
 // @access  Public
 router.get('/', asyncHandler(async (req, res) => {
-    // SỬA ĐỔI: Đọc thêm các tham số dạng chữ từ query
     const {
         keyword, brand, mainCategory, subCategory, isPromotional,
-        minPrice, maxPrice, weight, balance,
+        minPrice, maxPrice,
         sortBy, pageSize: pageSizeQuery, page: pageQuery
     } = req.query;
 
-    const pageSize = parseInt(pageSizeQuery) || 12; // Tăng pageSize mặc định
+    const pageSize = parseInt(pageSizeQuery) || 12;
     const page = parseInt(pageQuery) || 1;
     const offset = (page - 1) * pageSize;
 
     const request = pool.request();
     const countRequest = pool.request();
 
-    // SỬA ĐỔI: Luôn JOIN với Brands và Categories để có thể lọc theo tên
     const joinClauses = [
         "LEFT JOIN Brands b ON p.BrandId = b.Id",
         "LEFT JOIN Categories c ON p.CategoryId = c.Id"
@@ -37,20 +35,16 @@ router.get('/', asyncHandler(async (req, res) => {
         countRequest.input(name, type, value);
     };
 
-    // --- Xây dựng các điều kiện lọc ---
     if (keyword) { whereClauses.push("p.Name LIKE @keyword"); addInput('keyword', sql.NVarChar, `%${keyword}%`); }
     if (isPromotional === 'true') { whereClauses.push("p.IsPromotional = 1"); }
     
-    // SỬA ĐỔI: Lọc theo tên thương hiệu (hỗ trợ nhiều thương hiệu)
     if (brand) {
-        // Dùng STRING_SPLIT để xử lý chuỗi "Yonex,Lining"
         whereClauses.push("b.Name IN (SELECT value FROM STRING_SPLIT(@brand, ','))");
         addInput('brand', sql.NVarChar, brand);
     }
-
-    // SỬA ĐỔI: Lọc theo tên danh mục chính
+    
     if (mainCategory) {
-        whereClauses.push("c.Name = @mainCategory");
+        whereClauses.push("c.Name IN (SELECT value FROM STRING_SPLIT(@mainCategory, ','))");
         addInput('mainCategory', sql.NVarChar, mainCategory);
     }
     
@@ -58,19 +52,15 @@ router.get('/', asyncHandler(async (req, res) => {
     if (minPrice) { whereClauses.push("p.Price >= @minPrice"); addInput('minPrice', sql.Decimal(18, 2), minPrice); }
     if (maxPrice) { whereClauses.push("p.Price <= @maxPrice"); addInput('maxPrice', sql.Decimal(18, 2), maxPrice); }
     
-    // (Giữ nguyên logic lọc cho weight, balance nếu có)
-
     const joinClause = joinClauses.join(' ');
     const whereClause = whereClauses.length > 0 ? `WHERE ${whereClauses.join(' AND ')}` : '';
 
-    // --- Xây dựng điều kiện sắp xếp ---
-    let orderByClause = 'ORDER BY p.CreatedAt DESC'; // Mặc định
+    let orderByClause = 'ORDER BY p.CreatedAt DESC';
     if (sortBy === 'price_asc') orderByClause = 'ORDER BY p.Price ASC';
     else if (sortBy === 'price_desc') orderByClause = 'ORDER BY p.Price DESC';
-    else if (sortBy === 'rating_desc') orderByClause = 'ORDER BY p.Rating DESC';
+    else if (sortBy === 'rating_desc') orderByClause = 'ORDER BY p.Rating DESC, p.NumReviews DESC';
     else if (sortBy === 'newest') orderByClause = 'ORDER BY p.CreatedAt DESC';
 
-    // --- Câu query chính ---
     const productQuery = `
         SELECT p.Id as id, p.Name as name, p.Price as price, p.Image as image, 
                p.OriginalPrice as originalPrice, b.Name as brand, c.Name as categoryName, 
@@ -100,10 +90,61 @@ router.get('/', asyncHandler(async (req, res) => {
     });
 }));
 
-// (Các route khác trong file này giữ nguyên không đổi)
-// ...
+// ===== BẮT ĐẦU SỬA LỖI =====
+// DI CHUYỂN ROUTE /suggestions LÊN TRÊN CÁC ROUTE CÓ THAM SỐ ĐỘNG NHƯ /:id
+
+// @desc    Lấy gợi ý sản phẩm cho thanh tìm kiếm
+// @route   GET /api/products/suggestions
+// @access  Public
+router.get('/suggestions', asyncHandler(async (req, res) => {
+    const keyword = req.query.keyword;
+
+    if (!keyword || keyword.trim().length < 2) {
+        return res.json([]);
+    }
+
+    const result = await pool.request()
+        .input('Keyword', sql.NVarChar, `%${keyword}%`)
+        .input('StartKeyword', sql.NVarChar, `${keyword}%`)
+        .query(`
+            SELECT TOP 5 
+                p.Id as id, 
+                p.Name as name, 
+                p.Image as image,
+                p.Price as price,
+                b.Name as brand
+            FROM Products p
+            LEFT JOIN Brands b ON p.BrandId = b.Id
+            WHERE p.IsDeleted = 0 AND p.Name LIKE @Keyword
+            ORDER BY 
+                CASE 
+                    WHEN p.Name LIKE @StartKeyword THEN 1
+                    ELSE 2
+                END, 
+                p.NumReviews DESC
+        `);
+
+    const suggestions = result.recordset.map(p => ({
+        ...p,
+        price: parseFloat(p.price)
+    }));
+
+    res.json(suggestions);
+}));
+
+
+// @desc    Lấy sản phẩm theo ID
+// @route   GET /api/products/:id
+// @access  Public
 router.get('/:id', asyncHandler(async (req, res) => {
     const productId = req.params.id;
+
+    // Thêm kiểm tra để đảm bảo ID là một số
+    if (isNaN(productId)) {
+        res.status(400);
+        throw new Error('ID sản phẩm không hợp lệ.');
+    }
+
     const productResult = await pool.request().input('Id', sql.Int, productId).query(`
         SELECT p.*, b.Name as brand, c.Name as mainCategory
         FROM Products p
@@ -148,9 +189,15 @@ router.get('/:id', asyncHandler(async (req, res) => {
     res.json(formattedProduct);
 }));
 
+// ===== KẾT THÚC SỬA LỖI =====
+
+
+// @desc    Tạo sản phẩm mới (Admin)
+// @route   POST /api/products
+// @access  Private/Admin
 router.post('/', protect, admin, asyncHandler(async (req, res) => {
     const { 
-        name, price, originalPrice, image, images, brandId, categoryId, 
+        name, price, originalPrice, image, images, brandId, categoryId, subCategory,
         description, fullDescription, countInStock, isPromotional, 
         warranty, youtubeLink, specifications 
     } = req.body;
@@ -175,6 +222,7 @@ router.post('/', protect, admin, asyncHandler(async (req, res) => {
         .input('Specifications', sql.NVarChar(sql.MAX), specifications || '[]')
         .input('BrandId', sql.Int, brandId)
         .input('CategoryId', sql.Int, categoryId)
+        .input('SubCategory', sql.NVarChar, subCategory || null)
         .input('Rating', sql.Decimal(3, 2), 0)
         .input('NumReviews', sql.Int, 0);
 
@@ -182,13 +230,13 @@ router.post('/', protect, admin, asyncHandler(async (req, res) => {
         INSERT INTO Products (
             Name, Price, OriginalPrice, Image, Images, Description, FullDescription, 
             CountInStock, IsPromotional, Warranty, YoutubeLink, Specifications, 
-            BrandId, CategoryId, Rating, NumReviews
+            BrandId, CategoryId, SubCategory, Rating, NumReviews
         ) 
         OUTPUT INSERTED.Id as id, INSERTED.Name as name
         VALUES (
             @Name, @Price, @OriginalPrice, @Image, @Images, @Description, @FullDescription,
             @CountInStock, @IsPromotional, @Warranty, @YoutubeLink, @Specifications,
-            @BrandId, @CategoryId, @Rating, @NumReviews
+            @BrandId, @CategoryId, @SubCategory, @Rating, @NumReviews
         )
     `);
 
@@ -201,10 +249,13 @@ router.post('/', protect, admin, asyncHandler(async (req, res) => {
 }));
 
 
+// @desc    Cập nhật sản phẩm (Admin)
+// @route   PUT /api/products/:id
+// @access  Private/Admin
 router.put('/:id', protect, admin, asyncHandler(async (req, res) => {
     const productId = req.params.id;
     const { 
-        name, price, originalPrice, image, images, brandId, categoryId, 
+        name, price, originalPrice, image, images, brandId, categoryId, subCategory,
         description, fullDescription, countInStock, isPromotional, 
         warranty, youtubeLink, specifications 
     } = req.body;
@@ -226,6 +277,7 @@ router.put('/:id', protect, admin, asyncHandler(async (req, res) => {
     addClause('Images', images, sql.NVarChar);
     addClause('BrandId', brandId, sql.Int);
     addClause('CategoryId', categoryId, sql.Int);
+    addClause('SubCategory', subCategory, sql.NVarChar);
     addClause('Description', description, sql.NVarChar(1000));
     addClause('FullDescription', fullDescription, sql.NVarChar(sql.MAX));
     addClause('CountInStock', countInStock, sql.Int);
@@ -252,6 +304,10 @@ router.put('/:id', protect, admin, asyncHandler(async (req, res) => {
     }
 }));
 
+
+// @desc    Xóa sản phẩm (Admin) - Soft delete
+// @route   DELETE /api/products/:id
+// @access  Private/Admin
 router.delete('/:id', protect, admin, asyncHandler(async (req, res) => {
     const result = await pool.request()
         .input('Id', sql.Int, req.params.id)
@@ -262,6 +318,10 @@ router.delete('/:id', protect, admin, asyncHandler(async (req, res) => {
     res.json({ message: 'Sản phẩm đã được xóa' });
 }));
 
+
+// @desc    Tạo đánh giá mới
+// @route   POST /api/products/:id/reviews
+// @access  Private
 router.post('/:id/reviews', protect, asyncHandler(async (req, res, next) => {
     const { rating, comment } = req.body;
     const productId = req.params.id;
@@ -288,6 +348,10 @@ router.post('/:id/reviews', protect, asyncHandler(async (req, res, next) => {
     }
 }));
 
+
+// @desc    Lấy các sản phẩm liên quan
+// @route   GET /api/products/:id/related
+// @access  Public
 router.get('/:id/related', asyncHandler(async (req, res) => {
     const currentProductResult = await pool.request().input('Id', sql.Int, req.params.id).query('SELECT CategoryId FROM Products WHERE Id = @Id');
     if (currentProductResult.recordset.length === 0) return res.json([]);

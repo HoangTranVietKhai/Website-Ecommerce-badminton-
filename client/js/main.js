@@ -1,8 +1,8 @@
-// ===== File: client/js/main.js (VERSION 2.8 - FIXED INITIALIZATION LOGIC) =====
+// ===== File: client/js/main.js (PHIÊN BẢN CÓ SỬA LỖI VÀ KÍCH HOẠT TÌM KIẾM) =====
 import store from './store.js';
 import * as api from './api.js';
 import { loadLayout } from './layout.js';
-import { showToast } from './utils.js';
+import { showToast, debounce } from './utils.js';
 import * as pages from './pages.js';
 
 // --- HÀM QUẢN LÝ UI TRUNG TÂM ---
@@ -19,13 +19,12 @@ function openPopup(selector) {
     
     closeAllPopups();
     
-    document.body.classList.add('overlay-is-active', 'modal-is-open');
-    const isDrawer = element.matches('.cart-drawer, .products-sidebar-v2');
-    element.classList.add(isDrawer ? 'is-open' : 'is-visible');
-    if (isDrawer) {
-        if (element.id === 'cart-drawer') document.body.classList.add('cart-open');
-        else if (element.id === 'filter-drawer') document.body.classList.add('filter-is-open');
-    }
+    document.body.classList.add('overlay-is-active');
+    element.classList.add(element.matches('.cart-drawer, .products-sidebar-v2') ? 'is-open' : 'is-visible');
+
+    if (element.matches('.cart-drawer')) document.body.classList.add('cart-open');
+    else if (element.matches('.products-sidebar-v2')) document.body.classList.add('filter-is-open');
+    else document.body.classList.add('modal-is-open');
     
     if(selector === '#auth-modal') {
         pages.renderAuthModal('login');
@@ -43,9 +42,97 @@ function toggleMegaMenu(e) {
     
     if (!wasOpen) {
         dropdown.classList.add('is-open');
-        document.body.classList.add('menu-is-open'); 
+        document.body.classList.add('menu-is-open', 'overlay-is-active'); 
     }
 }
+
+
+// --- HÀM MỚI ĐỂ XỬ LÝ TÌM KIẾM GỢI Ý ---
+function setupSearchSuggestions() {
+    const searchInput = document.getElementById('search-input');
+    const suggestionsContainer = document.getElementById('search-suggestions-container');
+    const searchForm = document.getElementById('search-form');
+
+    if (!searchInput || !suggestionsContainer || !searchForm) {
+        return;
+    }
+    
+    const renderSuggestions = (suggestions) => {
+        if (!suggestions || suggestions.length === 0) {
+            suggestionsContainer.classList.remove('visible');
+            return;
+        }
+
+        suggestionsContainer.innerHTML = suggestions.map(item => `
+            <a href="/product-detail.html?id=${item.id}" class="suggestion-item">
+                <img src="${item.image || '/images/placeholder.png'}" alt="${item.name}">
+                <div class="suggestion-item-info">
+                    <span class="suggestion-item-name">${item.name}</span>
+                    <span class="suggestion-item-price">${store.formatCurrency(item.price)}</span>
+                </div>
+            </a>
+        `).join('');
+        suggestionsContainer.classList.add('visible');
+    };
+
+    const fetchSuggestions = debounce(async (keyword) => {
+        if (keyword.length < 2) {
+            suggestionsContainer.classList.remove('visible');
+            return;
+        }
+        try {
+            const suggestions = await api.fetchProductSuggestions(keyword);
+            renderSuggestions(suggestions);
+        } catch (error) {
+            console.error('Lỗi khi lấy gợi ý tìm kiếm:', error);
+            suggestionsContainer.classList.remove('visible');
+        }
+    }, 300);
+
+    searchInput.addEventListener('input', () => {
+        fetchSuggestions(searchInput.value);
+    });
+    
+    document.addEventListener('click', (e) => {
+        if (!searchForm.contains(e.target)) {
+            suggestionsContainer.classList.remove('visible');
+        }
+    });
+
+    let activeIndex = -1;
+    searchInput.addEventListener('keydown', (e) => {
+        const items = suggestionsContainer.querySelectorAll('.suggestion-item');
+        if (!items.length) return;
+
+        const updateActiveSuggestion = (items, index) => {
+            items.forEach(item => item.classList.remove('active'));
+            if (items[index]) {
+                items[index].classList.add('active');
+                items[index].scrollIntoView({ block: 'nearest' });
+            }
+        };
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            activeIndex = (activeIndex + 1) % items.length;
+            updateActiveSuggestion(items, activeIndex);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            activeIndex = (activeIndex > -1) ? (activeIndex - 1 + items.length) % items.length : items.length - 1;
+            updateActiveSuggestion(items, activeIndex);
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (activeIndex > -1 && items[activeIndex]) {
+                items[activeIndex].click();
+            } else {
+                searchForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+            }
+        } else if (e.key === 'Escape') {
+            suggestionsContainer.classList.remove('visible');
+        }
+    });
+}
+
 
 // --- THIẾT LẬP EVENT LISTENERS ---
 function setupEventListeners() {
@@ -64,64 +151,73 @@ function handleGlobalClick(e) {
         return;
     }
     
-    if (!closest('.has-dropdown')) {
-        const menu = document.querySelector('.has-dropdown.is-open');
-        if (menu) {
+    if (closest('#products-menu-trigger')) {
+        toggleMegaMenu(e);
+        return;
+    }
+    
+    if (!closest('.has-dropdown') && !closest('.mega-menu-v2')) {
+        if(document.body.classList.contains('menu-is-open')){
             closeAllPopups();
         }
     }
-
-    if (closest('#products-menu-trigger')) {
-        toggleMegaMenu(e);
-    } else if (closest('.category-card')) {
-        const link = closest('.category-card').dataset.link;
+    
+    const categoryCard = closest('.category-card');
+    if (categoryCard) {
+        const link = categoryCard.dataset.link;
         if (link) window.location.href = link;
-    } else if (closest('#view-cart-btn')) {
-        openPopup('#cart-drawer');
-        renderCartItems();
-    } else if (closest('#login-btn, #login-for-review-btn')) {
-        openPopup('#auth-modal');
-    } else if (closest('#open-filter-btn')) {
-        openPopup('#filter-drawer');
-    } else if (closest('#open-contact-modal-btn')) {
-        openPopup('#contact-modal');
-    } else if (closest('.auth-tab-btn')) {
-        pages.renderAuthModal(closest('.auth-tab-btn').dataset.form.includes('login') ? 'login' : 'register');
-    } else if (closest('#logout-btn')) {
-        logout();
-    } else if (closest('#add-to-cart-detail')) {
-        handleAddToCart(closest('#add-to-cart-detail').dataset.productId);
-    } else if (closest('.quantity-btn')) {
-        handleQuantityChange(closest('.quantity-btn'));
-    } else if (closest('.remove-item-btn-v2')) {
-        handleRemoveItem(closest('.remove-item-btn-v2'));
+        return;
     }
+    
+    const popupTrigger = closest('#view-cart-btn, #login-btn, #login-for-review-btn, #open-filter-btn, #open-contact-modal-btn');
+    if (popupTrigger) {
+        let selector;
+        if (popupTrigger.id === 'view-cart-btn') selector = '#cart-drawer';
+        else if (popupTrigger.id === 'open-filter-btn') selector = '#filter-drawer';
+        else if (popupTrigger.id === 'open-contact-modal-btn') selector = '#contact-modal';
+        else selector = '#auth-modal'; // for login-btn and login-for-review-btn
+        
+        openPopup(selector);
+        if(selector === '#cart-drawer') renderCartItems();
+        return;
+    }
+    
+    const authTab = closest('.auth-tab-btn');
+    if (authTab) {
+        pages.renderAuthModal(authTab.dataset.form.includes('login') ? 'login' : 'register');
+        return;
+    }
+
+    if (closest('#logout-btn')) { logout(); return; }
+    if (closest('#add-to-cart-detail')) { handleAddToCart(closest('#add-to-cart-detail').dataset.productId); return; }
+    if (closest('.quantity-btn')) { handleQuantityChange(closest('.quantity-btn')); return; }
+    if (closest('.remove-item-btn-v2')) { handleRemoveItem(closest('.remove-item-btn-v2')); return; }
 }
 
-function handleFormSubmit(e) {
-    const formId = e.target.id;
-    if (['login-form', 'register-form', 'review-form', 'search-form', 'shipping-form', 'newsletter-form', 'contact-form'].includes(formId)) {
-        e.preventDefault();
-    }
-
-    switch (formId) {
+async function handleFormSubmit(e) {
+    e.preventDefault();
+    const form = e.target;
+    
+    switch (form.id) {
         case 'login-form':
         case 'register-form':
-            handleAuthFormSubmit(e.target);
+            await handleAuthFormSubmit(form);
             break;
         case 'review-form':
-            handleReviewSubmit(e.target);
+            await handleReviewSubmit(form);
             break;
         case 'search-form':
-            handleSearchSubmit(e.target);
+            handleSearchSubmit(form);
             break;
         case 'shipping-form':
-            pages.handleShippingFormSubmit(e.target);
+            pages.handleShippingFormSubmit(form);
             break;
         case 'newsletter-form':
+            await handleNewsletterSubmit(form);
+            break;
         case 'contact-form':
             showToast('Cảm ơn bạn đã gửi thông tin!', 'success');
-            e.target.reset();
+            form.reset();
             break;
     }
 }
@@ -152,83 +248,49 @@ function setupCarousel() {
     if (!carouselContainer) return;
 
     const carouselInner = carouselContainer.querySelector('.carousel-inner');
-    const carouselItems = carouselContainer.querySelectorAll('.carousel-item');
+    const totalItems = carouselContainer.querySelectorAll('.carousel-item').length;
+    if (totalItems <= 1) return;
+    
     const prevBtn = carouselContainer.querySelector('.carousel-control-prev');
     const nextBtn = carouselContainer.querySelector('.carousel-control-next');
-    const indicatorsContainer = carouselContainer.querySelector('.carousel-indicators');
-    
-    if (!carouselInner || !carouselItems.length || !indicatorsContainer) return;
-    
-    const indicators = Array.from(indicatorsContainer.querySelectorAll('.indicator'));
+    const indicators = Array.from(carouselContainer.querySelectorAll('.indicator'));
     let currentIndex = 0;
-    const totalItems = carouselItems.length;
     let autoSlideInterval;
 
     function updateCarousel() {
-        carouselInner.style.transform = `translateX(${-currentIndex * 100 / totalItems}%)`;
-        indicators.forEach((indicator, index) => {
-            indicator.classList.toggle('active', index === currentIndex);
-        });
-    }
-
-    function showNextSlide() {
-        currentIndex = (currentIndex + 1) % totalItems;
-        updateCarousel();
+        carouselInner.style.transform = `translateX(-${currentIndex * (100 / totalItems)}%)`;
+        indicators.forEach((indicator, index) => indicator.classList.toggle('active', index === currentIndex));
     }
     
-    function startAutoSlide() {
-        stopAutoSlide(); 
-        autoSlideInterval = setInterval(showNextSlide, 5000);
-    }
-
-    function stopAutoSlide() {
-        clearInterval(autoSlideInterval);
-    }
-
-    if (prevBtn) prevBtn.addEventListener('click', () => { stopAutoSlide(); currentIndex = (currentIndex - 1 + totalItems) % totalItems; updateCarousel(); startAutoSlide(); });
-    if (nextBtn) nextBtn.addEventListener('click', () => { stopAutoSlide(); showNextSlide(); startAutoSlide(); });
-
-    indicators.forEach(indicator => {
-        indicator.addEventListener('click', (e) => {
-            stopAutoSlide();
-            currentIndex = parseInt(e.target.dataset.slideTo);
-            updateCarousel();
-            startAutoSlide();
-        });
-    });
-
-    updateCarousel();
-    startAutoSlide();
+    const resetAutoSlide = () => { clearInterval(autoSlideInterval); autoSlideInterval = setInterval(() => { currentIndex = (currentIndex + 1) % totalItems; updateCarousel(); }, 5000); };
+    
+    if (prevBtn) prevBtn.addEventListener('click', () => { currentIndex = (currentIndex - 1 + totalItems) % totalItems; updateCarousel(); resetAutoSlide(); });
+    if (nextBtn) nextBtn.addEventListener('click', () => { currentIndex = (currentIndex + 1) % totalItems; updateCarousel(); resetAutoSlide(); });
+    
+    indicators.forEach((indicator, i) => indicator.addEventListener('click', () => { currentIndex = i; updateCarousel(); resetAutoSlide(); }));
+    
+    resetAutoSlide();
 }
 
 function setupScrollEffects() {
     const scrollToTopBtn = document.getElementById('scroll-to-top-btn');
     if (scrollToTopBtn) {
-        window.addEventListener('scroll', () => {
-            scrollToTopBtn.classList.toggle('visible', window.scrollY > 300);
-        });
+        window.addEventListener('scroll', () => scrollToTopBtn.classList.toggle('visible', window.scrollY > 300));
         scrollToTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
     }
 }
 
 // --- CÁC HÀM LOGIC NGHIỆP VỤ ---
 async function handleAddToCart(productId) {
-    if (!productId || productId === 'undefined') {
-        showToast('Lỗi: ID sản phẩm không hợp lệ.', 'error');
-        return;
-    }
-    
-    const clickedButton = document.querySelector(`button[data-product-id="${productId}"].add-to-cart-icon-btn, button[data-product-id="${productId}"].add-to-cart-from-card-btn, #add-to-cart-detail[data-product-id="${productId}"]`);
-    if (!clickedButton || clickedButton.disabled) return;
-
+    if (!productId || productId === 'undefined') { showToast('Lỗi: ID sản phẩm không hợp lệ.', 'error'); return; }
+    const clickedButton = document.querySelector(`button[data-product-id="${productId}"]:not(:disabled)`);
+    if (!clickedButton) return;
     const originalContent = clickedButton.innerHTML;
     clickedButton.disabled = true;
     clickedButton.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
-    
     try {
         let product = store.findProductById(productId);
         if (!product) { product = await api.fetchProductById(productId); store.addProduct(product); }
-
         if (product) {
             let stringingInfo = null;
             if (document.body.classList.contains('product-detail-page')) {
@@ -236,37 +298,40 @@ async function handleAddToCart(productId) {
                 if (stringSelect && stringSelect.value !== 'none') {
                     const selectedOption = stringSelect.options[stringSelect.selectedIndex];
                     const tensionInput = document.getElementById('tension-input');
-                    stringingInfo = { 
-                        stringId: stringSelect.value, 
-                        stringName: selectedOption.textContent.split(' (+')[0], 
-                        stringPrice: parseFloat(selectedOption.dataset.price), 
-                        tension: tensionInput ? tensionInput.value : null 
-                    };
+                    stringingInfo = { stringId: stringSelect.value, stringName: selectedOption.textContent.split(' (+')[0], stringPrice: parseFloat(selectedOption.dataset.price), tension: tensionInput ? tensionInput.value : null };
                 }
             }
             store.addToCart(product, stringingInfo);
             updateCartIconCountUI();
-            openPopup('#cart-drawer');
-            renderCartItems();
+            if (clickedButton.classList.contains('add-to-cart-icon-btn')) {
+                clickedButton.classList.add('is-added');
+                const addedIcon = clickedButton.querySelector('.added-icon');
+                if (addedIcon) addedIcon.style.display = 'inline-block';
+                setTimeout(() => {
+                    clickedButton.classList.remove('is-added');
+                    if (addedIcon) addedIcon.style.display = 'none';
+                }, 2000);
+            }
+            setTimeout(() => {
+                openPopup('#cart-drawer');
+                renderCartItems();
+            }, 300);
             showToast(`${product.name} đã được thêm vào giỏ.`, 'success');
         } else { throw new Error('Không thể tìm thấy thông tin sản phẩm.'); }
-    } catch(error) { showToast(`Lỗi: ${error.message}`, 'error'); }
-    finally {
-        setTimeout(() => {
-            if(clickedButton) {
-                clickedButton.disabled = false;
-                clickedButton.innerHTML = originalContent;
-            }
-        }, 500);
+    } catch (error) { showToast(`Lỗi: ${error.message}`, 'error'); } finally {
+        if (!clickedButton.classList.contains('add-to-cart-icon-btn')) {
+            setTimeout(() => { if (clickedButton) { clickedButton.disabled = false; clickedButton.innerHTML = originalContent; } }, 500);
+        } else {
+            clickedButton.disabled = false;
+            clickedButton.innerHTML = originalContent;
+        }
     }
 }
-
 function handleQuantityChange(button) {
     store.updateCartItemQuantity(button.dataset.id, button.dataset.action);
     renderCartItems();
     updateCartIconCountUI();
 }
-
 function handleRemoveItem(button) {
     store.removeFromCart(button.dataset.id);
     renderCartItems();
@@ -281,25 +346,17 @@ async function handleAuthFormSubmit(form) {
     const originalBtnText = submitBtn.textContent;
     submitBtn.disabled = true;
     submitBtn.textContent = 'Đang xử lý...';
-
     try {
         if (!isLogin) {
-            if (data.password !== data.confirmPassword) {
-                throw new Error('Mật khẩu xác nhận không khớp.');
-            }
-            if (data.password.length < 6) {
-                throw new Error('Mật khẩu phải có ít nhất 6 ký tự.');
-            }
+            if (data.password !== data.confirmPassword) { throw new Error('Mật khẩu xác nhận không khớp.'); }
+            if (data.password.length < 6) { throw new Error('Mật khẩu phải có ít nhất 6 ký tự.'); }
         }
-
         const result = isLogin ? await api.loginUser(data) : await api.registerUser(data);
-        
         if (result.token && result.user) {
             store.setUser(result.user, result.token);
             updateAuthUI();
             closeAllPopups();
             showToast(isLogin ? 'Đăng nhập thành công!' : 'Đăng ký thành công!', 'success');
-            
             const redirectUrl = localStorage.getItem('redirectAfterLogin');
             if (redirectUrl) {
                 localStorage.removeItem('redirectAfterLogin');
@@ -307,17 +364,14 @@ async function handleAuthFormSubmit(form) {
             } else if (document.body.classList.contains('product-detail-page') || document.body.classList.contains('profile-page')) {
                 window.location.reload();
             }
-        } else {
-            throw new Error('Phản hồi từ máy chủ không hợp lệ.');
-        }
-
+        } else { throw new Error('Phản hồi từ máy chủ không hợp lệ.'); }
     } catch (error) {
         errorEl.textContent = error.message;
     } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = originalBtnText;
     }
-}   //aa//
+}
 function logout() {
     store.logout();
     updateAuthUI();
@@ -328,7 +382,6 @@ function logout() {
         window.location.reload();
     }
 }
-
 function updateAuthUI() {
     const user = store.getUser();
     const authSection = document.getElementById('auth-section');
@@ -340,7 +393,6 @@ function updateAuthUI() {
             <button id="logout-btn" class="action-btn" title="Đăng xuất" style="min-width: 40px;"><i class="fas fa-sign-out-alt"></i></button>
         </div>` : '<button id="login-btn" class="action-btn">Tài khoản</button>';
 }
-
 function updateCartIconCountUI() {
     const cartCountSpan = document.getElementById('cart-count-main');
     if (!cartCountSpan) return;
@@ -348,46 +400,32 @@ function updateCartIconCountUI() {
     cartCountSpan.textContent = totalItems;
     cartCountSpan.style.display = totalItems > 0 ? 'flex' : 'none';
 }
-
 function renderCartItems() {
     const cart = store.getCart();
     const itemsContainer = document.getElementById('cart-items-container');
     const emptyView = document.getElementById('empty-cart-view');
     const cartFooter = document.querySelector('.cart-footer');
     const cartTotalSpan = document.getElementById('cart-total');
-
     if (!itemsContainer || !emptyView || !cartFooter || !cartTotalSpan) return;
-    
     const hasItems = cart.length > 0;
     emptyView.style.display = hasItems ? 'none' : 'flex';
     cartFooter.style.display = hasItems ? 'flex' : 'none';
-    
     itemsContainer.innerHTML = '';
     if (hasItems) {
         cart.forEach((item) => {
-            if (!item || !item.id || !item.name) {
-                console.warn("Một sản phẩm trong giỏ hàng bị lỗi, đã bỏ qua:", item);
-                return;
-            }
-
+            if (!item || !item.id || !item.name) { return; }
             const itemEl = document.createElement('div');
             itemEl.className = 'cart-item-v2';
             const cartItemId = store.getCartItemId(item);
-            const imageUrl = item.image || '/images/placeholder.png'; 
-            const productUrl = `/product-detail.html?id=${item.id}`;
-            const itemName = item.name || 'Sản phẩm không tên';
-            const itemPrice = item.price || 0;
-            
             let stringingHTML = '';
             if (item.stringingInfo) {
                 stringingHTML = `<div class="cart-item-options-v2">+ Cước: ${item.stringingInfo.stringName} ${item.stringingInfo.tension ? `(${item.stringingInfo.tension} kg)` : ''}</div>`;
             }
-
             itemEl.innerHTML = `
-                <img src="${imageUrl}" alt="${itemName}" class="cart-item-image-v2" loading="lazy">
+                <img src="${item.image || '/images/placeholder.png'}" alt="${item.name}" class="cart-item-image-v2" loading="lazy">
                 <div class="cart-item-details-v2">
                     <div class="cart-item-info-v2">
-                        <a href="${productUrl}" class="cart-item-name-v2">${itemName}</a>
+                        <a href="/product-detail.html?id=${item.id}" class="cart-item-name-v2">${item.name}</a>
                         ${stringingHTML}
                     </div>
                     <div class="cart-item-footer-v2">
@@ -396,7 +434,7 @@ function renderCartItems() {
                             <span>${item.quantity}</span>
                             <button class="quantity-btn" data-id="${cartItemId}" data-action="increase">+</button>
                         </div>
-                        <span class="cart-item-price-v2">${store.formatCurrency(itemPrice * item.quantity)}</span>
+                        <span class="cart-item-price-v2">${store.formatCurrency(item.price * item.quantity)}</span>
                         <button class="remove-item-btn-v2" data-id="${cartItemId}" title="Xóa sản phẩm"><i class="fas fa-trash-alt"></i></button>
                     </div>
                 </div>`;
@@ -405,14 +443,6 @@ function renderCartItems() {
         cartTotalSpan.textContent = store.formatCurrency(store.getCartTotalPrice());
     }
 }
-
-function handleSearchSubmit(form) {
-    const keyword = form.querySelector('#search-input').value.trim();
-    if (keyword) {
-        window.location.href = `/products.html?keyword=${encodeURIComponent(keyword)}`;
-    }
-}
-
 async function handleReviewSubmit(form) {
     const productId = new URLSearchParams(window.location.search).get('id');
     const rating = form.querySelector('#rating').value;
@@ -427,13 +457,35 @@ async function handleReviewSubmit(form) {
         errorEl.textContent = error.message;
     }
 }
+async function handleNewsletterSubmit(form) {
+    const emailInput = form.querySelector('input[type="email"]');
+    const email = emailInput.value.trim();
+    if (!email) return;
+    try {
+        const response = await api.subscribeNewsletter(email);
+        showToast(response.message, 'success');
+        form.reset();
+    } catch (error) {
+        showToast(`Lỗi: ${error.message}`, 'error');
+    }
+}
+function handleSearchSubmit(form) {
+    const keyword = form.querySelector('#search-input').value.trim();
+    if (keyword) {
+        const suggestionsContainer = document.getElementById('search-suggestions-container');
+        if (suggestionsContainer) {
+            suggestionsContainer.classList.remove('visible');
+        }
+        window.location.href = `/products.html?keyword=${encodeURIComponent(keyword)}`;
+    }
+}
+
 
 // --- HÀM KHỞI TẠO CHÍNH ---
 function main() {
-    // Sửa lỗi: Di chuyển check admin vào trong hàm main
     if (document.body.classList.contains('admin-page')) {
-        console.log("-> Đang ở trang Admin, main.js sẽ không khởi tạo layout và các trang công khai.");
-        return; // Dừng lại, không chạy code cho trang công khai
+        console.log("-> Admin page detected, public main.js will not run layout/page logic.");
+        return;
     }
 
     try {
@@ -445,12 +497,12 @@ function main() {
         renderPageSpecificContent();
         setupCarousel();
         setupScrollEffects();
+        setupSearchSuggestions();
         
-        console.log("✅ Ứng dụng đã khởi tạo thành công!");
+        console.log("✅ Application initialized successfully!");
     } catch (error) {
-        console.error("❌ Lỗi nghiêm trọng khi khởi tạo ứng dụng:", error);
+        console.error("❌ Critical error during application initialization:", error);
     }
 }
 
-// Chạy hàm main sau khi DOM đã được tải hoàn toàn
 document.addEventListener('DOMContentLoaded', main);

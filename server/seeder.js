@@ -1,8 +1,8 @@
 const sql = require('mssql');
 const path = require('path');
-const bcrypt = require('bcryptjs'); // THÊM BCRYPT
+const bcrypt = require('bcryptjs');
 const productsData = require('./data/products.js');
-const usersData = require('./data/users.js'); // THÊM DỮ LIỆU USERS
+const usersData = require('./data/users.js');
 const { pool, poolConnect, closePool } = require('./config/db.js');
 
 require('dotenv').config({ path: path.resolve(__dirname, '.env') });
@@ -21,7 +21,8 @@ const importData = async () => {
         await new sql.Request(transaction).query('DELETE FROM OrderItems');
         await new sql.Request(transaction).query('DELETE FROM Orders');
         await new sql.Request(transaction).query('DELETE FROM Products');
-        await new sql.Request(transaction).query('DELETE FROM Users'); // THÊM XÓA USERS
+        await new sql.Request(transaction).query('DELETE FROM Subscribers');
+        await new sql.Request(transaction).query('DELETE FROM Users');
         await new sql.Request(transaction).query('DELETE FROM Categories');
         await new sql.Request(transaction).query('DELETE FROM Brands');
         console.log('✅ Existing data cleared.');
@@ -65,6 +66,11 @@ const importData = async () => {
         // 4. Chèn Products
         console.log('🌱 Inserting Products...');
         for (const product of productsData) {
+            if (!brandNameToIdMap.has(product.brand) || !categoryNameToIdMap.has(product.mainCategory)) {
+                console.warn(`Skipping product "${product.name}" due to missing brand or category.`);
+                continue;
+            }
+            
             const request = new sql.Request(transaction);
             
             request.input('Name', sql.NVarChar, product.name);
@@ -74,8 +80,8 @@ const importData = async () => {
             request.input('Images', sql.NVarChar, product.images);
             request.input('Description', sql.NVarChar(1000), product.description);
             request.input('FullDescription', sql.NVarChar(sql.MAX), product.fullDescription);
-            request.input('Rating', sql.Decimal(3, 2), product.rating);
-            request.input('NumReviews', sql.Int, product.numReviews);
+            request.input('Rating', sql.Decimal(3, 2), product.rating || 0);
+            request.input('NumReviews', sql.Int, product.numReviews || 0);
             request.input('IsPromotional', sql.Bit, product.isPromotional || false);
             request.input('CountInStock', sql.Int, product.countInStock);
             request.input('Warranty', sql.NVarChar, product.warranty);
@@ -83,16 +89,17 @@ const importData = async () => {
             request.input('Specifications', sql.NVarChar(sql.MAX), product.specifications);
             request.input('BrandId', sql.Int, brandNameToIdMap.get(product.brand));
             request.input('CategoryId', sql.Int, categoryNameToIdMap.get(product.mainCategory));
+            request.input('SubCategory', sql.NVarChar, product.subCategory || null);
 
             await request.query(`
                 INSERT INTO Products (
                     Name, Price, OriginalPrice, Image, Images, Description, FullDescription, 
                     Rating, NumReviews, IsPromotional, CountInStock, Warranty, YoutubeLink, 
-                    Specifications, BrandId, CategoryId
+                    Specifications, BrandId, CategoryId, SubCategory
                 ) VALUES (
                     @Name, @Price, @OriginalPrice, @Image, @Images, @Description, @FullDescription,
                     @Rating, @NumReviews, @IsPromotional, @CountInStock, @Warranty, @YoutubeLink,
-                    @Specifications, @BrandId, @CategoryId
+                    @Specifications, @BrandId, @CategoryId, @SubCategory
                 )
             `);
         }
@@ -101,51 +108,40 @@ const importData = async () => {
         await transaction.commit();
         console.log('🎉 Transaction committed.');
         console.log('✅ Data Imported Successfully!');
-        process.exit();
     } catch (error) {
         console.error('❌ Error during data import:', error);
         if (transaction.rolledBack === false) {
            await transaction.rollback();
            console.log('Transaction rolled back due to error.');
         }
-        process.exit(1);
     } finally {
         await closePool();
+        process.exit(0);
     }
 };
 
 const destroyData = async () => {
-    const transaction = new sql.Transaction(pool);
     try {
         await poolConnect;
         console.log('✅ Database connection established for destroying data.');
         
-        await transaction.begin();
-        console.log('🏁 Transaction started.');
-        
+        const request = pool.request();
         console.log('🔥 Deleting all data...');
-        await new sql.Request(transaction).query('DELETE FROM Reviews');
-        await new sql.Request(transaction).query('DELETE FROM OrderItems');
-        await new sql.Request(transaction).query('DELETE FROM Orders');
-        await new sql.Request(transaction).query('DELETE FROM Products');
-        await new sql.Request(transaction).query('DELETE FROM Users'); // THÊM XÓA USERS
-        await new sql.Request(transaction).query('DELETE FROM Categories');
-        await new sql.Request(transaction).query('DELETE FROM Brands');
-        await new sql.Request(transaction).query('DELETE FROM Discounts'); // THÊM XÓA DISCOUNTS
+        await request.query('DELETE FROM Reviews');
+        await request.query('DELETE FROM OrderItems');
+        await request.query('DELETE FROM Orders');
+        await request.query('DELETE FROM Products');
+        await request.query('DELETE FROM Subscribers');
+        await request.query('DELETE FROM Users');
+        await request.query('DELETE FROM Categories');
+        await request.query('DELETE FROM Brands');
         
-        await transaction.commit();
-        console.log('🎉 Transaction committed.');
         console.log('✅ Data Destroyed Successfully!');
-        process.exit();
     } catch (error) {
         console.error('❌ Error during data destruction:', error);
-        if (transaction.rolledBack === false) {
-            await transaction.rollback();
-        }
-        console.log('Transaction rolled back due to error.');
-        process.exit(1);
     } finally {
         await closePool();
+        process.exit(0);
     }
 };
 

@@ -11,7 +11,6 @@ const orderRoutes = require('./routes/orderRoutes.js');
 const dashboardRoutes = require('./routes/dashboardRoutes.js');
 const brandRoutes = require('./routes/brandRoutes.js');
 const categoryRoutes = require('./routes/categoryRoutes.js');
-// THÊM MỚI: Import các route còn thiếu
 const newsletterRoutes = require('./routes/newsletterRoutes.js');
 const trackingRoutes = require('./routes/trackingRoutes.js');
 
@@ -30,11 +29,19 @@ app.use(
                 "script-src": [
                     "'self'", 
                     "https://cdnjs.cloudflare.com",
-                    "'unsafe-inline'"
+                    "'unsafe-inline'" // Cần cho một số thư viện hoặc script nhỏ
                 ],
                 "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
                 "font-src": ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
-                "img-src": ["'self'", "data:", "https://images.unsplash.com", "https://plus.unsplash.com", "https://cdn.shopvnb.com", "https://shopvnb.com"],
+                "img-src": [
+                    "'self'", 
+                    "data:", 
+                    "https://images.unsplash.com", 
+                    "https://plus.unsplash.com", 
+                    "https://cdn.shopvnb.com", // Thêm nguồn ảnh từ VNB
+                    "https://shopvnb.com"
+                ],
+                 "frame-src": ["'self'", "https://www.youtube.com"], // Cho phép nhúng video Youtube
             },
         },
     })
@@ -50,6 +57,7 @@ const apiLimiter = rateLimit({
     max: 200,
     standardHeaders: true,
     legacyHeaders: false,
+    message: "Quá nhiều yêu cầu từ IP này, vui lòng thử lại sau 15 phút.",
 });
 app.use('/api', apiLimiter);
 app.use('/api/products', productRoutes);
@@ -58,7 +66,6 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/brands', brandRoutes); 
 app.use('/api/categories', categoryRoutes);
-// THÊM MỚI: Sử dụng các route còn thiếu
 app.use('/api/newsletter', newsletterRoutes);
 app.use('/api/tracking', trackingRoutes);
 
@@ -68,11 +75,12 @@ const __projectRoot = path.resolve(__dirname, '..');
 const clientPath = path.join(__projectRoot, 'client');
 
 // 1. Phục vụ các file tĩnh (CSS, JS, images, etc.) từ thư mục client
+// Thêm thư mục client/templates để phục vụ các file template cho admin
 app.use(express.static(clientPath));
+app.use('/templates', express.static(path.join(clientPath, 'templates')));
 
 // 2. Đối với bất kỳ request GET nào không khớp với API và file tĩnh ở trên,
 //    trả về file index.html để JS router phía client xử lý.
-//    Đây là cách làm đúng cho một SPA.
 app.get('*', (req, res, next) => {
     // Bỏ qua các route API
     if (req.originalUrl.startsWith('/api')) {
@@ -109,6 +117,5 @@ startServer();
 process.on('SIGINT', async () => {
     console.log('🔌 Server is shutting down...');
     await closePool();
-    console.log('✅ Database pool closed.');
     process.exit(0);
 });

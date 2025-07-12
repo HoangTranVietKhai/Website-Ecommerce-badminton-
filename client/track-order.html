@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tra Cứu Đơn Hàng - Khải Hoàng </title>
+    <title>Tra Cứu Đơn Hàng - SportStore</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/style.css">
     <style>
@@ -48,11 +48,9 @@
 
     <script type="module" src="/js/main.js"></script>
     <script type="module">
-        // Import các hàm cần thiết
         import * as api from '/js/api.js';
         import { generateOrderDetailHTML } from '/js/templates.js';
 
-        // Lấy các element
         const form = document.getElementById('tracking-form');
         const resultContainer = document.getElementById('tracking-result-container');
         
@@ -61,27 +59,27 @@
             
             const orderId = document.getElementById('track-order-id').value.trim();
             const email = document.getElementById('track-email').value.trim();
+            const submitBtn = form.querySelector('button[type="submit"]');
             
             if (!orderId || !email) {
                 resultContainer.innerHTML = `<p class="error-message">Vui lòng nhập đầy đủ Mã đơn hàng và Email.</p>`;
                 return;
             }
 
-            // Hiển thị spinner loading
             resultContainer.innerHTML = `<div class="loading-spinner"></div>`;
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Đang tìm...";
 
             try {
-                // Gọi API để tra cứu
                 const order = await api.trackOrder({ orderId, email });
-                
-                // Hiển thị kết quả
-                // Chúng ta có thể tái sử dụng template của trang chi tiết đơn hàng
                 const orderDetailHTML = generateOrderDetailHTML(order);
                 resultContainer.innerHTML = orderDetailHTML;
 
             } catch (error) {
-                // Hiển thị lỗi
                 resultContainer.innerHTML = `<p class="error-message" style="text-align:center;">${error.message}</p>`;
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Tra Cứu";
             }
         });
     </script>

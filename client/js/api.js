@@ -1,4 +1,4 @@
-// ===== File: client/js/api.js (PHIÊN BẢN HOÀN CHỈNH - ĐÃ XỬ LÝ LỖI TOKEN) =====
+// ===== File: client/js/api.js (PHIÊN BẢN HOÀN CHỈNH) =====
 
 const API_BASE_URL = '/api';
 
@@ -16,13 +16,16 @@ async function request(endpoint, options = {}) {
     const response = await fetch(url, config);
 
     if (response.status === 401) {
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
-        alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
-        window.location.href = '/index.html';
+        if(localStorage.getItem('token')) {
+            localStorage.removeItem('user');
+            localStorage.removeItem('token');
+            alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+            window.location.href = '/index.html';
+        }
         throw new Error('Unauthorized');
     }
 
+    // Xử lý các lỗi khác
     if (!response.ok) {
         let errorData;
         try {
@@ -34,15 +37,25 @@ async function request(endpoint, options = {}) {
         throw new Error(errorData.message || 'Something went wrong');
     }
 
-    const text = await response.text();
-    if (!text) return {}; 
+    // Xử lý trường hợp response không có nội dung (VD: DELETE 204 No Content)
+    if (response.status === 204) {
+        return {};
+    }
     
-    return JSON.parse(text);
+    // An toàn hơn khi parse JSON
+    const text = await response.text();
+    try {
+        return JSON.parse(text);
+    } catch(e) {
+        // Trả về text nếu không phải là JSON hợp lệ
+        return text;
+    }
 }
 
 // Product APIs
 export const fetchProducts = (queryParams = '') => request(`/products?${queryParams}`);
 export const fetchProductById = (id) => request(`/products/${id}`);
+export const fetchProductSuggestions = (keyword) => request(`/products/suggestions?keyword=${encodeURIComponent(keyword)}`);
 export const fetchRelatedProducts = (id) => request(`/products/${id}/related`);
 export const submitReview = (productId, reviewData, token) => {
     return request(`/products/${productId}/reviews`, {
@@ -131,6 +144,7 @@ export const checkFirstOrderDiscount = (token) => {
         headers: { 'Authorization': `Bearer ${token}` }
     });
 };
+
 // Order APIs
 export const createOrder = (orderData, token) => {
     return request('/orders', {
@@ -179,15 +193,6 @@ export const fetchAllOrders = (token, queryParams = '') => {
         headers: { 'Authorization': `Bearer ${token}` }
     });
 };
-export const updateUserByAdmin = (id, userData, token) => {
-    return request(`/users/${id}`, {
-        method: 'PUT',
-        headers: { 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify(userData)
-    });
-};
-
-// THÊM MỚI
 export const updateUserRoleByAdmin = (id, role, token) => {
     return request(`/users/${id}/role`, {
         method: 'PUT',
@@ -196,8 +201,23 @@ export const updateUserRoleByAdmin = (id, role, token) => {
     });
 };
 
+// Newsletter API
+export const subscribeNewsletter = (email) => {
+    return request('/newsletter/subscribe', {
+        method: 'POST',
+        body: JSON.stringify({ email })
+    });
+};
 
-// api zalop pay
+// Tracking API
+export const trackOrder = (trackingData) => {
+    return request('/tracking', {
+        method: 'POST',
+        body: JSON.stringify(trackingData)
+    });
+};
+
+// ZaloPay API
 export const createZaloPayPaymentUrl = (orderId, token) => {
     return request(`/orders/${orderId}/create-zalopay-payment`, {
         method: 'POST',

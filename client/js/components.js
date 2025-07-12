@@ -5,7 +5,7 @@ export function createProductCard(product) {
     productCard.className = 'product-card-v2';
     productCard.dataset.productId = product.id;
 
-    let priceHTML = `<span class="product-price-v2">${formatCurrency(product.price)}</span>`;
+    let priceHTML = `<div class="price-container"><span class="product-price-v2">${formatCurrency(product.price)}</span></div>`;
     if (product.originalPrice && product.originalPrice > product.price) {
         priceHTML = `
             <div class="price-container">
@@ -26,7 +26,8 @@ export function createProductCard(product) {
             <div class="product-card-footer">
                 ${priceHTML}
                 <button class="add-to-cart-icon-btn" data-product-id="${product.id}" aria-label="Thêm vào giỏ">
-                    <i class="fas fa-plus"></i>
+                    <i class="fas fa-shopping-cart initial-icon"></i>
+                    <i class="fas fa-check added-icon" style="display: none;"></i>
                 </button>
             </div>
         </div>
